@@ -234,6 +234,28 @@
   function saveRecords() {
     try { localStorage.setItem(KEY, JSON.stringify(streaks)); } catch (e) {}
   }
+  var STATS_KEY = "ryu-fukisoku-stats-v1";
+  var stats = {};
+  function loadStats() {
+    try {
+      var raw = localStorage.getItem(STATS_KEY);
+      if (raw) { stats = JSON.parse(raw) || {}; }
+    } catch (e) { stats = {}; }
+  }
+  function saveStats() {
+    try { localStorage.setItem(STATS_KEY, JSON.stringify(stats)); } catch (e) {}
+  }
+  function recordAttempt(v, ok) {
+    var s = stats[v.id] || { t: 0, o: 0 };
+    s.t++; if (ok) { s.o++; }
+    stats[v.id] = s;
+    saveStats();
+  }
+  function accuracyOf(v) {
+    var s = stats[v.id];
+    if (!s || !s.t) { return null; }
+    return s.o / s.t;
+  }
   function streakOf(v) { return streaks[v.id] || 0; }
   function isMastered(v) { return streakOf(v) >= 3; }
   function masteredCount() { return VERBS.filter(isMastered).length; }
@@ -332,9 +354,9 @@
     if (r < 0.85) { return "jpToPast"; }
     return "toBase";
   }
-  function startQuiz(items, label) {
+  function startQuiz(items, label, ordered) {
     stopListen();
-    queue = shuffle(items).map(function (v) { return { v: v, dir: pickDir() }; });
+    queue = (ordered ? items : shuffle(items)).map(function (v) { return { v: v, dir: pickDir() }; });
     pos = 0; modeLabel = label;
     sessTotal = 0; sessFirstOk = 0; sessNewMaster = 0; seenFirst = {};
     showScreen("quiz");
@@ -369,6 +391,7 @@
       $("q-jp").textContent = v.jp;
       $("answer-input").placeholder = "原形を入力";
     }
+    if (current.confirm) { $("q-label").textContent = "確認：" + $("q-label").textContent; }
     $("q-star").textContent = starText(v);
     $("answer-input").value = "";
     $("answer-input").disabled = false;
@@ -376,6 +399,10 @@
     $("result-box").className = "result";
     $("result-box").style.display = "none";
     $("next-btn").hidden = true;
+    $("next-btn").textContent = "次へ →";
+    $("dontknow-btn").hidden = !!current.confirm;
+    $("skip-btn").hidden = !!current.confirm;
+    if (current.confirm) { $("quiz-pos").textContent = "確認：もう一度入力してみよう"; }
     setTimeout(function () { $("answer-input").focus(); }, 50);
   }
   function normalize(s) {
@@ -395,6 +422,25 @@
     if (!normalize(val)) { $("answer-input").focus(); return; }
     checked = true;
     var ok = isCorrect(v, current.dir, val);
+    if (current.confirm) {
+      $("answer-input").disabled = true;
+      $("check-btn").hidden = true;
+      var cbox = $("result-box");
+      cbox.style.display = "block";
+      cbox.className = "result " + (ok ? "ok" : "ng");
+      $("result-msg").textContent = ok ? "⭕ 確認できました！" : "✖ 正しくは… もう一度、入力して確認しましょう";
+      $("forms-text").textContent = v.b + " → " + v.p;
+      $("forms-jp").textContent = v.jp;
+      if (v.note) { $("forms-note").hidden = false; $("forms-note").textContent = "※ " + v.note; }
+      else { $("forms-note").hidden = true; }
+      if (!ok) {
+        queue.splice(Math.min(pos + 1, queue.length), 0, { v: v, dir: current.dir, confirm: true });
+        $("next-btn").textContent = "もう一度入力する →";
+      }
+      $("next-btn").hidden = false;
+      return;
+    }
+    recordAttempt(v, ok);
     var firstTime = !seenFirst[v.id];
     if (firstTime) {
       seenFirst[v.id] = true;
@@ -433,19 +479,31 @@
     if (pos >= queue.length) { finishRound(); } else { renderQuestion(); }
   }
   function judgeDontKnow() {
-    if (phase !== "input") { return; }
+    if (checked || !current || current.confirm) { return; }
+    checked = true;
     var v = current.v;
-    current.streak = 0;
-    requeue(v);
-    saveStore();
-    phase = "feedback";
-    $("input-area").hidden = true;
-    $("answer-area").hidden = false;
-    var fb = $("feedback");
-    fb.className = "feedback ng";
-    fb.textContent = "「わからない」で記録しました。正解は " + expectedAnswer(current);
-    $("forms-line").textContent = v.b + " → " + v.p + "（" + v.jp + "）";
-    $("streak-note").textContent = "連続正解 0 回（★マスターまであと 3 回）";
+    if (!seenFirst[v.id]) { seenFirst[v.id] = true; sessTotal++; }
+    streaks[v.id] = 0;
+  loadStats();
+    recordAttempt(v, false);
+    queue.splice(Math.min(pos + 1, queue.length), 0, { v: v, dir: current.dir, confirm: true });
+    queue.splice(Math.min(pos + 5, queue.length), 0, { v: v, dir: "toPast" });
+    saveRecords();
+    $("answer-input").disabled = true;
+    $("check-btn").hidden = true;
+    var box = $("result-box");
+    box.style.display = "block";
+    box.className = "result ng";
+    $("result-msg").textContent = "「わからない」で記録しました。正しくは…";
+    $("forms-text").textContent = v.b + " → " + v.p;
+    $("forms-jp").textContent = v.jp;
+    if (v.note) { $("forms-note").hidden = false; $("forms-note").textContent = "※ " + v.note; }
+    else { $("forms-note").hidden = true; }
+    $("next-btn").hidden = false;
+    $("next-btn").textContent = "入力して確認する →";
+    $("dontknow-btn").hidden = true;
+    $("skip-btn").hidden = true;
+    $("quiz-pos").textContent = (pos + 1) + " / " + queue.length + " 問";
   }
   function skipQuestion() {
     if ("speechSynthesis" in window) { window.speechSynthesis.cancel(); }
@@ -466,7 +524,16 @@
   $("start-all").addEventListener("click", function () { startQuiz(VERBS, "全58語ミックス"); });
   $("start-review").addEventListener("click", function () { startQuiz(VERBS, "全部復習"); });
   $("start-weak").addEventListener("click", function () {
-    startQuiz(VERBS.filter(function (v) { return !isMastered(v); }), "苦手だけ");
+    var weak = VERBS.filter(function (v) { return !isMastered(v); });
+    weak.sort(function (a, b) {
+      var ra = accuracyOf(a), rb = accuracyOf(b);
+      if (ra === null && rb === null) { return 0; }
+      if (ra === null) { return 1; }
+      if (rb === null) { return -1; }
+      if (ra !== rb) { return ra - rb; }
+      return (stats[b.id] ? stats[b.id].t : 0) - (stats[a.id] ? stats[a.id].t : 0);
+    });
+    startQuiz(weak, "苦手だけ", true);
   });
   $("listen-btn").addEventListener("click", function () { if (listening) { stopListen(); } else { startListen(); } });
   $("check-btn").addEventListener("click", checkAnswer);

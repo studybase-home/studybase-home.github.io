@@ -377,7 +377,10 @@
     var it = order[pos];
     $("quiz-pos").textContent = (pos + 1) + " / " + order.length + " 問目";
     $("quiz-set").textContent = SETS[currentSet].label + (currentMode === "retry" ? "（できなかった問題）" : "");
-    if (currentSet === "word" && typeof it.cat === "number") {
+    if (it.confirm) {
+      $("q-chip").hidden = false;
+      $("q-chip").textContent = "確認（もう一度）";
+    } else if (currentSet === "word" && typeof it.cat === "number") {
       $("q-chip").hidden = false;
       $("q-chip").textContent = WORD_CATS[it.cat];
     } else {
@@ -392,9 +395,9 @@
     }
     $("a-area").hidden = true;
     $("show-a-btn").hidden = false;
-    $("dontknow-btn").hidden = false;
+    $("dontknow-btn").hidden = !!it.confirm;
     $("next-btn").hidden = true;
-    $("skip-btn").hidden = false;
+    $("skip-btn").hidden = !!it.confirm;
     $("judge-row").hidden = true;
     $("speak-btn").hidden = true;
   }
@@ -412,6 +415,10 @@
     $("dontknow-btn").hidden = true;
     $("judge-row").hidden = false;
     $("speak-btn").hidden = false;
+    if (it.confirm) {
+      $("judge-row").hidden = true;
+      $("next-btn").hidden = false;
+    }
   }
   function speakEnglish(text) {
     if (!("speechSynthesis" in window)) { return; }
@@ -454,6 +461,7 @@
     records[it.id] = false;
     saveRecords();
     roundNg++;
+    order.splice(Math.min(pos + 3, order.length), 0, { id: it.id, q: it.q, a: it.a, hint: it.hint, note: it.note, cat: it.cat, confirm: true });
     showAnswer();
     $("judge-row").hidden = true;
     $("skip-btn").hidden = true;
