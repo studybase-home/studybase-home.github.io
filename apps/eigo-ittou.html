@@ -119,6 +119,10 @@
     margin-top: 14px; border: 2px solid var(--accent); background: #fff; color: var(--accent);
     border-radius: 999px; font-size: 1rem; font-weight: 700; padding: 8px 18px; min-height: 44px;
   }
+  .dontknow-btn {
+    width: 100%; border: 2px solid #e0655a; background: var(--surface); color: #c0392b;
+    border-radius: 16px; font-size: 1.05rem; font-weight: 700; padding: 12px; min-height: 54px; margin-top: 10px;
+  }
   .show-a-btn {
     width: 100%; border: 2px solid var(--accent); background: var(--surface); color: var(--accent);
     border-radius: 16px; font-size: 1.1rem; font-weight: 700; padding: 12px; min-height: 54px;
@@ -188,10 +192,12 @@
       <button class="speak-btn" id="speak-btn" hidden>🔊 発音</button>
     </div>
     <button class="show-a-btn" id="show-a-btn">答えを見る</button>
+    <button class="dontknow-btn" id="dontknow-btn">わからない</button>
     <div class="judge-row" id="judge-row" hidden>
       <button class="ok-btn" id="ok-btn">⭕ できた</button>
       <button class="ng-btn" id="ng-btn">✖ できなかった</button>
     </div>
+    <button class="show-a-btn" id="next-btn" hidden>つぎへ →</button>
     <button class="ghost-btn" id="skip-btn" style="margin-top:10px;">記録しないで次へ →</button>
   </div>
 
@@ -386,6 +392,9 @@
     }
     $("a-area").hidden = true;
     $("show-a-btn").hidden = false;
+    $("dontknow-btn").hidden = false;
+    $("next-btn").hidden = true;
+    $("skip-btn").hidden = false;
     $("judge-row").hidden = true;
     $("speak-btn").hidden = true;
   }
@@ -400,6 +409,7 @@
     }
     $("a-area").hidden = false;
     $("show-a-btn").hidden = true;
+    $("dontknow-btn").hidden = true;
     $("judge-row").hidden = false;
     $("speak-btn").hidden = false;
   }
@@ -439,6 +449,24 @@
       renderQuestion();
     }
   }
+  function dontKnow() {
+    var it = order[pos];
+    records[it.id] = false;
+    saveRecords();
+    roundNg++;
+    showAnswer();
+    $("judge-row").hidden = true;
+    $("skip-btn").hidden = true;
+    $("next-btn").hidden = false;
+  }
+  function goNext() {
+    pos++;
+    if (pos >= order.length) {
+      finishRound();
+    } else {
+      renderQuestion();
+    }
+  }
   function judge(ok) {
     var it = order[pos];
     records[it.id] = ok;
@@ -461,6 +489,8 @@
   $("show-a-btn").addEventListener("click", showAnswer);
   $("skip-btn").addEventListener("click", skipQuestion);
   $("speak-btn").addEventListener("click", speakCurrent);
+  $("dontknow-btn").addEventListener("click", dontKnow);
+  $("next-btn").addEventListener("click", goNext);
   $("ok-btn").addEventListener("click", function () { judge(true); });
   $("ng-btn").addEventListener("click", function () { judge(false); });
   $("again-btn").addEventListener("click", startQuiz);

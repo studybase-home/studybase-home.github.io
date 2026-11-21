@@ -39,6 +39,7 @@
   .start-btn { background: var(--accent); color: #fff; margin: 6px 0; }
   .wide-btn { background: var(--accent-soft); color: var(--accent); margin: 6px 0; }
   .ghost-btn { background: transparent; color: var(--ink-soft); border: 1px solid var(--line); margin: 6px 0; font-weight: 600; }
+  .ghost-btn.dontknow { color: #c0392b; border-color: #e5b4ae; }
   .summary-link {
     display: block; text-align: center; text-decoration: none; margin: 10px 0 6px;
     background: linear-gradient(135deg, #f59e0b, #f97316); color: #fff;
@@ -129,6 +130,7 @@
       <div class="judge-row">
         <button class="start-btn" id="next-btn" hidden>次へ →</button>
       </div>
+      <button class="ghost-btn dontknow" id="dontknow-btn">わからない</button>
       <button class="ghost-btn" id="skip-btn">記録しないで次へ →</button>
     </div>
   </div>
@@ -430,6 +432,21 @@
     pos++;
     if (pos >= queue.length) { finishRound(); } else { renderQuestion(); }
   }
+  function judgeDontKnow() {
+    if (phase !== "input") { return; }
+    var v = current.v;
+    current.streak = 0;
+    requeue(v);
+    saveStore();
+    phase = "feedback";
+    $("input-area").hidden = true;
+    $("answer-area").hidden = false;
+    var fb = $("feedback");
+    fb.className = "feedback ng";
+    fb.textContent = "「わからない」で記録しました。正解は " + expectedAnswer(current);
+    $("forms-line").textContent = v.b + " → " + v.p + "（" + v.jp + "）";
+    $("streak-note").textContent = "連続正解 0 回（★マスターまであと 3 回）";
+  }
   function skipQuestion() {
     if ("speechSynthesis" in window) { window.speechSynthesis.cancel(); }
     pos++;
@@ -457,6 +474,7 @@
     if (e.key === "Enter") { if (checked) { nextQuestion(); } else { checkAnswer(); } }
   });
   $("next-btn").addEventListener("click", nextQuestion);
+  $("dontknow-btn").addEventListener("click", judgeDontKnow);
   $("skip-btn").addEventListener("click", skipQuestion);
   $("speak-btn").addEventListener("click", function () { if (current) { speakForms(current.v); } });
   $("again-all-btn").addEventListener("click", function () { startQuiz(VERBS, "全部もう一度"); });
