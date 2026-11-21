@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="一問一答" />
 <link rel="apple-touch-icon" href="../icon-180.png" />
 <link rel="icon" href="../icon-180.png" />
-<title>英作文・英単語 一問一答（NT L9）</title>
+<title>NT L9｜英作文・英単語 一問一答</title>
 <style>
   :root {
     --bg: #f4f1ea;
@@ -59,13 +59,13 @@
   .wrap { max-width: 640px; margin: 0 auto; padding: 16px 16px 56px; }
 
   .back { color: var(--accent); text-decoration: none; font-size: 1rem; font-weight: 700; }
-  h1 { font-size: 1.45rem; margin: 10px 0 2px; }
+  h1 { font-size: 1.6rem; margin: 10px 0 2px; }
   .sub { margin: 0 0 18px; color: var(--ink-soft); font-size: 0.92rem; }
 
   /* 進み具合 */
   .progress-box {
     background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
-    padding: 16px 18px; box-shadow: var(--shadow); margin-bottom: 18px;
+    padding: 12px 14px; box-shadow: var(--shadow); margin-bottom: 14px;
   }
   .progress-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 1rem; margin-bottom: 8px; }
   .progress-row .num { font-weight: 700; font-size: 1.1rem; }
@@ -77,7 +77,7 @@
   .tabs { display: flex; gap: 6px; background: var(--surface-2); border-radius: 12px; padding: 5px; margin-bottom: 14px; }
   .tab {
     flex: 1; border: none; border-radius: 9px; background: transparent;
-    color: var(--ink-soft); font-size: 1.1rem; font-weight: 700; padding: 10px 8px; min-height: 54px;
+    color: var(--ink-soft); font-size: 1.05rem; font-weight: 700; padding: 8px 6px; min-height: 46px;
   }
   .tab .tab-count { display: block; font-size: 0.78rem; font-weight: 600; opacity: 0.85; }
   .tab[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
@@ -86,7 +86,7 @@
   .mode-box { display: flex; gap: 10px; margin-bottom: 18px; }
   .mode-btn {
     flex: 1; border: 2px solid var(--line); background: var(--surface); color: var(--ink);
-    border-radius: 14px; padding: 12px 8px; font-size: 1.02rem; font-weight: 700; min-height: 58px;
+    border-radius: 14px; padding: 10px 8px; font-size: 1.0rem; font-weight: 700; min-height: 50px;
   }
   .mode-btn .cnt { display: block; font-size: 0.8rem; font-weight: 600; color: var(--ink-soft); }
   .mode-btn[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
@@ -94,7 +94,7 @@
 
   .start-btn {
     width: 100%; border: none; border-radius: 16px; background: var(--accent); color: var(--accent-ink);
-    font-size: 1.3rem; font-weight: 700; padding: 18px; min-height: 68px; box-shadow: var(--shadow);
+    font-size: 1.18rem; font-weight: 700; padding: 13px; min-height: 56px; box-shadow: var(--shadow);
   }
   .start-btn:disabled { opacity: 0.45; }
   .note { color: var(--ink-soft); font-size: 0.92rem; margin-top: 12px; }
@@ -103,7 +103,7 @@
   .quiz-head { display: flex; justify-content: space-between; color: var(--ink-soft); font-size: 0.95rem; margin-bottom: 10px; }
   .card {
     background: var(--surface); border: 1px solid var(--line); border-radius: 18px;
-    padding: 24px 20px; box-shadow: var(--shadow); margin-bottom: 16px; min-height: 190px;
+    padding: 18px 16px; box-shadow: var(--shadow); margin-bottom: 14px; min-height: 160px;
   }
   .chip {
     display: inline-block; background: var(--accent-soft); color: var(--ink);
@@ -117,10 +117,10 @@
 
   .show-a-btn {
     width: 100%; border: 2px solid var(--accent); background: var(--surface); color: var(--accent);
-    border-radius: 16px; font-size: 1.2rem; font-weight: 700; padding: 16px; min-height: 64px;
+    border-radius: 16px; font-size: 1.1rem; font-weight: 700; padding: 12px; min-height: 54px;
   }
   .judge-row { display: flex; gap: 10px; }
-  .judge-row button { flex: 1; border: none; border-radius: 16px; font-size: 1.2rem; font-weight: 700; padding: 16px 8px; min-height: 64px; }
+  .judge-row button { flex: 1; border: none; border-radius: 16px; font-size: 1.1rem; font-weight: 700; padding: 12px 8px; min-height: 54px; }
   .ok-btn { background: var(--good-bg); color: var(--good); }
   .ng-btn { background: var(--bad-bg); color: var(--bad); }
 
@@ -131,12 +131,12 @@
   .done-box button { margin-bottom: 10px; }
   .wide-btn {
     width: 100%; border: 2px solid var(--line); background: var(--surface); color: var(--ink);
-    border-radius: 16px; font-size: 1.1rem; font-weight: 700; padding: 16px; min-height: 62px;
+    border-radius: 16px; font-size: 1.05rem; font-weight: 700; padding: 12px; min-height: 52px;
   }
   .wide-btn:disabled { opacity: 0.45; }
   .ghost-btn {
     width: 100%; border: none; background: transparent; color: var(--ink-soft);
-    font-size: 1rem; font-weight: 700; padding: 14px; min-height: 54px;
+    font-size: 1rem; font-weight: 700; padding: 10px; min-height: 46px;
   }
 </style>
 </head>
@@ -144,8 +144,8 @@
 <div class="wrap">
 
   <a class="back" href="../index.html">‹ 学習ハブに戻る</a>
-  <h1>英作文・英単語 一問一答</h1>
-  <p class="sub">NT L9（英文16問・単語29語）</p>
+  <h1>NT L9</h1>
+  <p class="sub">英作文・英単語 一問一答（英文16問・単語29語）</p>
 
   <!-- ===== トップ画面 ===== -->
   <div id="screen-home">

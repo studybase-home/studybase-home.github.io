@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>正12角形と3つの三角形の証明</title>
+    <style>
+      button, [role="button"], select, summary, input:not([type="checkbox"], [type="radio"]) { min-height: 2.25rem; }
+      * { box-sizing: border-box; }
+      :root {
+        --bg: #f4f4ef;
+        --card: #ffffff;
+        --ink: #1e2732;
+        --ink-soft: #4a5563;
+        --line: #d9d9cf;
+        --accent: #20536e;
+        --c-a: #cf4433;
+        --c-b: #0e7c86;
+        --c-c: #c07f0a;
+        --good: #1d7a4f;
+        --bad: #b03a2e;
+        --chip: #eceade;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #13171c;
+          --card: #1c2129;
+          --ink: #e9edf2;
+          --ink-soft: #a9b4c0;
+          --line: #39424e;
+          --accent: #7fc4de;
+          --c-a: #f0765f;
+          --c-b: #3ec6d4;
+          --c-c: #eda93c;
+          --good: #4cc38a;
+          --bad: #ff8a7a;
+          --chip: #262d38;
+        }
+      }
+      html { -webkit-text-size-adjust: 100%; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+        line-height: 1.85;
+        font-size: 16px;
+      }
+      main { max-width: 880px; margin: 0 auto; padding: 28px 18px 64px; }
+      h1, h2, h3 { font-family: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif; line-height: 1.45; }
+      h1 { font-size: 1.65rem; margin: 0 0 10px; font-weight: 800; }
+      h2 { font-size: 1.3rem; margin: 0 0 12px; font-weight: 800; }
+      h3 { font-size: 1.08rem; margin: 0 0 8px; }
+      p { margin: 0 0 12px; }
+      .lead { color: var(--ink-soft); margin-bottom: 22px; }
+      .problem {
+        background: var(--card);
+        border: 1.5px solid var(--ink);
+        border-radius: 6px;
+        padding: 18px 20px;
+        margin-bottom: 30px;
+      }
+      .problem .tag {
+        display: inline-block; font-size: .78rem; font-weight: 900; letter-spacing: .12em;
+        background: var(--ink); color: var(--bg); padding: 2px 10px; border-radius: 3px; margin-bottom: 10px;
+      }
+      .problem p { margin: 0; font-size: 1.02rem; }
+      section { margin-bottom: 40px; }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 20px;
+      }
+      .figwrap { display: grid; gap: 18px; }
+      @media (min-width: 720px) {
+        .figwrap { grid-template-columns: 1fr 300px; align-items: start; }
+      }
+      svg { display: block; width: 100%; height: auto; touch-action: none; }
+      .figcap { font-size: .86rem; color: var(--ink-soft); margin-top: 8px; }
+      .drag-hint { font-size: .86rem; color: var(--ink-soft); }
+      .modes { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 14px; }
+      .modes button {
+        font: inherit; font-size: .9rem; font-weight: 700; cursor: pointer;
+        padding: 8px 14px; border-radius: 999px;
+        border: 1.5px solid var(--accent); color: var(--accent); background: transparent;
+      }
+      .modes button[aria-pressed="true"] { background: var(--accent); color: var(--card); }
+      .readout { font-variant-numeric: tabular-nums; }
+      .readout table { width: 100%; border-collapse: collapse; font-size: .98rem; }
+      .readout td { padding: 5px 2px; border-bottom: 1px dashed var(--line); }
+      .readout td:last-child { text-align: right; font-weight: 700; }
+      .readout tr.total td { border-bottom: none; border-top: 2px solid var(--ink); font-weight: 900; }
+      .dot { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 7px; vertical-align: -1px; }
+      .dot.a { background: var(--c-a); } .dot.b { background: var(--c-b); } .dot.c { background: var(--c-c); }
+      .verdict { margin-top: 14px; padding: 10px 14px; border-radius: 6px; font-weight: 900; font-size: .98rem; }
+      .verdict.ok { background: color-mix(in srgb, var(--good) 14%, transparent); color: var(--good); }
+      .verdict.ng { background: color-mix(in srgb, var(--bad) 12%, transparent); color: var(--bad); }
+      .bar { display: flex; height: 20px; border-radius: 4px; overflow: hidden; margin-top: 14px; border: 1px solid var(--line); }
+      .bar > div { height: 100%; }
+      .bar .sa { background: var(--c-a); } .bar .sb { background: var(--c-b); } .bar .sc { background: var(--c-c); }
+      .bar-note { font-size: .8rem; color: var(--ink-soft); margin-top: 5px; }
+      .formula {
+        background: var(--chip); border-radius: 8px; padding: 14px 18px; margin: 14px 0;
+        font-size: 1.05rem; text-align: center; font-weight: 500; overflow-x: auto; white-space: nowrap;
+      }
+      @media (max-width: 560px) {
+        .formula { white-space: normal; font-size: .98rem; line-height: 2; }
+      }
+      .frac { display: inline-flex; flex-direction: column; text-align: center; vertical-align: middle; margin: 0 .15em; font-size: .82em; line-height: 1.25; }
+      .frac > span:first-child { border-bottom: 1.5px solid currentColor; padding: 0 .3em; }
+      .frac > span:last-child { padding: 0 .3em; }
+      .step-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+      .step-no {
+        flex: none; font-family: "Shippori Mincho B1", serif; font-weight: 800; font-size: 1rem;
+        background: var(--accent); color: var(--card); border-radius: 50%;
+        width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center;
+        transform: translateY(6px);
+      }
+      .mini { max-width: 460px; margin: 0 auto; }
+      .twocol { display: grid; gap: 18px; }
+      @media (min-width: 720px) { .twocol { grid-template-columns: 1fr 1fr; align-items: start; } }
+      .goal {
+        border: 1.5px dashed var(--accent); border-radius: 8px; padding: 12px 16px; margin: 14px 0;
+        font-weight: 700;
+      }
+      .summary {
+        background: var(--card); border: 1.5px solid var(--ink); border-radius: 6px; padding: 18px 20px;
+      }
+      .summary ol { margin: 6px 0 0; padding-left: 1.4em; }
+      .summary li { margin-bottom: 6px; }
+      .tools { font-size: .94rem; }
+      .tools li { margin-bottom: 4px; }
+      sub, sup { font-size: .72em; }
+      .p-label { font-weight: 900; }
+    </style>
+  </head>
+  <body>
+<div style="max-width:760px;margin:0 auto;padding:12px 16px 0;"><a href="../index.html" style="color:#20536e;font-weight:700;text-decoration:none;">‹ 学習ハブに戻る</a></div>
+    <main>
+      <h1>正12角形と3つの三角形 ― 面積の合計はいつも同じ</h1>
+      <p class="lead">使う道具は中1までの知識だけです。三角形の面積の公式と、正多角形の対称性で証明します。まず図を触って、成り立つことを目で確かめてください。</p>
+
+      <div class="problem">
+        <span class="tag">問題</span>
+        <p>正12角形の内部に点Pをとる。12本の辺のうち、<strong>4辺ごとに1辺ずつ（間に3辺ずつ入る）</strong>選んだ3辺と、点Pを結んで3つの三角形を作る。この3つの三角形の面積の合計は、点Pがどこにあっても<strong>常に同じ</strong>であり、正12角形の面積の<strong>ちょうど<span class="frac"><span>1</span><span>4</span></span></strong>になる。これを証明せよ。</p>
+      </div>
+
+      <section>
+        <h2>図で確かめる ― 点Pを動かしてみよう</h2>
+        <div class="card">
+          <div class="modes" role="group" aria-label="辺の選び方">
+            <button type="button" id="modeA" aria-pressed="true">間に3辺ずつ（4辺ごと）</button>
+            <button type="button" id="modeB" aria-pressed="false">間に2辺ずつ（3辺ごと）</button>
+          </div>
+          <div class="figwrap">
+            <div>
+              <svg id="figMain" viewBox="-175 -175 350 350" role="img" aria-label="正12角形と点P、選んだ3辺で作る3つの三角形の図"></svg>
+              <p class="figcap">色のついた3辺が選んだ辺。図の中を指でなぞると点P（黒丸）が動き、3つの三角形と、Pから各辺までの距離 x・y・z が変わります。辺の長さ s ＝ 2 として計算しています。</p>
+            </div>
+            <div class="readout">
+              <table>
+                <tr><td><span class="dot a"></span>距離 x</td><td id="valX">–</td></tr>
+                <tr><td><span class="dot b"></span>距離 y</td><td id="valY">–</td></tr>
+                <tr><td><span class="dot c"></span>距離 z</td><td id="valZ">–</td></tr>
+                <tr><td>x ＋ y ＋ z</td><td id="valSum">–</td></tr>
+                <tr><td>3つの三角形の面積の合計</td><td id="valArea">–</td></tr>
+                <tr><td>正12角形の面積</td><td id="valDodec">–</td></tr>
+                <tr class="total"><td>合計 ÷ 正12角形</td><td id="valRatio">–</td></tr>
+              </table>
+              <div class="bar" aria-hidden="true"><div class="sa" id="barX"></div><div class="sb" id="barY"></div><div class="sc" id="barZ"></div></div>
+              <p class="bar-note">x・y・z を横に並べた棒グラフ。Pを動かすと配分は変わりますが…</p>
+              <div class="verdict ok" id="verdict">合計は変わりません（常に全体の 1/4）</div>
+            </div>
+          </div>
+        </div>
+        <p style="margin-top:14px">「間に2辺ずつ」の方も試してみてください。そちらはPを動かすと合計が変わってしまいます。<strong>成り立つのは「間に3辺ずつ」のときだけ</strong>で、証明ではこの選び方が効いてきます。</p>
+      </section>
+
+      <section>
+        <h2>証明の準備 ― 面積を「距離の和」に変える</h2>
+        <div class="card">
+          <p>選んだ3辺の長さは、正多角形なので全部等しく、これを <strong>s</strong> とします。点Pから3辺までの距離（Pから辺に引いた垂線の長さ）を <strong>x、y、z</strong> とします。</p>
+          <p>各三角形の面積は「底辺 × 高さ ÷ 2」です。底辺はどれも s、高さはちょうど x、y、z だから、合計は</p>
+          <div class="formula"><span class="frac"><span>1</span><span>2</span></span>·s·x ＋ <span class="frac"><span>1</span><span>2</span></span>·s·y ＋ <span class="frac"><span>1</span><span>2</span></span>·s·z ＝ <span class="frac"><span>1</span><span>2</span></span>·s·( x ＋ y ＋ z )</div>
+          <div class="goal">ゴール：x ＋ y ＋ z が、Pの場所によらず一定であることを示す。それが言えれば、面積の合計も一定と言える。</div>
+          <p class="tools" style="margin-bottom:2px">使う道具はこれだけです。</p>
+          <ul class="tools">
+            <li>三角形の面積 ＝ 底辺 × 高さ ÷ 2</li>
+            <li>正多角形の辺の長さは全部等しい</li>
+            <li>点と直線の距離 ＝ 垂線の長さ</li>
+            <li>三角形の内角の和は180°</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <div class="step-head"><span class="step-no">1</span><h2>3辺を延長すると、正三角形ができる</h2></div>
+        <div class="card">
+          <div class="twocol">
+            <div>
+              <p>正12角形の辺に沿って歩くと、頂点ごとに進む向きが変わります。1周すると向きは360°回り、頂点は12個あって曲がり方は全部同じなので、<strong>1つの頂点で30°ずつ</strong>向きが変わります。</p>
+              <p>選んだ辺は4辺ごとですから、辺の向きは <strong>30° × 4 ＝ 120°ずつ</strong> 違います。向きが120°違う2直線は、180° − 120° ＝ <strong>60°</strong> で交わります。</p>
+              <p>3辺を延長した3直線が作る三角形は、どの角も60°。内角が全部60°の三角形は<strong>正三角形</strong>です。正12角形はこの正三角形の内側にあるので、点Pも正三角形の内側にあります。</p>
+            </div>
+            <div>
+              <svg id="figExt" viewBox="-175 -178 350 356" role="img" aria-label="3辺を延長してできる正三角形の図"></svg>
+              <p class="figcap">3辺を含む直線を延長すると、正12角形を囲む正三角形ができます。</p>
+              <div class="mini" style="max-width:230px">
+                <svg id="figDir" viewBox="-100 -100 200 200" role="img" aria-label="3辺の向きが120度ずつ違うことを示す図"></svg>
+                <p class="figcap" style="text-align:center">3辺の向きは120°ずつ違う</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="step-head"><span class="step-no">2</span><h2>正三角形の中の点 ― 距離の和は一定</h2></div>
+        <div class="card">
+          <div class="twocol">
+            <div>
+              <svg id="figViv" viewBox="-165 -165 330 330" role="img" aria-label="正三角形と内部の点P、3辺までの距離の図"></svg>
+              <p class="figcap">この図でも、図の中をなぞると点Pが動きます。x、y、z がどう変わるか見てください。</p>
+            </div>
+            <div>
+              <p>ステップ1の正三角形について考えます。1辺の長さを <strong>L</strong>、高さを <strong>H</strong> とします。この正三角形の3辺は、もとの3辺を含む直線そのものなので、Pから各辺までの距離は、さっきの <strong>x、y、z のまま</strong>です。</p>
+              <p>Pと正三角形の3つの頂点を結ぶと、正三角形は3つの三角形に分かれます。底辺はどれも L で、高さは x、y、z。面積を比べると</p>
+              <div class="formula"><span class="frac"><span>1</span><span>2</span></span>·L·x ＋ <span class="frac"><span>1</span><span>2</span></span>·L·y ＋ <span class="frac"><span>1</span><span>2</span></span>·L·z ＝ <span class="frac"><span>1</span><span>2</span></span>·L·H</div>
+              <p>両辺を <span class="frac"><span>1</span><span>2</span></span>·L で割ると</p>
+              <div class="formula">x ＋ y ＋ z ＝ H</div>
+              <p>つまり距離の和は、Pがどこにあっても<strong>正三角形の高さ H と等しく、一定</strong>です。これで準備のゴールが達成できました。</p>
+              <div class="readout">
+                <table>
+                  <tr><td>x ＋ y ＋ z</td><td id="vivSum">–</td></tr>
+                  <tr class="total"><td>正三角形の高さ H</td><td id="vivH">–</td></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="step-head"><span class="step-no">3</span><h2>合計の値を出す ― ちょうど 1/4</h2></div>
+        <div class="card">
+          <div class="twocol">
+            <div>
+              <p>ステップ2を、正12角形の<strong>中心O</strong>に当てはめます。中心から各辺までの距離は、対称性で全部等しく、これを <strong>a</strong> とすると、x ＝ y ＝ z ＝ a の場合なので</p>
+              <div class="formula">H ＝ a ＋ a ＋ a ＝ 3a</div>
+              <p>よって、3つの三角形の面積の合計は</p>
+              <div class="formula"><span class="frac"><span>1</span><span>2</span></span>·s·H ＝ <span class="frac"><span>1</span><span>2</span></span>·s·3a ＝ <span class="frac"><span>3</span><span>2</span></span>·s·a</div>
+              <p>一方、正12角形の面積は、中心Oと各辺でできる12個の三角形（どれも底辺 s、高さ a）の和なので</p>
+              <div class="formula">12 × <span class="frac"><span>1</span><span>2</span></span>·s·a ＝ 6·s·a</div>
+              <p>比べると、<span class="frac"><span>3</span><span>2</span></span>·s·a は 6·s·a のちょうど <strong><span class="frac"><span>1</span><span>4</span></span></strong> です。</p>
+            </div>
+            <div>
+              <svg id="figCenter" viewBox="-155 -155 310 310" role="img" aria-label="正12角形の中心Oと各辺までの距離aの図"></svg>
+              <p class="figcap">中心Oから各辺までの距離は全部 a。色のついた3つの三角形（Oと選んだ3辺でできるもの）の面積は、どれも <span class="frac"><span>1</span><span>2</span></span>·s·a です。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>なぜ「間に3辺ずつ」でないとダメなのか</h2>
+        <div class="card">
+          <p>カギはステップ1です。延長して正三角形ができるのは、3辺の向きが120°ずつ離れているときだけです。「間に2辺ずつ」（3辺ごと）では向きが90°ずつになり、延長しても正三角形にはなりません。ステップ2の「面積で分ける」技が使えないので、距離の和は一定にならず、最初の図で試した通り、合計はPの場所で変わってしまいます。</p>
+          <p style="margin-bottom:0">直感的に言うと、120°ずつの3方向は互いに打ち消し合う配置なので、Pを動かしたときに「ある辺には近づくが、別の辺からは同じだけ遠ざかる」というつり合いが取れます。90°ずつの配置では、このつり合いが崩れるのです。</p>
+        </div>
+      </section>
+
+      <div class="summary">
+        <h2>まとめ</h2>
+        <ol>
+          <li>面積の合計は <span class="frac"><span>1</span><span>2</span></span>·s·(x＋y＋z) と書けるので、示すべきは「x＋y＋z が一定」。</li>
+          <li>4辺ごとの3辺は向きが120°ずつ違うので、延長すると正三角形ができる。</li>
+          <li>正三角形の中の点では、面積の比較から x＋y＋z ＝ 高さH（一定）。</li>
+          <li>中心Oで計算すると H ＝ 3a となり、合計は正12角形の面積のちょうど 1/4。</li>
+        </ol>
+      </div>
+    </main>
+
+    <script>
+      (function () {
+        var DEG = Math.PI / 180;
+        function dir(deg) { return [Math.cos(deg * DEG), -Math.sin(deg * DEG)]; }
+        function pt(r, deg) { var d = dir(deg); return [r * d[0], r * d[1]]; }
+        function add(p, q) { return [p[0] + q[0], p[1] + q[1]]; }
+        function mul(p, k) { return [p[0] * k, p[1] * k]; }
+        function dot(p, q) { return p[0] * q[0] + p[1] * q[1]; }
+        function fmt(n) { return n.toFixed(2); }
+        var NS = "http://www.w3.org/2000/svg";
+        function el(name, attrs, parent) {
+          var e = document.createElementNS(NS, name);
+          for (var k in attrs) e.setAttribute(k, attrs[k]);
+          if (parent) parent.appendChild(e);
+          return e;
+        }
+        function pointsStr(pts) { return pts.map(function (p) { return p[0].toFixed(2) + "," + p[1].toFixed(2); }).join(" "); }
+        var css = getComputedStyle(document.documentElement);
+        function col(name) { return css.getPropertyValue(name).trim(); }
+        var COLORS = [col("--c-a"), col("--c-b"), col("--c-c")];
+        var INK = col("--ink"), SOFT = col("--ink-soft"), LINE = col("--line");
+
+        /* ---------- geometry of the dodecagon (side length s = 2) ---------- */
+        var S = 2;
+        var R = S / (2 * Math.sin(15 * DEG));       // circumradius
+        var AP = R * Math.cos(15 * DEG);            // apothem a
+        var DODEC_AREA = 6 * S * AP;                // 12 * (1/2) s a
+        var verts = [];
+        for (var k = 0; k < 12; k++) verts.push(pt(R, 15 + 30 * k));
+        function sideNormal(k) { return dir(30 + 30 * k); }  // outward unit normal of side k
+        function sideEnds(k) { return [verts[k], verts[(k + 1) % 12]]; }
+
+        /* ================= main figure ================= */
+        var U = 34; // px per unit
+        function toPx(p) { return [p[0] * U, p[1] * U]; }
+        var svgMain = document.getElementById("figMain");
+        var mode = "A";
+        var selA = [2, 6, 10], selB = [2, 5, 8];
+        var P = [1.05, 0.55];
+
+        // dodecagon outline
+        el("polygon", { points: pointsStr(verts.map(toPx)), fill: "none", stroke: INK, "stroke-width": 2 }, svgMain);
+        var gSel = el("g", {}, svgMain);
+        var triPolys = [], perpLines = [], raPaths = [], distLabels = [], sideLines = [];
+        for (var i = 0; i < 3; i++) {
+          triPolys.push(el("polygon", { fill: COLORS[i], opacity: 0.22, stroke: "none" }, gSel));
+        }
+        for (i = 0; i < 3; i++) {
+          perpLines.push(el("line", { stroke: COLORS[i], "stroke-width": 1.6, "stroke-dasharray": "5 4" }, gSel));
+          raPaths.push(el("path", { fill: "none", stroke: COLORS[i], "stroke-width": 1.4 }, gSel));
+          sideLines.push(el("line", { stroke: COLORS[i], "stroke-width": 5, "stroke-linecap": "round" }, gSel));
+        }
+        for (i = 0; i < 3; i++) {
+          var t = el("text", { "font-size": 17, "font-weight": 700, fill: COLORS[i], "text-anchor": "middle" }, gSel);
+          t.textContent = ["x", "y", "z"][i];
+          distLabels.push(t);
+        }
+        var pHit = el("circle", { r: 26, fill: "transparent", "pointer-events": "none" }, svgMain);
+        svgMain.style.cursor = "grab";
+        var pDot = el("circle", { r: 7.5, fill: INK, stroke: "#fff", "stroke-width": 2, "pointer-events": "none" }, svgMain);
+        var pLabel = el("text", { "font-size": 17, "font-weight": 700, fill: INK, "pointer-events": "none" }, svgMain);
+        pLabel.textContent = "P";
+
+        function clampDodec(p) {
+          var q = [p[0], p[1]], margin = AP - 0.28;
+          for (var it = 0; it < 40; it++) {
+            var worst = 0, wn = null;
+            for (var k = 0; k < 12; k++) {
+              var n = sideNormal(k), d = dot(q, n);
+              if (d > margin && d > worst) { worst = d; wn = n; }
+            }
+            if (!wn) break;
+            var f = margin / worst;
+            q = mul(q, f);
+          }
+          return q;
+        }
+        function renderMain() {
+          var sel = mode === "A" ? selA : selB;
+          var Pp = toPx(P), dists = [];
+          for (var i = 0; i < 3; i++) {
+            var k = sel[i], n = sideNormal(k), ends = sideEnds(k);
+            var d = AP - dot(P, n);
+            dists.push(d);
+            var e0 = toPx(ends[0]), e1 = toPx(ends[1]);
+            triPolys[i].setAttribute("points", pointsStr([Pp, e0, e1]));
+            sideLines[i].setAttribute("x1", e0[0]); sideLines[i].setAttribute("y1", e0[1]);
+            sideLines[i].setAttribute("x2", e1[0]); sideLines[i].setAttribute("y2", e1[1]);
+            var foot = toPx(add(P, mul(n, d)));
+            perpLines[i].setAttribute("x1", Pp[0]); perpLines[i].setAttribute("y1", Pp[1]);
+            perpLines[i].setAttribute("x2", foot[0]); perpLines[i].setAttribute("y2", foot[1]);
+            // right-angle mark at foot
+            var tang = [-n[1], n[0]];
+            var m = 9;
+            var f1 = add(foot, mul(tang, -m)), f2 = add(add(foot, mul(tang, -m)), mul(n, -m)), f3 = add(foot, mul(n, -m));
+            raPaths[i].setAttribute("d", "M" + f1[0].toFixed(1) + " " + f1[1].toFixed(1) + " L" + f2[0].toFixed(1) + " " + f2[1].toFixed(1) + " L" + f3[0].toFixed(1) + " " + f3[1].toFixed(1));
+            var mid = mul(add(Pp, foot), 0.5);
+            var off = mul(tang, 15);
+            distLabels[i].setAttribute("x", mid[0] + off[0]);
+            distLabels[i].setAttribute("y", mid[1] + off[1] + 6);
+          }
+          pHit.setAttribute("cx", Pp[0]); pHit.setAttribute("cy", Pp[1]);
+          pDot.setAttribute("cx", Pp[0]); pDot.setAttribute("cy", Pp[1]);
+          pLabel.setAttribute("x", Pp[0] + 13); pLabel.setAttribute("y", Pp[1] - 10);
+          var sum = dists[0] + dists[1] + dists[2];
+          var area = 0.5 * S * sum;
+          document.getElementById("valX").textContent = fmt(dists[0]);
+          document.getElementById("valY").textContent = fmt(dists[1]);
+          document.getElementById("valZ").textContent = fmt(dists[2]);
+          document.getElementById("valSum").textContent = fmt(sum);
+          document.getElementById("valArea").textContent = fmt(area);
+          document.getElementById("valDodec").textContent = fmt(DODEC_AREA);
+          document.getElementById("valRatio").textContent = mode === "A" ? "1/4（0.25）" : (area / DODEC_AREA).toFixed(3);
+          var scale = 100 / 12.6;
+          document.getElementById("barX").style.width = (dists[0] * scale) + "%";
+          document.getElementById("barY").style.width = (dists[1] * scale) + "%";
+          document.getElementById("barZ").style.width = (dists[2] * scale) + "%";
+          var v = document.getElementById("verdict");
+          if (mode === "A") { v.className = "verdict ok"; v.textContent = "合計は変わりません（常に全体の 1/4）"; }
+          else { v.className = "verdict ng"; v.textContent = "この選び方では、合計がPの場所で変わってしまいます"; }
+        }
+        renderMain();
+
+        var btnA = document.getElementById("modeA"), btnB = document.getElementById("modeB");
+        btnA.addEventListener("click", function () { mode = "A"; btnA.setAttribute("aria-pressed", "true"); btnB.setAttribute("aria-pressed", "false"); renderMain(); });
+        btnB.addEventListener("click", function () { mode = "B"; btnB.setAttribute("aria-pressed", "true"); btnA.setAttribute("aria-pressed", "false"); renderMain(); });
+
+        /* ================= step 1 figure: extended lines ================= */
+        var svgExt = document.getElementById("figExt");
+        var U1 = 15.5;
+        function toPx1(p) { return [p[0] * U1, p[1] * U1]; }
+        function intersect(n1, a1, n2, a2) {
+          var det = n1[0] * n2[1] - n1[1] * n2[0];
+          return [(a1 * n2[1] - a2 * n1[1]) / det, (n1[0] * a2 - n2[0] * a1) / det];
+        }
+        var ns = [sideNormal(2), sideNormal(6), sideNormal(10)];
+        var triV = [
+          intersect(ns[1], AP, ns[2], AP),
+          intersect(ns[2], AP, ns[0], AP),
+          intersect(ns[0], AP, ns[1], AP)
+        ];
+        // dashed extensions of the three lines
+        for (i = 0; i < 3; i++) {
+          var A = triV[(i + 1) % 3], Bv = triV[(i + 2) % 3];
+          var ext1 = add(A, mul([A[0] - Bv[0], A[1] - Bv[1]], 0.16));
+          var ext2 = add(Bv, mul([Bv[0] - A[0], Bv[1] - A[1]], 0.16));
+          var ln = el("line", { x1: toPx1(ext1)[0], y1: toPx1(ext1)[1], x2: toPx1(ext2)[0], y2: toPx1(ext2)[1], stroke: SOFT, "stroke-width": 1.2, "stroke-dasharray": "4 4" }, svgExt);
+        }
+        el("polygon", { points: pointsStr(triV.map(toPx1)), fill: "none", stroke: INK, "stroke-width": 1.8 }, svgExt);
+        el("polygon", { points: pointsStr(verts.map(toPx1)), fill: "none", stroke: INK, "stroke-width": 1.6 }, svgExt);
+        for (i = 0; i < 3; i++) {
+          var se = sideEnds(selA[i]).map(toPx1);
+          el("line", { x1: se[0][0], y1: se[0][1], x2: se[1][0], y2: se[1][1], stroke: COLORS[i], "stroke-width": 4.5, "stroke-linecap": "round" }, svgExt);
+        }
+        // 60° labels at triangle vertices
+        for (i = 0; i < 3; i++) {
+          var V = toPx1(triV[i]);
+          var inw = mul([ -V[0], -V[1] ], 1 / Math.sqrt(V[0] * V[0] + V[1] * V[1]));
+          var lab = el("text", { x: V[0] + inw[0] * 30, y: V[1] + inw[1] * 30 + 5, "font-size": 14.5, "font-weight": 700, fill: INK, "text-anchor": "middle" }, svgExt);
+          lab.textContent = "60°";
+        }
+        var extCap = el("text", { x: 0, y: -168, "font-size": 14, fill: SOFT, "text-anchor": "middle" }, svgExt);
+        extCap.textContent = "延長してできる正三角形";
+
+        /* direction arrows mini figure */
+        var svgDir = document.getElementById("figDir");
+        el("defs", {}, svgDir).innerHTML = '<marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="' + INK + '"/></marker>';
+        var dirAngles = [0, 120, 240];
+        for (i = 0; i < 3; i++) {
+          var tip = pt(62, dirAngles[i]);
+          el("line", { x1: 0, y1: 0, x2: tip[0], y2: tip[1], stroke: COLORS[i], "stroke-width": 3.5, "marker-end": "url(#arr)" }, svgDir);
+        }
+        for (i = 0; i < 2; i++) {
+          var a0 = dirAngles[i], a1 = dirAngles[i + 1], arcPts = [];
+          for (var t = 0; t <= 10; t++) arcPts.push(pt(30, a0 + (a1 - a0) * t / 10));
+          el("polyline", { points: pointsStr(arcPts), fill: "none", stroke: SOFT, "stroke-width": 1.4 }, svgDir);
+          var midA = pt(44, (a0 + a1) / 2);
+          var at = el("text", { x: midA[0], y: midA[1] + 5, "font-size": 13, fill: SOFT, "text-anchor": "middle" }, svgDir);
+          at.textContent = "120°";
+        }
+
+        /* ================= step 2 figure: Viviani ================= */
+        var svgViv = document.getElementById("figViv");
+        var U2 = 36;
+        var RC = 3.6, RIN = RC / 2, HH = RC + RIN; // circumradius, inradius, height
+        function toPx2(p) { return [p[0] * U2, p[1] * U2]; }
+        var vVerts = [pt(RC, 90), pt(RC, 210), pt(RC, 330)];
+        // sides: side i is opposite vertex i; outward normals:
+        var vNormals = [dir(-90), dir(150), dir(30)];
+        var vEnds = [[vVerts[1], vVerts[2]], [vVerts[2], vVerts[0]], [vVerts[0], vVerts[1]]];
+        el("polygon", { points: pointsStr(vVerts.map(toPx2)), fill: "none", stroke: INK, "stroke-width": 2 }, svgViv);
+        var vivTris = [], vivPerps = [], vivLabels = [];
+        for (i = 0; i < 3; i++) vivTris.push(el("polygon", { fill: COLORS[i], opacity: 0.22 }, svgViv));
+        // height H (dashed) from top vertex to base midpoint
+        var hLine = el("line", { x1: toPx2(vVerts[0])[0], y1: toPx2(vVerts[0])[1], x2: toPx2([0, RIN])[0], y2: toPx2([0, RIN])[1], stroke: INK, "stroke-width": 1.6, "stroke-dasharray": "6 4" }, svgViv);
+        var hLab = el("text", { x: 10, y: toPx2([0, (RIN - RC) / 2])[1], "font-size": 16, "font-weight": 700, fill: INK }, svgViv);
+        hLab.textContent = "H";
+        for (i = 0; i < 3; i++) {
+          vivPerps.push(el("line", { stroke: COLORS[i], "stroke-width": 1.6, "stroke-dasharray": "5 4" }, svgViv));
+        }
+        for (i = 0; i < 3; i++) {
+          var vt = el("text", { "font-size": 16, "font-weight": 700, fill: COLORS[i], "text-anchor": "middle" }, svgViv);
+          vt.textContent = ["x", "y", "z"][i];
+          vivLabels.push(vt);
+        }
+        // side labels L
+        for (i = 0; i < 3; i++) {
+          var m = mul(add(vEnds[i][0], vEnds[i][1]), 0.5);
+          var lp = toPx2(add(m, mul(vNormals[i], 0.42)));
+          var lt = el("text", { x: lp[0], y: lp[1] + 5, "font-size": 15, "font-weight": 700, fill: SOFT, "text-anchor": "middle" }, svgViv);
+          lt.textContent = "L";
+        }
+        var vHit = el("circle", { r: 26, fill: "transparent", "pointer-events": "none" }, svgViv);
+        svgViv.style.cursor = "grab";
+        var vDot = el("circle", { r: 7.5, fill: INK, stroke: "#fff", "stroke-width": 2, "pointer-events": "none" }, svgViv);
+        var vLab = el("text", { "font-size": 16, "font-weight": 700, fill: INK, "pointer-events": "none" }, svgViv);
+        vLab.textContent = "P";
+        var PV = [0.7, 0.5];
+        function clampTri(p) {
+          var q = [p[0], p[1]], margin = RIN - 0.3;
+          for (var it = 0; it < 40; it++) {
+            var worst = 0, wn = null;
+            for (var j = 0; j < 3; j++) { var d = dot(q, vNormals[j]); if (d > margin && d > worst) { worst = d; wn = vNormals[j]; } }
+            if (!wn) break;
+            q = mul(q, margin / worst);
+          }
+          return q;
+        }
+        function renderViv() {
+          var Pp = toPx2(PV), sum = 0;
+          for (var i = 0; i < 3; i++) {
+            var d = RIN - dot(PV, vNormals[i]);
+            sum += d;
+            vivTris[i].setAttribute("points", pointsStr([Pp, toPx2(vEnds[i][0]), toPx2(vEnds[i][1])]));
+            var foot = toPx2(add(PV, mul(vNormals[i], d)));
+            vivPerps[i].setAttribute("x1", Pp[0]); vivPerps[i].setAttribute("y1", Pp[1]);
+            vivPerps[i].setAttribute("x2", foot[0]); vivPerps[i].setAttribute("y2", foot[1]);
+            var tang = [-vNormals[i][1], vNormals[i][0]];
+            var mid = mul(add(Pp, foot), 0.5), off = mul(tang, 14);
+            vivLabels[i].setAttribute("x", mid[0] + off[0]);
+            vivLabels[i].setAttribute("y", mid[1] + off[1] + 5);
+          }
+          vHit.setAttribute("cx", Pp[0]); vHit.setAttribute("cy", Pp[1]);
+          vDot.setAttribute("cx", Pp[0]); vDot.setAttribute("cy", Pp[1]);
+          vLab.setAttribute("x", Pp[0] + 12); vLab.setAttribute("y", Pp[1] - 9);
+          document.getElementById("vivSum").textContent = fmt(sum);
+          document.getElementById("vivH").textContent = fmt(HH);
+        }
+        (function () {
+          var dragging = false;
+          function toUnits(evt) {
+            var r = svgViv.getBoundingClientRect(), vb = svgViv.viewBox.baseVal;
+            return [(vb.x + (evt.clientX - r.left) / r.width * vb.width) / U2, (vb.y + (evt.clientY - r.top) / r.height * vb.height) / U2];
+          }
+          svgViv.addEventListener("pointerdown", function (e) { dragging = true; try { svgViv.setPointerCapture(e.pointerId); } catch (err) {} PV = clampTri(toUnits(e)); renderViv(); e.preventDefault(); });
+          svgViv.addEventListener("pointermove", function (e) { if (!dragging) return; PV = clampTri(toUnits(e)); renderViv(); });
+          svgViv.addEventListener("pointerup", function () { dragging = false; });
+          svgViv.addEventListener("pointercancel", function () { dragging = false; });
+        })();
+        renderViv();
+
+        /* main-figure dragging: touching anywhere in the figure moves P */
+        (function () {
+          var dragging = false;
+          function toUnits(evt) {
+            var r = svgMain.getBoundingClientRect(), vb = svgMain.viewBox.baseVal;
+            return [(vb.x + (evt.clientX - r.left) / r.width * vb.width) / U, (vb.y + (evt.clientY - r.top) / r.height * vb.height) / U];
+          }
+          svgMain.addEventListener("pointerdown", function (e) { dragging = true; try { svgMain.setPointerCapture(e.pointerId); } catch (err) {} P = clampDodec(toUnits(e)); renderMain(); e.preventDefault(); });
+          svgMain.addEventListener("pointermove", function (e) { if (!dragging) return; P = clampDodec(toUnits(e)); renderMain(); });
+          svgMain.addEventListener("pointerup", function () { dragging = false; });
+          svgMain.addEventListener("pointercancel", function () { dragging = false; });
+        })();
+
+        /* ================= step 3 figure: center O ================= */
+        var svgC = document.getElementById("figCenter");
+        var U3 = 30;
+        function toPx3(p) { return [p[0] * U3, p[1] * U3]; }
+        for (i = 0; i < 3; i++) {
+          var ce = sideEnds(selA[i]).map(toPx3);
+          el("polygon", { points: pointsStr([[0, 0], ce[0], ce[1]]), fill: COLORS[i], opacity: 0.25 }, svgC);
+        }
+        for (k = 0; k < 12; k++) {
+          var v = toPx3(verts[k]);
+          el("line", { x1: 0, y1: 0, x2: v[0], y2: v[1], stroke: SOFT, "stroke-width": 0.8, opacity: 0.55 }, svgC);
+        }
+        el("polygon", { points: pointsStr(verts.map(toPx3)), fill: "none", stroke: INK, "stroke-width": 2 }, svgC);
+        for (i = 0; i < 3; i++) {
+          var n3 = sideNormal(selA[i]);
+          var foot3 = toPx3(mul(n3, AP));
+          el("line", { x1: 0, y1: 0, x2: foot3[0], y2: foot3[1], stroke: COLORS[i], "stroke-width": 1.8, "stroke-dasharray": "5 4" }, svgC);
+          var se3 = sideEnds(selA[i]).map(toPx3);
+          el("line", { x1: se3[0][0], y1: se3[0][1], x2: se3[1][0], y2: se3[1][1], stroke: COLORS[i], "stroke-width": 5, "stroke-linecap": "round" }, svgC);
+          var tang3 = [-n3[1], n3[0]];
+          var labPos = add(mul(foot3, 0.55), mul(tang3, 13));
+          var at3 = el("text", { x: labPos[0], y: labPos[1] + 5, "font-size": 15, "font-weight": 700, fill: COLORS[i], "text-anchor": "middle" }, svgC);
+          at3.textContent = "a";
+        }
+        el("circle", { cx: 0, cy: 0, r: 5, fill: INK }, svgC);
+        var oLab = el("text", { x: 10, y: 20, "font-size": 16, "font-weight": 700, fill: INK }, svgC);
+        oLab.textContent = "O";
+      })();
+    </script>
+  </body>
+</html>
