@@ -187,7 +187,7 @@
     { jp: "〜を意味する", b: "mean", p: "meant", pp: "meant", g: 4 },
     { jp: "〜と会う", b: "meet", p: "met", pp: "met", g: 4 },
     { jp: "〜を置く", b: "put", p: "put", pp: "put", g: 1 },
-    { jp: "〜を読む", b: "read", p: "read", pp: "read", g: 1, note: "発音は「リード → レッド」。綴りは同じでも読み方が変わります。" },
+    { jp: "〜を読む", b: "read", p: "read", pp: "read", sp: "red", g: 1, note: "発音は「リード → レッド」。綴りは同じでも読み方が変わります。" },
     { jp: "〜に乗る", b: "ride", p: "rode", pp: "ridden", g: 6 },
     { jp: "走る", b: "run", p: "ran", pp: "run", g: 2 },
     { jp: "〜と言う", b: "say", p: "said", pp: "said", g: 7 },
@@ -262,7 +262,7 @@
   function speakForms(v) {
     if (!("speechSynthesis" in window)) { return; }
     window.speechSynthesis.cancel();
-    var u = new SpeechSynthesisUtterance(v.b + ", " + v.p);
+    var u = new SpeechSynthesisUtterance(v.b + ", " + (v.sp || v.p));
     u.lang = "en-US"; u.rate = 0.85;
     var vc = enVoice(); if (vc) { u.voice = vc; }
     window.speechSynthesis.speak(u);
@@ -284,7 +284,7 @@
       if (idx >= VERBS.length) { stopListen(); return; }
       var v = VERBS[idx];
       $("listen-status").textContent = (idx + 1) + " / 58：" + v.b + " - " + v.p;
-      var u = new SpeechSynthesisUtterance(v.b + ", " + v.p);
+      var u = new SpeechSynthesisUtterance(v.b + ", " + (v.sp || v.p));
       u.lang = "en-US"; u.rate = 0.85;
       var vc = enVoice(); if (vc) { u.voice = vc; }
       u.onend = function () { idx++; setTimeout(step, 350); };
