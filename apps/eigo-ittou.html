@@ -115,6 +115,10 @@
   .a-text { font-size: 1.4rem; font-weight: 700; margin: 0; line-height: 1.55; color: var(--accent); }
   .a-note { color: var(--ink-soft); font-size: 0.92rem; margin: 10px 0 0; }
 
+  .speak-btn {
+    margin-top: 14px; border: 2px solid var(--accent); background: #fff; color: var(--accent);
+    border-radius: 999px; font-size: 1rem; font-weight: 700; padding: 8px 18px; min-height: 44px;
+  }
   .show-a-btn {
     width: 100%; border: 2px solid var(--accent); background: var(--surface); color: var(--accent);
     border-radius: 16px; font-size: 1.1rem; font-weight: 700; padding: 12px; min-height: 54px;
@@ -181,6 +185,7 @@
         <p class="a-text" id="a-text"></p>
         <p class="a-note" id="a-note" hidden></p>
       </div>
+      <button class="speak-btn" id="speak-btn" hidden>🔊 発音</button>
     </div>
     <button class="show-a-btn" id="show-a-btn">答えを見る</button>
     <div class="judge-row" id="judge-row" hidden>
@@ -381,6 +386,7 @@
     $("a-area").hidden = true;
     $("show-a-btn").hidden = false;
     $("judge-row").hidden = true;
+    $("speak-btn").hidden = (currentSet !== "word");
   }
   function showAnswer() {
     var it = order[pos];
@@ -394,6 +400,27 @@
     $("a-area").hidden = false;
     $("show-a-btn").hidden = true;
     $("judge-row").hidden = false;
+    $("speak-btn").hidden = false;
+  }
+  function speakEnglish(text) {
+    if (!("speechSynthesis" in window)) { return; }
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = "en-US";
+    u.rate = 0.95;
+    var voices = window.speechSynthesis.getVoices();
+    for (var i = 0; i < voices.length; i++) {
+      if (voices[i].lang && voices[i].lang.indexOf("en") === 0) { u.voice = voices[i]; break; }
+    }
+    window.speechSynthesis.speak(u);
+  }
+  function speakCurrent() {
+    var it = order[pos];
+    if (currentSet === "word") {
+      speakEnglish(it.q.join(" "));
+    } else if (!$("a-area").hidden) {
+      speakEnglish(it.a.join(" "));
+    }
   }
   function judge(ok) {
     var it = order[pos];
@@ -419,6 +446,7 @@
   $("mode-retry").addEventListener("click", function () { currentMode = "retry"; renderHome(); });
   $("start-btn").addEventListener("click", startQuiz);
   $("show-a-btn").addEventListener("click", showAnswer);
+  $("speak-btn").addEventListener("click", speakCurrent);
   $("ok-btn").addEventListener("click", function () { judge(true); });
   $("ng-btn").addEventListener("click", function () { judge(false); });
   $("again-btn").addEventListener("click", startQuiz);
