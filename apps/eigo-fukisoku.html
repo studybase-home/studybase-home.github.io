@@ -39,6 +39,13 @@
   .start-btn { background: var(--accent); color: #fff; margin: 6px 0; }
   .wide-btn { background: var(--accent-soft); color: var(--accent); margin: 6px 0; }
   .ghost-btn { background: transparent; color: var(--ink-soft); border: 1px solid var(--line); margin: 6px 0; font-weight: 600; }
+  .summary-link {
+    display: block; text-align: center; text-decoration: none; margin: 10px 0 6px;
+    background: linear-gradient(135deg, #f59e0b, #f97316); color: #fff;
+    border-radius: 14px; padding: 14px 16px; box-shadow: 0 3px 8px rgba(249,115,22,.35);
+  }
+  .summary-link .big { display: block; font-size: 1.2rem; font-weight: 800; }
+  .summary-link .small { display: block; font-size: 0.82rem; font-weight: 600; opacity: .92; margin-top: 2px; }
   .group-btn {
     display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid var(--line);
     color: var(--ink); margin: 6px 0; text-align: left; font-weight: 600; min-height: 48px;
@@ -88,7 +95,7 @@
     <button class="start-btn" id="start-all">全58語ミックス スタート</button>
     <button class="wide-btn" id="start-weak">苦手だけ（まだマスターしていない語）</button>
     <button class="wide-btn" id="start-review">全部もう一度 復習する（マスター済みも全部）</button>
-    <a class="wide-btn" href="eigo-fukisoku-list.html" style="display:block;text-align:center;text-decoration:none;line-height:32px;">類型別まとめを見る</a>
+    <a class="summary-link" href="eigo-fukisoku-list.html"><span class="big">📖 類型別まとめを見る</span><span class="small">テストではなく、見るためのページです</span></a>
     <div class="card">
       <p class="q-label" style="margin-bottom:8px;">類型別にチェック</p>
       <div id="group-list"></div>
