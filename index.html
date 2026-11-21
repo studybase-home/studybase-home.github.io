@@ -64,6 +64,9 @@
     min-height: 52px;
   }
   .send-print .icon { font-size: 1.35rem; line-height: 1; }
+  .send-note { font-size: 0.85rem; color: var(--ink-soft); margin: 0 2px 8px; }
+  section.group .send-print { margin-bottom: 10px; }
+  section.group .send-print:last-child { margin-bottom: 0; }
   .send-print .label { font-size: 1.05rem; font-weight: 700; }
   .send-print .sub { display: block; font-size: 0.78rem; font-weight: 400; opacity: 0.9; }
 
@@ -98,14 +101,26 @@
     <p>勉強アプリと解説ページの入り口です。</p>
   </header>
 
-  <!-- TODO: プリント送信先リンク
-       DropboxのファイルリクエストURLが決まったら、下の href="#" をそのURLに差し替えること。
-       （隆之介がプリントの写真を送るためのボタン） -->
-  <a class="send-print" href="#" id="send-print-btn">
-    <span class="icon">📷</span>
-    <span><span class="label">プリントを送る</span>
-    <span class="sub">プリントの写真を撮って送れます（準備中）</span></span>
-  </a>
+  <!-- プリントを送る：種類ごとにDropboxファイルリクエストへ（2026-11-21 接続済み） -->
+  <section class="group">
+    <h2>プリントを送る</h2>
+    <p class="send-note">種類を選んで、プリントの写真を送ってください。</p>
+    <a class="send-print" href="https://www.dropbox.com/request/zs3qxr4jho7sdmsmszya">
+      <span class="icon">📷</span>
+      <span><span class="label">英語のプリント</span>
+      <span class="sub">一問一答にしてほしいプリント</span></span>
+    </a>
+    <a class="send-print" href="https://www.dropbox.com/request/pyv94loexft184q9eguj">
+      <span class="icon">❓</span>
+      <span><span class="label">解説がほしいプリント</span>
+      <span class="sub">わからない問題の写真</span></span>
+    </a>
+    <a class="send-print" href="https://www.dropbox.com/request/j4u46ahkm0bo2dwwyrmn">
+      <span class="icon">📄</span>
+      <span><span class="label">その他のプリント</span>
+      <span class="sub">上の2つ以外のプリント</span></span>
+    </a>
+  </section>
 
   <!-- ===== 科目グループ：英語 ===== -->
   <section class="group">
