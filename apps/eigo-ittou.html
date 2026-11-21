@@ -192,6 +192,7 @@
       <button class="ok-btn" id="ok-btn">⭕ できた</button>
       <button class="ng-btn" id="ng-btn">✖ できなかった</button>
     </div>
+    <button class="ghost-btn" id="skip-btn" style="margin-top:10px;">記録しないで次へ →</button>
   </div>
 
   <!-- ===== 結果画面 ===== -->
@@ -306,7 +307,7 @@
   var currentMode = "all"; /* "all" | "retry" */
   var order = [];          /* 出題する問題の配列 */
   var pos = 0;
-  var roundOk = 0, roundNg = 0;
+  var roundOk = 0, roundNg = 0, roundSkip = 0;
 
   function $(id) { return document.getElementById(id); }
   function showScreen(name) {
@@ -362,7 +363,7 @@
     var pool = currentMode === "retry" ? failedItems(currentSet) : SETS[currentSet].items.slice();
     if (pool.length === 0) return;
     order = shuffle(pool);
-    pos = 0; roundOk = 0; roundNg = 0;
+    pos = 0; roundOk = 0; roundNg = 0; roundSkip = 0;
     showScreen("quiz");
     renderQuestion();
   }
@@ -422,6 +423,24 @@
       speakEnglish(it.a.join(" "));
     }
   }
+  function finishRound() {
+    $("done-summary").textContent =
+      "今回は " + order.length + "問中、できた " + roundOk + "問・できなかった " + roundNg + "問" +
+      (roundSkip > 0 ? "・スキップ " + roundSkip + "問" : "") + "でした。" +
+      "（全体では 全" + ALL_ITEMS.length + "問中 できた " + countOk(ALL_ITEMS) + "問）";
+    $("done-retry-btn").disabled = failedItems(currentSet).length === 0;
+    showScreen("done");
+  }
+  function skipQuestion() {
+    if ("speechSynthesis" in window) { window.speechSynthesis.cancel(); }
+    roundSkip++;
+    pos++;
+    if (pos >= order.length) {
+      finishRound();
+    } else {
+      renderQuestion();
+    }
+  }
   function judge(ok) {
     var it = order[pos];
     records[it.id] = ok;
@@ -429,11 +448,7 @@
     if (ok) { roundOk++; } else { roundNg++; }
     pos++;
     if (pos >= order.length) {
-      $("done-summary").textContent =
-        "今回は " + order.length + "問中、できた " + roundOk + "問・できなかった " + roundNg + "問でした。" +
-        "（全体では 全" + ALL_ITEMS.length + "問中 できた " + countOk(ALL_ITEMS) + "問）";
-      $("done-retry-btn").disabled = failedItems(currentSet).length === 0;
-      showScreen("done");
+      finishRound();
     } else {
       renderQuestion();
     }
@@ -446,6 +461,7 @@
   $("mode-retry").addEventListener("click", function () { currentMode = "retry"; renderHome(); });
   $("start-btn").addEventListener("click", startQuiz);
   $("show-a-btn").addEventListener("click", showAnswer);
+  $("skip-btn").addEventListener("click", skipQuestion);
   $("speak-btn").addEventListener("click", speakCurrent);
   $("ok-btn").addEventListener("click", function () { judge(true); });
   $("ng-btn").addEventListener("click", function () { judge(false); });
