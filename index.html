@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<meta name="theme-color" content="#0f6b5c" />
+<!-- ホーム画面に追加してアプリとして使うための設定 -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="学習ハブ" />
+<link rel="apple-touch-icon" href="icon-180.png" />
+<link rel="icon" href="icon-180.png" />
+<title>学習ハブ</title>
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --surface: #ffffff;
+    --surface-2: #ece7db;
+    --ink: #1c2420;
+    --ink-soft: #5a655f;
+    --line: #d8d2c4;
+    --accent: #0f6b5c;
+    --accent-ink: #ffffff;
+    --accent-soft: #dcebe6;
+    --shadow: 0 2px 10px rgba(28, 36, 32, 0.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #171b19;
+      --surface: #222825;
+      --surface-2: #2c332f;
+      --ink: #eef1ee;
+      --ink-soft: #a7b3ab;
+      --line: #3a423d;
+      --accent: #3aa88f;
+      --accent-ink: #0d1512;
+      --accent-soft: #24382f;
+      --shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 20px 16px 56px; }
+
+  .page-head { margin: 8px 0 20px; }
+  .page-head h1 { font-size: 1.7rem; margin: 0 0 2px; }
+  .page-head p { margin: 0; color: var(--ink-soft); font-size: 0.95rem; }
+
+  /* プリントを送るボタン */
+  .send-print {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--accent); color: var(--accent-ink);
+    border-radius: 16px; padding: 18px 20px; margin: 0 0 28px;
+    text-decoration: none; box-shadow: var(--shadow);
+    min-height: 72px;
+  }
+  .send-print .icon { font-size: 1.9rem; line-height: 1; }
+  .send-print .label { font-size: 1.25rem; font-weight: 700; }
+  .send-print .sub { display: block; font-size: 0.85rem; font-weight: 400; opacity: 0.9; }
+
+  /* 科目グループ */
+  .group { margin: 0 0 28px; }
+  .group h2 {
+    font-size: 1.05rem; margin: 0 0 10px; color: var(--ink-soft);
+    border-bottom: 2px solid var(--line); padding-bottom: 6px;
+  }
+  .card-link {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 16px; padding: 18px 20px; margin: 0 0 10px;
+    text-decoration: none; color: var(--ink); box-shadow: var(--shadow);
+    min-height: 72px;
+  }
+  .card-link .icon { font-size: 1.7rem; line-height: 1; flex: 0 0 auto; }
+  .card-link .label { font-size: 1.15rem; font-weight: 700; }
+  .card-link .sub { display: block; font-size: 0.85rem; font-weight: 400; color: var(--ink-soft); }
+  .card-link .arrow { margin-left: auto; color: var(--ink-soft); font-size: 1.3rem; flex: 0 0 auto; }
+  .empty-note { color: var(--ink-soft); font-size: 0.95rem; margin: 4px 0 0; }
+
+  .foot { color: var(--ink-soft); font-size: 0.82rem; margin-top: 36px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="page-head">
+    <h1>学習ハブ</h1>
+    <p>勉強アプリと解説ページの入り口です。</p>
+  </header>
+
+  <!-- TODO: プリント送信先リンク
+       DropboxのファイルリクエストURLが決まったら、下の href="#" をそのURLに差し替えること。
+       （隆之介がプリントの写真を送るためのボタン） -->
+  <a class="send-print" href="#" id="send-print-btn">
+    <span class="icon">📷</span>
+    <span><span class="label">プリントを送る</span>
+    <span class="sub">プリントの写真を撮って送れます（準備中）</span></span>
+  </a>
+
+  <!-- ===== 科目グループ：英語 ===== -->
+  <section class="group">
+    <h2>英語</h2>
+    <a class="card-link" href="apps/eigo-ittou.html">
+      <span class="icon">🔤</span>
+      <span><span class="label">英作文・英単語 一問一答</span>
+      <span class="sub">NT L9（英文16問・単語29語）</span></span>
+      <span class="arrow">›</span>
+    </a>
+    <!-- 英語のアプリが増えたら、この下に card-link を追加する -->
+  </section>
+
+  <!-- ===== 科目グループ：数学 ===== -->
+  <section class="group">
+    <h2>数学</h2>
+    <p class="empty-note">まだありません。これから増えます。</p>
+    <!-- 数学のアプリが増えたら、ここに card-link を追加する -->
+  </section>
+
+  <!-- ===== 解説ページ ===== -->
+  <section class="group">
+    <h2>解説ページ</h2>
+    <p class="empty-note">まだありません。わからない問題の解説がここに増えていきます。</p>
+    <!-- 解説ページが増えたら、ここに card-link を追加する -->
+  </section>
+
+  <p class="foot">記録（できた・できない）は、このスマホのブラウザの中だけに保存されます。</p>
+
+</div>
+</body>
+</html>

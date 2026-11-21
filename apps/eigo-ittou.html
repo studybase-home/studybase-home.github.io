@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<meta name="theme-color" content="#0f6b5c" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="一問一答" />
+<link rel="apple-touch-icon" href="../icon-180.png" />
+<link rel="icon" href="../icon-180.png" />
+<title>英作文・英単語 一問一答（NT L9）</title>
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --surface: #ffffff;
+    --surface-2: #ece7db;
+    --ink: #1c2420;
+    --ink-soft: #5a655f;
+    --line: #d8d2c4;
+    --accent: #0f6b5c;
+    --accent-ink: #ffffff;
+    --accent-soft: #dcebe6;
+    --good: #1e7d32;
+    --good-bg: #e2f0e3;
+    --bad: #b3261e;
+    --bad-bg: #f9e3e1;
+    --shadow: 0 2px 10px rgba(28, 36, 32, 0.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #171b19;
+      --surface: #222825;
+      --surface-2: #2c332f;
+      --ink: #eef1ee;
+      --ink-soft: #a7b3ab;
+      --line: #3a423d;
+      --accent: #3aa88f;
+      --accent-ink: #0d1512;
+      --accent-soft: #24382f;
+      --good: #7fc98a;
+      --good-bg: #24382a;
+      --bad: #f0938c;
+      --bad-bg: #3d2725;
+      --shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+    line-height: 1.6;
+  }
+  button { font-family: inherit; cursor: pointer; }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 16px 16px 56px; }
+
+  .back { color: var(--accent); text-decoration: none; font-size: 1rem; font-weight: 700; }
+  h1 { font-size: 1.45rem; margin: 10px 0 2px; }
+  .sub { margin: 0 0 18px; color: var(--ink-soft); font-size: 0.92rem; }
+
+  /* 進み具合 */
+  .progress-box {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+    padding: 16px 18px; box-shadow: var(--shadow); margin-bottom: 18px;
+  }
+  .progress-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 1rem; margin-bottom: 8px; }
+  .progress-row .num { font-weight: 700; font-size: 1.1rem; }
+  .bar { height: 12px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+  .bar-fill { height: 100%; background: var(--accent); border-radius: 999px; transition: width 0.3s; }
+  .progress-note { margin: 8px 0 0; color: var(--ink-soft); font-size: 0.9rem; }
+
+  /* セット切替タブ */
+  .tabs { display: flex; gap: 6px; background: var(--surface-2); border-radius: 12px; padding: 5px; margin-bottom: 14px; }
+  .tab {
+    flex: 1; border: none; border-radius: 9px; background: transparent;
+    color: var(--ink-soft); font-size: 1.1rem; font-weight: 700; padding: 10px 8px; min-height: 54px;
+  }
+  .tab .tab-count { display: block; font-size: 0.78rem; font-weight: 600; opacity: 0.85; }
+  .tab[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+
+  /* モード選択 */
+  .mode-box { display: flex; gap: 10px; margin-bottom: 18px; }
+  .mode-btn {
+    flex: 1; border: 2px solid var(--line); background: var(--surface); color: var(--ink);
+    border-radius: 14px; padding: 12px 8px; font-size: 1.02rem; font-weight: 700; min-height: 58px;
+  }
+  .mode-btn .cnt { display: block; font-size: 0.8rem; font-weight: 600; color: var(--ink-soft); }
+  .mode-btn[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+  .mode-btn:disabled { opacity: 0.45; }
+
+  .start-btn {
+    width: 100%; border: none; border-radius: 16px; background: var(--accent); color: var(--accent-ink);
+    font-size: 1.3rem; font-weight: 700; padding: 18px; min-height: 68px; box-shadow: var(--shadow);
+  }
+  .start-btn:disabled { opacity: 0.45; }
+  .note { color: var(--ink-soft); font-size: 0.92rem; margin-top: 12px; }
+
+  /* クイズ */
+  .quiz-head { display: flex; justify-content: space-between; color: var(--ink-soft); font-size: 0.95rem; margin-bottom: 10px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 18px;
+    padding: 24px 20px; box-shadow: var(--shadow); margin-bottom: 16px; min-height: 190px;
+  }
+  .chip {
+    display: inline-block; background: var(--accent-soft); color: var(--ink);
+    border-radius: 999px; padding: 3px 12px; font-size: 0.82rem; font-weight: 700; margin-bottom: 12px;
+  }
+  .q-text { font-size: 1.5rem; font-weight: 700; margin: 0; line-height: 1.55; }
+  .q-hint { color: var(--ink-soft); font-size: 0.95rem; margin: 10px 0 0; }
+  .a-area { border-top: 2px dashed var(--line); margin-top: 20px; padding-top: 18px; }
+  .a-text { font-size: 1.4rem; font-weight: 700; margin: 0; line-height: 1.55; color: var(--accent); }
+  .a-note { color: var(--ink-soft); font-size: 0.92rem; margin: 10px 0 0; }
+
+  .show-a-btn {
+    width: 100%; border: 2px solid var(--accent); background: var(--surface); color: var(--accent);
+    border-radius: 16px; font-size: 1.2rem; font-weight: 700; padding: 16px; min-height: 64px;
+  }
+  .judge-row { display: flex; gap: 10px; }
+  .judge-row button { flex: 1; border: none; border-radius: 16px; font-size: 1.2rem; font-weight: 700; padding: 16px 8px; min-height: 64px; }
+  .ok-btn { background: var(--good-bg); color: var(--good); }
+  .ng-btn { background: var(--bad-bg); color: var(--bad); }
+
+  /* 結果 */
+  .done-box { text-align: center; padding-top: 24px; }
+  .done-box h2 { font-size: 1.5rem; margin: 0 0 8px; }
+  .done-box p { font-size: 1.05rem; margin: 0 0 24px; }
+  .done-box button { margin-bottom: 10px; }
+  .wide-btn {
+    width: 100%; border: 2px solid var(--line); background: var(--surface); color: var(--ink);
+    border-radius: 16px; font-size: 1.1rem; font-weight: 700; padding: 16px; min-height: 62px;
+  }
+  .wide-btn:disabled { opacity: 0.45; }
+  .ghost-btn {
+    width: 100%; border: none; background: transparent; color: var(--ink-soft);
+    font-size: 1rem; font-weight: 700; padding: 14px; min-height: 54px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="back" href="../index.html">‹ 学習ハブに戻る</a>
+  <h1>英作文・英単語 一問一答</h1>
+  <p class="sub">NT L9（英文16問・単語29語）</p>
+
+  <!-- ===== トップ画面 ===== -->
+  <div id="screen-home">
+    <div class="progress-box">
+      <div class="progress-row"><span>進み具合</span><span class="num" id="progress-text">全45問中 できた 0問</span></div>
+      <div class="bar"><div class="bar-fill" id="progress-bar" style="width:0%"></div></div>
+      <p class="progress-note" id="progress-note"></p>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="問題の種類">
+      <button class="tab" id="tab-sent" role="tab" aria-selected="true">英文<span class="tab-count">全16問</span></button>
+      <button class="tab" id="tab-word" role="tab" aria-selected="false">単語<span class="tab-count">全29語</span></button>
+    </div>
+
+    <div class="mode-box">
+      <button class="mode-btn" id="mode-all" aria-pressed="true">全部の問題</button>
+      <button class="mode-btn" id="mode-retry" aria-pressed="false">できなかった問題だけ<span class="cnt" id="retry-count"></span></button>
+    </div>
+
+    <button class="start-btn" id="start-btn">スタート</button>
+    <p class="note" id="home-note"></p>
+    <p class="note">記録はこのブラウザの中だけに保存されます。</p>
+  </div>
+
+  <!-- ===== クイズ画面 ===== -->
+  <div id="screen-quiz" hidden>
+    <div class="quiz-head"><span id="quiz-pos"></span><span id="quiz-set"></span></div>
+    <div class="card">
+      <span class="chip" id="q-chip" hidden></span>
+      <p class="q-text" id="q-text"></p>
+      <p class="q-hint" id="q-hint" hidden></p>
+      <div class="a-area" id="a-area" hidden>
+        <p class="a-text" id="a-text"></p>
+        <p class="a-note" id="a-note" hidden></p>
+      </div>
+    </div>
+    <button class="show-a-btn" id="show-a-btn">答えを見る</button>
+    <div class="judge-row" id="judge-row" hidden>
+      <button class="ok-btn" id="ok-btn">⭕ できた</button>
+      <button class="ng-btn" id="ng-btn">✖ できなかった</button>
+    </div>
+  </div>
+
+  <!-- ===== 結果画面 ===== -->
+  <div id="screen-done" hidden>
+    <div class="done-box">
+      <h2>おつかれさま！</h2>
+      <p id="done-summary"></p>
+      <button class="start-btn" id="again-btn">もう一度（同じ設定）</button>
+      <button class="wide-btn" id="done-retry-btn">できなかった問題だけやる</button>
+      <button class="ghost-btn" id="done-home-btn">トップに戻る</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  /* ===== 問題データ（既存アプリ「英作文 一問一答（NT L9 英文＋単語）」から移行） ===== */
+  var SENTENCES = [
+    { q: ["私は昨日、病気でした。"], a: ["I was sick yesterday."] },
+    { q: ["私たちは2年前、ニューヨークにいました。"], a: ["We were in New York two years ago."] },
+    { q: ["ケンジは昨日、家にいませんでした。"], a: ["Kenji wasn't at home yesterday."] },
+    { q: ["あなたは昨晩、忙しかったのですか。", "はい、忙しかったです。／いいえ、忙しくありませんでした。"],
+      a: ["Were you busy last night?", "Yes, I was. / No, I wasn't."] },
+    { q: ["彼はその時どこにいましたか。", "図書館にいました。"],
+      a: ["Where was he at that time?", "He was in the library."] },
+    { q: ["私たちはその時、野球をしていました。"], a: ["We were playing baseball then."] },
+    { q: ["彼はその時、公園で走っていませんでした。"], a: ["He wasn't running in the park at that time."] },
+    { q: ["ヒロコはその時、テレビを見ていましたか。", "はい、見ていました。／いいえ、見ていませんでした。"],
+      a: ["Was Hiroko watching TV then?", "Yes, she was. / No, she wasn't."] },
+    { q: ["あなたはその時、何をしていましたか。", "本を読んでいました。"],
+      a: ["What were you doing then?", "I was reading a book."] },
+    { q: ["今日は何月何日ですか。", "9月13日です。"],
+      a: ["What is the date today?", "It's September 13."] },
+    { q: ["今日は何曜日ですか。", "木曜日です。"],
+      a: ["What day is it today?", "It's Thursday."] },
+    { q: ["今何時ですか。", "9時です。"],
+      a: ["What time is it now?", "It's nine o'clock."] },
+    { q: ["今日の天気はどうですか。", "晴れです。"],
+      a: ["How's the weather today?", "It's sunny."] },
+    { q: ["今年の夏はとても暑いです。"], a: ["It is very hot this summer."] },
+    { q: ["部屋の中は暗かったです。"], a: ["It was dark in the room."] },
+    { q: ["ここから大阪駅までどのくらいですか。", "約1キロです。"],
+      a: ["How far is it from here to Osaka Station?", "It's about one kilometer."] }
+  ];
+
+  var WORD_CATS = ["① 動詞（表現含む）", "② 名詞（表現含む）", "③ 形容詞（表現含む）", "④ 副詞（表現含む）"];
+  var WORDS = [
+    { q: ["終わる"], a: ["end"], cat: 0 },
+    { q: ["雪が降る"], a: ["snow"], cat: 0 },
+    { q: ["キャッチボールをする"], a: ["play catch"], cat: 0 },
+    { q: ["犬を散歩させる"], a: ["walk a dog"], cat: 0 },
+    { q: ["日付"], a: ["date"], cat: 1 },
+    { q: ["体育館／ジム"], a: ["gym"], cat: 1 },
+    { q: ["郵便局"], a: ["post office"], cat: 1 },
+    { q: ["駅"], a: ["station"], cat: 1 },
+    { q: ["天気"], a: ["weather"], cat: 1 },
+    { q: ["徒歩5分"], a: ["five minutes' walk"], cat: 1, note: "minutes' のアポストロフィーの位置に注意（1分なら one minute's walk）" },
+    { q: ["曇った"], a: ["cloudy"], cat: 2 },
+    { q: ["暗い"], a: ["dark"], cat: 2 },
+    { q: ["空腹な"], a: ["hungry"], cat: 2 },
+    { q: ["雨降りの"], a: ["rainy"], cat: 2 },
+    { q: ["病気の／具合が悪い"], a: ["sick"], cat: 2 },
+    { q: ["病気で寝ている"], a: ["sick in bed"], cat: 2 },
+    { q: ["雪の降る／雪が積もった"], a: ["snowy"], cat: 2 },
+    { q: ["のどが渇いた"], a: ["thirsty"], cat: 2 },
+    { q: ["疲れた"], a: ["tired"], cat: 2 },
+    { q: ["風の強い"], a: ["windy"], cat: 2 },
+    { q: ["〜に腹を立てている"], a: ["angry at 〜"], cat: 2 },
+    { q: ["遠い"], a: ["far"], cat: 3 },
+    { q: ["外で／外に"], a: ["outside"], cat: 3 },
+    { q: ["そのとき"], a: ["then"], cat: 3, hint: "副詞 ・ 1語" },
+    { q: ["そのとき"], a: ["at that time"], cat: 3, hint: "副詞 ・ 3語の表現" },
+    { q: ["学校にいる／学校で"], a: ["at school"], cat: 3 },
+    { q: ["家にいる／家で"], a: ["at home"], cat: 3 },
+    { q: ["午前10時"], a: ["10 a.m."], cat: 3, note: "10 am も可" },
+    { q: ["午後10時"], a: ["10 p.m."], cat: 3, note: "10 pm も可" }
+  ];
+
+  /* 各問題に安定したIDを付ける（記録の保存キー） */
+  SENTENCES.forEach(function (it, i) { it.id = "s" + (i + 1); });
+  WORDS.forEach(function (it, i) { it.id = "w" + (i + 1); });
+
+  var SETS = {
+    sent: { label: "英文", items: SENTENCES },
+    word: { label: "単語", items: WORDS }
+  };
+  var ALL_ITEMS = SENTENCES.concat(WORDS);
+
+  /* ===== 記録（localStorage：このブラウザの中だけ） ===== */
+  var STORE_KEY = "ryunosuke.eigo-ittou.records.v1";
+  function loadRecords() {
+    try {
+      var raw = localStorage.getItem(STORE_KEY);
+      var obj = raw ? JSON.parse(raw) : {};
+      return (obj && typeof obj === "object") ? obj : {};
+    } catch (e) { return {}; }
+  }
+  function saveRecords() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(records)); } catch (e) {}
+  }
+  var records = loadRecords(); /* id -> true（できた） / false（できなかった） */
+
+  function countOk(items) {
+    return items.filter(function (it) { return records[it.id] === true; }).length;
+  }
+  function failedItems(setKey) {
+    return SETS[setKey].items.filter(function (it) { return records[it.id] === false; });
+  }
+
+  /* ===== 画面の状態 ===== */
+  var currentSet = "sent";
+  var currentMode = "all"; /* "all" | "retry" */
+  var order = [];          /* 出題する問題の配列 */
+  var pos = 0;
+  var roundOk = 0, roundNg = 0;
+
+  function $(id) { return document.getElementById(id); }
+  function showScreen(name) {
+    $("screen-home").hidden = name !== "home";
+    $("screen-quiz").hidden = name !== "quiz";
+    $("screen-done").hidden = name !== "done";
+  }
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+  function linesHtml(lines) {
+    return lines.map(function (s) {
+      return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }).join("<br>");
+  }
+
+  /* ===== トップ画面の描画 ===== */
+  function renderHome() {
+    var total = ALL_ITEMS.length;
+    var ok = countOk(ALL_ITEMS);
+    $("progress-text").textContent = "全" + total + "問中 できた " + ok + "問";
+    $("progress-bar").style.width = (total ? Math.round(ok / total * 100) : 0) + "%";
+    var ngAll = ALL_ITEMS.filter(function (it) { return records[it.id] === false; }).length;
+    var yetAll = total - ok - ngAll;
+    $("progress-note").textContent = "できなかった " + ngAll + "問 ／ まだやっていない " + yetAll + "問";
+
+    $("tab-sent").setAttribute("aria-selected", currentSet === "sent" ? "true" : "false");
+    $("tab-word").setAttribute("aria-selected", currentSet === "word" ? "true" : "false");
+    $("mode-all").setAttribute("aria-pressed", currentMode === "all" ? "true" : "false");
+    $("mode-retry").setAttribute("aria-pressed", currentMode === "retry" ? "true" : "false");
+
+    var failed = failedItems(currentSet);
+    $("retry-count").textContent = SETS[currentSet].label + "のできなかった問題 " + failed.length + "問";
+    $("mode-retry").disabled = failed.length === 0;
+
+    var pool = currentMode === "retry" ? failed : SETS[currentSet].items;
+    $("start-btn").disabled = pool.length === 0;
+    $("home-note").textContent = pool.length === 0
+      ? "できなかった問題はありません。「全部の問題」で練習できます。"
+      : "「" + SETS[currentSet].label + "」の" +
+        (currentMode === "retry" ? "できなかった問題 " + pool.length + "問" : "全" + pool.length + "問") +
+        "をシャッフルして出題します。";
+    showScreen("home");
+  }
+
+  /* ===== クイズ画面 ===== */
+  function startQuiz() {
+    var pool = currentMode === "retry" ? failedItems(currentSet) : SETS[currentSet].items.slice();
+    if (pool.length === 0) return;
+    order = shuffle(pool);
+    pos = 0; roundOk = 0; roundNg = 0;
+    showScreen("quiz");
+    renderQuestion();
+  }
+  function renderQuestion() {
+    var it = order[pos];
+    $("quiz-pos").textContent = (pos + 1) + " / " + order.length + " 問目";
+    $("quiz-set").textContent = SETS[currentSet].label + (currentMode === "retry" ? "（できなかった問題）" : "");
+    if (currentSet === "word" && typeof it.cat === "number") {
+      $("q-chip").hidden = false;
+      $("q-chip").textContent = WORD_CATS[it.cat];
+    } else {
+      $("q-chip").hidden = true;
+    }
+    $("q-text").innerHTML = linesHtml(it.q);
+    if (it.hint) {
+      $("q-hint").hidden = false;
+      $("q-hint").textContent = "ヒント：" + it.hint;
+    } else {
+      $("q-hint").hidden = true;
+    }
+    $("a-area").hidden = true;
+    $("show-a-btn").hidden = false;
+    $("judge-row").hidden = true;
+  }
+  function showAnswer() {
+    var it = order[pos];
+    $("a-text").innerHTML = linesHtml(it.a);
+    if (it.note) {
+      $("a-note").hidden = false;
+      $("a-note").textContent = "※ " + it.note;
+    } else {
+      $("a-note").hidden = true;
+    }
+    $("a-area").hidden = false;
+    $("show-a-btn").hidden = true;
+    $("judge-row").hidden = false;
+  }
+  function judge(ok) {
+    var it = order[pos];
+    records[it.id] = ok;
+    saveRecords();
+    if (ok) { roundOk++; } else { roundNg++; }
+    pos++;
+    if (pos >= order.length) {
+      $("done-summary").textContent =
+        "今回は " + order.length + "問中、できた " + roundOk + "問・できなかった " + roundNg + "問でした。" +
+        "（全体では 全" + ALL_ITEMS.length + "問中 できた " + countOk(ALL_ITEMS) + "問）";
+      $("done-retry-btn").disabled = failedItems(currentSet).length === 0;
+      showScreen("done");
+    } else {
+      renderQuestion();
+    }
+  }
+
+  /* ===== イベント ===== */
+  $("tab-sent").addEventListener("click", function () { currentSet = "sent"; renderHome(); });
+  $("tab-word").addEventListener("click", function () { currentSet = "word"; renderHome(); });
+  $("mode-all").addEventListener("click", function () { currentMode = "all"; renderHome(); });
+  $("mode-retry").addEventListener("click", function () { currentMode = "retry"; renderHome(); });
+  $("start-btn").addEventListener("click", startQuiz);
+  $("show-a-btn").addEventListener("click", showAnswer);
+  $("ok-btn").addEventListener("click", function () { judge(true); });
+  $("ng-btn").addEventListener("click", function () { judge(false); });
+  $("again-btn").addEventListener("click", startQuiz);
+  $("done-retry-btn").addEventListener("click", function () { currentMode = "retry"; startQuiz(); });
+  $("done-home-btn").addEventListener("click", renderHome);
+
+  /* 問題データが無い場合の表示（データ移行前の安全策） */
+  if (ALL_ITEMS.length === 0) {
+    $("progress-text").textContent = "問題データ待ち";
+    $("start-btn").disabled = true;
+    $("home-note").textContent = "問題はまだ入っていません。プリントが届いたら追加されます。";
+  } else {
+    renderHome();
+  }
+</script>
+</body>
+</html>
