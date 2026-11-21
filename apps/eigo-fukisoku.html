@@ -88,10 +88,7 @@
     <button class="start-btn" id="start-all">全58語ミックス スタート</button>
     <button class="wide-btn" id="start-weak">苦手だけ（まだマスターしていない語）</button>
     <button class="wide-btn" id="start-review">全部もう一度 復習する（マスター済みも全部）</button>
-    <div class="card">
-      <p class="q-label" style="margin-bottom:8px;">パターン別に練習</p>
-      <div id="group-list"></div>
-    </div>
+    <a class="wide-btn" href="eigo-fukisoku-list.html" style="display:block;text-align:center;text-decoration:none;line-height:32px;">類型別まとめページを見る（58語の一覧）</a>
     <div class="card">
       <p class="q-label">聞いて覚える</p>
       <button class="wide-btn" id="listen-btn">🔊 ぜんぶ聞く（原形・過去形）</button>
@@ -295,21 +292,6 @@
     $("start-weak").textContent = masteredCount() >= VERBS.length
       ? "苦手だけ（全部マスター済みです）"
       : "苦手だけ（まだマスターしていない語）";
-    var html = "";
-    Object.keys(GROUPS).forEach(function (g) {
-      var items = VERBS.filter(function (v) { return v.g === Number(g); });
-      var m = items.filter(isMastered).length;
-      html += '<button class="group-btn" data-group="' + g + '">' + GROUPS[g] +
-        '<span class="cnt">★ ' + m + " / " + items.length + "語</span></button>";
-    });
-    $("group-list").innerHTML = html;
-    var btns = $("group-list").querySelectorAll("button");
-    for (var i = 0; i < btns.length; i++) {
-      btns[i].addEventListener("click", function () {
-        var g = Number(this.getAttribute("data-group"));
-        startQuiz(VERBS.filter(function (v) { return v.g === g; }), GROUPS[g]);
-      });
-    }
     showScreen("home");
   }
 
