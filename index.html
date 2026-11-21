@@ -51,32 +51,33 @@
   }
   .wrap { max-width: 640px; margin: 0 auto; padding: 14px 12px 40px; }
 
-  .page-head { margin: 4px 0 12px; }
+  .page-head { margin: 4px 0 10px; }
   .page-head h1 { font-size: 1.35rem; margin: 0; }
   .page-head p { margin: 0; color: var(--ink-soft); font-size: 0.85rem; }
 
-  /* プリントを送るボタン（コンパクト版） */
-  .send-print {
-    display: flex; align-items: center; gap: 10px;
-    background: var(--accent); color: var(--accent-ink);
-    border-radius: 12px; padding: 10px 14px; margin: 0 0 18px;
-    text-decoration: none; box-shadow: var(--shadow);
-    min-height: 52px;
+  /* プリントを送る（コンパクトな1行ボタン） */
+  .send-note { font-size: 0.82rem; color: var(--ink-soft); margin: 0 2px 5px; }
+  .send-row { display: flex; gap: 8px; margin: 0 0 16px; }
+  .send-chip {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px;
+    background: var(--surface); border: 1.5px solid var(--accent); color: var(--accent);
+    border-radius: 999px; padding: 7px 4px; min-height: 44px;
+    text-decoration: none; font-weight: 700; font-size: 0.9rem; box-shadow: var(--shadow);
   }
-  .send-print .icon { font-size: 1.35rem; line-height: 1; }
-  .send-note { font-size: 0.85rem; color: var(--ink-soft); margin: 0 2px 8px; }
-  section.group .send-print { margin-bottom: 10px; }
-  section.group .send-print:last-child { margin-bottom: 0; }
-  .send-print .label { font-size: 1.05rem; font-weight: 700; }
-  .send-print .sub { display: block; font-size: 0.78rem; font-weight: 400; opacity: 0.9; }
+  .send-chip .icon { font-size: 1.05rem; line-height: 1; }
 
-  /* 科目グループ */
-  .group { margin: 0 0 18px; }
-  .group h2 {
-    font-size: 0.95rem; margin: 0 0 7px; color: var(--ink-soft);
-    border-bottom: 2px solid var(--line); padding-bottom: 4px;
+  /* 教科タブ */
+  .tabs { display: flex; gap: 8px; margin: 0 0 12px; }
+  .tab {
+    flex: 1; font-family: inherit; cursor: pointer;
+    padding: 9px 10px; min-height: 48px;
+    font-size: 1.05rem; font-weight: 700;
+    border-radius: 999px; border: 2px solid var(--line);
+    background: var(--surface); color: var(--ink-soft);
   }
-  /* カード：大きく見せるのは単元・番号（label）、種類名は小さく（sub） */
+  .tab.active { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+
+  /* カード：大きく見せるのは単元・番号（label）、種類名は小さく（sub）。並びは上が新しい順 */
   .card-link {
     display: flex; align-items: center; gap: 10px;
     background: var(--surface); border: 1px solid var(--line);
@@ -101,34 +102,27 @@
     <p>勉強アプリと解説ページの入り口です。</p>
   </header>
 
-  <!-- プリントを送る：種類ごとにDropboxファイルリクエストへ（2026-11-21 接続済み） -->
-  <section class="group">
-    <h2>プリントを送る</h2>
-    <p class="send-note">種類を選んで、プリントの写真を送ってください。</p>
-    <a class="send-print" href="https://www.dropbox.com/request/zs3qxr4jho7sdmsmszya">
-      <span class="icon">📷</span>
-      <span><span class="label">英語のプリント</span>
-      <span class="sub">一問一答にしてほしいプリント</span></span>
-    </a>
-    <a class="send-print" href="https://www.dropbox.com/request/pyv94loexft184q9eguj">
-      <span class="icon">❓</span>
-      <span><span class="label">解説がほしいプリント</span>
-      <span class="sub">わからない問題の写真</span></span>
-    </a>
-    <a class="send-print" href="https://www.dropbox.com/request/j4u46ahkm0bo2dwwyrmn">
-      <span class="icon">📄</span>
-      <span><span class="label">その他のプリント</span>
-      <span class="sub">上の2つ以外のプリント</span></span>
-    </a>
-  </section>
+  <!-- プリントを送る：種類ごとにDropboxファイルリクエストへ（コンパクト版） -->
+  <p class="send-note">プリントを送る（種類を選んでください）</p>
+  <div class="send-row">
+    <a class="send-chip" href="https://www.dropbox.com/request/zs3qxr4jho7sdmsmszya"><span class="icon">📷</span>英語</a>
+    <a class="send-chip" href="https://www.dropbox.com/request/pyv94loexft184q9eguj"><span class="icon">❓</span>解説がほしい</a>
+    <a class="send-chip" href="https://www.dropbox.com/request/j4u46ahkm0bo2dwwyrmn"><span class="icon">📄</span>その他</a>
+  </div>
 
-  <!-- ===== 科目グループ：英語 ===== -->
-  <section class="group">
-    <h2>英語</h2>
-    <a class="card-link" href="apps/eigo-ittou.html">
-      <span class="icon">🔤</span>
-      <span><span class="label">NT L9</span>
-      <span class="sub">英作文・英単語 一問一答（英文16問・単語29語）</span></span>
+  <!-- 教科タブ -->
+  <div class="tabs">
+    <button class="tab active" data-tab="english">英語</button>
+    <button class="tab" data-tab="math">数学</button>
+  </div>
+
+  <!-- ===== 英語（上が新しい順） ===== -->
+  <section id="panel-english">
+    <!-- 新しいカードは、この下ではなく一番上に追加する -->
+    <a class="card-link" href="apps/eigo-fukisoku-list.html">
+      <span class="icon">📋</span>
+      <span><span class="label">L8-2</span>
+      <span class="sub">不規則動詞の過去形 類型別まとめ（58語一覧）</span></span>
       <span class="arrow">›</span>
     </a>
     <a class="card-link" href="apps/eigo-fukisoku.html">
@@ -137,36 +131,38 @@
       <span class="sub">不規則動詞の過去形 タイピングドリル（58語）</span></span>
       <span class="arrow">›</span>
     </a>
-    <a class="card-link" href="apps/eigo-fukisoku-list.html">
-      <span class="icon">📋</span>
-      <span><span class="label">L8-2</span>
-      <span class="sub">不規則動詞の過去形 類型別まとめ（58語一覧）</span></span>
+    <a class="card-link" href="apps/eigo-ittou.html">
+      <span class="icon">🔤</span>
+      <span><span class="label">NT L9</span>
+      <span class="sub">英作文・英単語 一問一答（英文16問・単語29語）</span></span>
       <span class="arrow">›</span>
     </a>
-    <!-- 英語のアプリが増えたら、この下に card-link を追加する -->
   </section>
 
-  <!-- ===== 科目グループ：数学 ===== -->
-  <section class="group">
-    <h2>数学</h2>
-    <p class="empty-note">まだありません。これから増えます。</p>
-    <!-- 数学のアプリが増えたら、ここに card-link を追加する -->
-  </section>
-
-  <!-- ===== 解説ページ ===== -->
-  <section class="group">
-    <h2>解説ページ</h2>
+  <!-- ===== 数学（上が新しい順） ===== -->
+  <section id="panel-math" hidden>
+    <!-- 新しいカードは、この下ではなく一番上に追加する -->
     <a class="card-link" href="notes/dodecagon-proof.html">
       <span class="icon">📐</span>
       <span><span class="label">正12角形と3つの三角形の証明</span>
       <span class="sub">数学の解説（図を動かして確かめられます）</span></span>
       <span class="arrow">›</span>
     </a>
-    <!-- 解説ページが増えたら、この下に card-link を追加する -->
   </section>
 
   <p class="foot">記録（できた・できない）は、このスマホのブラウザの中だけに保存されます。</p>
 
 </div>
+<script>
+  var tabs = document.querySelectorAll(".tab");
+  tabs.forEach(function (t) {
+    t.addEventListener("click", function () {
+      tabs.forEach(function (x) { x.classList.remove("active"); });
+      t.classList.add("active");
+      document.getElementById("panel-english").hidden = t.getAttribute("data-tab") !== "english";
+      document.getElementById("panel-math").hidden = t.getAttribute("data-tab") !== "math";
+    });
+  });
+</script>
 </body>
 </html>
