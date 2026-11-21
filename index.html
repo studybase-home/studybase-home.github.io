@@ -97,7 +97,8 @@
   .card-link .icon { font-size: 1.25rem; line-height: 1; flex: 0 0 auto; }
   .card-link .label { font-size: 1.2rem; font-weight: 700; }
   .card-link .sub { display: block; font-size: 0.8rem; font-weight: 400; color: var(--ink-soft); }
-  .card-link .arrow { margin-left: auto; color: var(--ink-soft); font-size: 1.15rem; flex: 0 0 auto; }
+  .card-link .card-date { margin-left: auto; color: var(--ink-soft); font-size: 0.78rem; white-space: nowrap; flex: 0 0 auto; }
+  .card-link .arrow { color: var(--ink-soft); font-size: 1.15rem; flex: 0 0 auto; }
   .empty-note { color: var(--ink-soft); font-size: 0.92rem; margin: 4px 2px; }
 
   .foot { color: var(--ink-soft); font-size: 0.78rem; margin-top: 24px; }
@@ -134,19 +135,19 @@
       <span class="icon">📋</span>
       <span><span class="label">L8-2</span>
       <span class="sub">不規則動詞の過去形 類型別まとめ（58語一覧）</span></span>
-      <span class="arrow">›</span>
+      <span class="card-date" data-created="2026-11-21"></span><span class="arrow">›</span>
     </a>
     <a class="card-link" href="apps/eigo-fukisoku.html">
       <span class="icon">✍️</span>
       <span><span class="label">L8-2</span>
       <span class="sub">不規則動詞の過去形 タイピングドリル（58語）</span></span>
-      <span class="arrow">›</span>
+      <span class="card-date" data-created="2026-11-21"></span><span class="arrow">›</span>
     </a>
     <a class="card-link" href="apps/eigo-ittou.html">
       <span class="icon">🔤</span>
       <span><span class="label">NT L9</span>
       <span class="sub">英作文・英単語 一問一答（英文16問・単語29語）</span></span>
-      <span class="arrow">›</span>
+      <span class="card-date" data-created="2026-11-21"></span><span class="arrow">›</span>
     </a>
   </section>
 
@@ -157,7 +158,7 @@
       <span class="icon">📐</span>
       <span><span class="label">正12角形と3つの三角形の証明</span>
       <span class="sub">数学の解説（図を動かして確かめられます）</span></span>
-      <span class="arrow">›</span>
+      <span class="card-date" data-created="2026-11-17"></span><span class="arrow">›</span>
     </a>
   </section>
 
@@ -182,6 +183,17 @@
     japanese: document.getElementById("panel-japanese"),
     social: document.getElementById("panel-social")
   };
+  document.querySelectorAll(".card-date").forEach(function (el) {
+    var d = new Date(el.getAttribute("data-created") + "T00:00:00");
+    if (isNaN(d.getTime())) { return; }
+    var now = new Date();
+    var oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
+    var mm = String(d.getMonth() + 1).padStart(2, "0");
+    var dd = String(d.getDate()).padStart(2, "0");
+    el.textContent = d <= oneYearAgo
+      ? String(d.getFullYear()).slice(2) + "/" + mm + "/" + dd
+      : (d.getMonth() + 1) + "/" + dd;
+  });
   tabs.forEach(function (t) {
     t.addEventListener("click", function () {
       tabs.forEach(function (x) { x.classList.remove("active"); });
