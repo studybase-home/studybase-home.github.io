@@ -387,7 +387,7 @@
     $("a-area").hidden = true;
     $("show-a-btn").hidden = false;
     $("judge-row").hidden = true;
-    $("speak-btn").hidden = (currentSet !== "word");
+    $("speak-btn").hidden = true;
   }
   function showAnswer() {
     var it = order[pos];
@@ -417,10 +417,8 @@
   }
   function speakCurrent() {
     var it = order[pos];
-    if (currentSet === "word") {
-      speakEnglish(it.q.join(" "));
-    } else if (!$("a-area").hidden) {
-      speakEnglish(it.a.join(" "));
+    if (!$("a-area").hidden) {
+      speakEnglish(it.a.join(" ").replace(/[〜~]/g, ""));
     }
   }
   function finishRound() {
