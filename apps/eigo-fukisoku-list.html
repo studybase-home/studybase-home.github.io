@@ -28,6 +28,12 @@
   .g-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
   .g-title { font-size: 1.08rem; font-weight: 800; margin: 0; flex: 1; }
   .g-count { color: var(--ink-soft); font-size: 0.85rem; white-space: nowrap; }
+  .play-all {
+    display: block; width: 100%; padding: 1rem; margin: 0 0 0.4rem; border: none; border-radius: 14px;
+    background: linear-gradient(135deg, #ff9a3d, #ff7a1a); color: #fff; font-size: 1.15rem; font-weight: 800;
+    font-family: inherit; cursor: pointer; box-shadow: 0 4px 14px rgba(255, 122, 26, 0.35);
+  }
+  .play-all-note { text-align: center; color: var(--ink-soft); font-size: 0.82rem; margin: 0 0 1rem; }
   .g-speak {
     border: 2px solid var(--accent); background: #fff; color: var(--accent); border-radius: 999px;
     font-size: 0.85rem; font-weight: 700; padding: 6px 12px; min-height: 40px; white-space: nowrap; cursor: pointer;
@@ -62,6 +68,8 @@
   <h1>L8-2</h1>
   <p class="subtitle">不規則動詞の過去形 類型別まとめ（58語）</p>
   <p class="playing" id="playing"></p>
+  <button class="play-all" id="play-all">▶ 全部を流し聞き（58語ぜんぶ）</button>
+  <p class="play-all-note">類型に関係なく58語ぜんぶを順番に読み上げます。他のことをしながら聞き流せます。止めたいときはもう一度押してください。</p>
   <div id="groups"></div>
   <p class="note">🔊ボタンで「原形 → 過去形」を聞けます。グループの「全部聞く」で、その類型を続けて聞けます。</p>
 </div>
@@ -99,7 +107,9 @@
     if ("speechSynthesis" in window) { window.speechSynthesis.cancel(); }
     $("playing").textContent = "";
     var btns = document.querySelectorAll(".g-speak");
+  $("play-all").addEventListener("click", speakAll);
     for (var i = 0; i < btns.length; i++) { btns[i].textContent = "🔊 全部聞く"; }
+    $("play-all").textContent = "▶ 全部を流し聞き（58語ぜんぶ）";
   }
   function speakGroup(g, btn) {
     if (playing) { stopAll(); return; }
@@ -113,6 +123,22 @@
       var v = items[idx];
       $("playing").textContent = GROUPS[g] + "：" + v.b + " → " + v.p + "（" + (idx + 1) + " / " + items.length + "）";
       speakOne(v, function () { idx++; setTimeout(step, 300); });
+    }
+    window.speechSynthesis.cancel();
+    step();
+  }
+  function speakAll() {
+    if (playing) { stopAll(); return; }
+    var btn = $("play-all");
+    playing = true;
+    btn.textContent = "⏹ 止める";
+    var idx = 0;
+    function step() {
+      if (!playing) { return; }
+      if (idx >= VERBS.length) { stopAll(); return; }
+      var v = VERBS[idx];
+      $("playing").textContent = "全部： " + v.b + " → " + v.p + "（" + (idx + 1) + " / " + VERBS.length + "）";
+      speakOne(v, function () { idx++; setTimeout(step, 350); });
     }
     window.speechSynthesis.cancel();
     step();
