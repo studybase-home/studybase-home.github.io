@@ -479,7 +479,12 @@
     var it = order[pos];
     records[it.id] = ok;
     saveRecords();
-    if (ok) { roundOk++; } else { roundNg++; }
+    if (ok) { roundOk++; } else {
+      roundNg++;
+      if (!it.confirm) {
+        order.splice(Math.min(pos + 3, order.length), 0, { id: it.id, q: it.q, a: it.a, hint: it.hint, note: it.note, cat: it.cat, confirm: true });
+      }
+    }
     pos++;
     if (pos >= order.length) {
       finishRound();

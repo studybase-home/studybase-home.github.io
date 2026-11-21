@@ -456,6 +456,8 @@
       /* 間違えた語は、この回の後ろの方でもう一度出す（過去形を書く問題で） */
       var insertAt = Math.min(pos + 4, queue.length);
       queue.splice(insertAt, 0, { v: v, dir: "toPast" });
+      /* 直後に、同じ問題を自分で入力して確認する（確認で正しく書けても「できた」には数えない） */
+      queue.splice(Math.min(pos + 1, queue.length), 0, { v: v, dir: current.dir, confirm: true });
     }
     saveRecords();
     $("answer-input").disabled = true;
@@ -471,6 +473,7 @@
     if (v.note) { $("forms-note").hidden = false; $("forms-note").textContent = "※ " + v.note; }
     else { $("forms-note").hidden = true; }
     $("next-btn").hidden = false;
+    if (!ok) { $("next-btn").textContent = "入力して確認する →"; }
     $("quiz-pos").textContent = (pos + 1) + " / " + queue.length + " 問";
   }
   function nextQuestion() {
