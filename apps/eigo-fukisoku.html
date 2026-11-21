@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="不規則動詞ドリル">
+<title>L8-2 不規則動詞の過去形｜RYU学習ポータル</title>
+<style>
+  :root {
+    --ink: #1f2430; --ink-soft: #5b6472; --accent: #2563eb; --accent-soft: #e8effd;
+    --ok: #15803d; --ok-bg: #e7f6ec; --ng: #dc2626; --ng-bg: #fdecec;
+    --card: #ffffff; --line: #e3e7ee; --gold: #d97706;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0; font-family: -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif;
+    background: #f4f6fa; color: var(--ink);
+    padding: max(14px, env(safe-area-inset-top)) 14px 40px;
+  }
+  .wrap { max-width: 560px; margin: 0 auto; }
+  a.back { color: var(--accent); text-decoration: none; font-size: 0.95rem; font-weight: 600; }
+  h1 { font-size: 1.9rem; margin: 8px 0 2px; }
+  .subtitle { color: var(--ink-soft); margin: 0 0 14px; font-size: 0.95rem; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    padding: 20px 18px; margin: 12px 0; box-shadow: 0 1px 3px rgba(20,30,60,.05);
+  }
+  .master-box { text-align: center; }
+  .master-num { font-size: 1.6rem; font-weight: 800; }
+  .master-num .gold { color: var(--gold); }
+  .bar { height: 12px; background: var(--accent-soft); border-radius: 999px; overflow: hidden; margin: 10px 0 4px; }
+  .bar > div { height: 100%; background: var(--gold); border-radius: 999px; transition: width .3s; }
+  .note { color: var(--ink-soft); font-size: 0.85rem; text-align: center; margin: 8px 0 0; }
+  button {
+    font-family: inherit; cursor: pointer; border: none; border-radius: 12px;
+    font-size: 1.05rem; font-weight: 700; min-height: 52px; padding: 10px 16px; width: 100%;
+  }
+  .start-btn { background: var(--accent); color: #fff; margin: 6px 0; }
+  .wide-btn { background: var(--accent-soft); color: var(--accent); margin: 6px 0; }
+  .ghost-btn { background: transparent; color: var(--ink-soft); border: 1px solid var(--line); margin: 6px 0; font-weight: 600; }
+  .group-btn {
+    display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid var(--line);
+    color: var(--ink); margin: 6px 0; text-align: left; font-weight: 600; min-height: 48px;
+  }
+  .group-btn .cnt { margin-left: auto; color: var(--ink-soft); font-size: 0.85rem; font-weight: 600; white-space: nowrap; }
+  .group-btn:disabled { opacity: .45; }
+  .quiz-head { display: flex; justify-content: space-between; color: var(--ink-soft); font-size: 0.9rem; margin: 6px 2px; }
+  .q-label { color: var(--ink-soft); font-size: 0.9rem; margin: 0 0 4px; }
+  .q-text { font-size: 1.9rem; font-weight: 800; margin: 0; line-height: 1.4; }
+  .q-jp { color: var(--ink-soft); font-size: 1rem; margin: 6px 0 0; }
+  .star { color: var(--gold); font-size: 0.95rem; margin-top: 6px; min-height: 1.2em; }
+  input.answer {
+    width: 100%; font-size: 1.4rem; font-weight: 700; padding: 12px 14px; margin: 16px 0 10px;
+    border: 2px solid var(--line); border-radius: 12px; font-family: inherit; color: var(--ink);
+  }
+  input.answer:focus { border-color: var(--accent); outline: none; }
+  .result { border-radius: 12px; padding: 14px; margin: 12px 0; font-weight: 700; display: none; }
+  .result.ok { background: var(--ok-bg); color: var(--ok); display: block; }
+  .result.ng { background: var(--ng-bg); color: var(--ng); display: block; }
+  .forms { font-size: 1.45rem; font-weight: 800; text-align: center; margin: 10px 0 2px; color: var(--ink); }
+  .forms-jp { text-align: center; color: var(--ink-soft); margin: 0 0 6px; }
+  .forms-note { text-align: center; color: var(--ng); font-size: 0.9rem; margin: 4px 0 0; font-weight: 600; }
+  .speak-btn {
+    background: #fff; border: 2px solid var(--accent); color: var(--accent);
+    border-radius: 999px; width: auto; min-height: 48px; padding: 8px 20px; font-size: 1rem;
+    display: block; margin: 12px auto 2px;
+  }
+  .judge-row { display: flex; gap: 10px; margin-top: 10px; }
+  .done-box { text-align: center; }
+  .done-box h2 { margin: 4px 0 8px; }
+  .listen-status { text-align: center; font-weight: 700; margin: 8px 0 0; min-height: 1.4em; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html">‹ RYU学習ポータルに戻る</a>
+  <h1>L8-2</h1>
+  <p class="subtitle">不規則動詞の過去形 タイピングドリル（58語）</p>
+
+  <!-- ===== ホーム画面 ===== -->
+  <div id="screen-home">
+    <div class="card master-box">
+      <div class="master-num">マスター <span class="gold" id="master-count">0</span> / 58 語</div>
+      <div class="bar"><div id="master-bar" style="width:0%"></div></div>
+      <p class="note">3回連続で正しく書けたらマスター（★）。1回できただけでは完了になりません。</p>
+    </div>
+    <button class="start-btn" id="start-all">全58語ミックス スタート</button>
+    <button class="wide-btn" id="start-weak">苦手だけ（まだマスターしていない語）</button>
+    <button class="wide-btn" id="start-review">全部もう一度 復習する（マスター済みも全部）</button>
+    <div class="card">
+      <p class="q-label" style="margin-bottom:8px;">パターン別に練習</p>
+      <div id="group-list"></div>
+    </div>
+    <div class="card">
+      <p class="q-label">聞いて覚える</p>
+      <button class="wide-btn" id="listen-btn">🔊 ぜんぶ聞く（原形・過去形・過去分詞）</button>
+      <p class="listen-status" id="listen-status"></p>
+      <p class="note">58語ぜんぶを「go, went, gone」の形で読み上げます。聞きながら声に出して言ってみましょう。</p>
+    </div>
+    <p class="note">記録はこのブラウザの中だけに保存されます。</p>
+  </div>
+
+  <!-- ===== クイズ画面 ===== -->
+  <div id="screen-quiz" hidden>
+    <div class="quiz-head"><span id="quiz-pos"></span><span id="quiz-mode"></span></div>
+    <div class="card">
+      <p class="q-label" id="q-label"></p>
+      <p class="q-text" id="q-text"></p>
+      <p class="q-jp" id="q-jp"></p>
+      <div class="star" id="q-star"></div>
+      <input class="answer" id="answer-input" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="ここに入力">
+      <button class="start-btn" id="check-btn">答え合わせ</button>
+      <div class="result" id="result-box">
+        <div id="result-msg"></div>
+        <p class="forms" id="forms-text"></p>
+        <p class="forms-jp" id="forms-jp"></p>
+        <p class="forms-note" id="forms-note" hidden></p>
+        <button class="speak-btn" id="speak-btn">🔊 3つの形を聞いて、声に出して言ってみよう</button>
+      </div>
+      <div class="judge-row">
+        <button class="start-btn" id="next-btn" hidden>次へ →</button>
+      </div>
+      <button class="ghost-btn" id="skip-btn">記録しないで次へ →</button>
+    </div>
+  </div>
+
+  <!-- ===== 結果画面 ===== -->
+  <div id="screen-done" hidden>
+    <div class="card done-box">
+      <h2>おつかれさま！</h2>
+      <p id="done-summary"></p>
+      <p id="done-master"></p>
+      <button class="start-btn" id="again-all-btn">全部もう一度（全58語）</button>
+      <button class="wide-btn" id="again-weak-btn">苦手だけもう一度</button>
+      <button class="ghost-btn" id="done-home-btn">トップに戻る</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ===== データ：不規則動詞の過去形（L8-2）58語 ===== */
+  /* g: 1=そのまま 2=母音がa 3=-ought/-aught 4=tで終わる 5=-ew 6=真ん中がo 7=その他 */
+  var VERBS = [
+    { jp: "〜である、〜にいる", b: "be", p: "was, were", pp: "been", g: 7, acc: ["was", "were", "was, were", "was/were", "was were"] },
+    { jp: "〜になる", b: "become", p: "became", pp: "become", g: 7 },
+    { jp: "〜を始める", b: "begin", p: "began", pp: "begun", g: 2 },
+    { jp: "〜を壊す", b: "break", p: "broke", pp: "broken", g: 6 },
+    { jp: "〜を持ってくる", b: "bring", p: "brought", pp: "brought", g: 3 },
+    { jp: "〜を建てる", b: "build", p: "built", pp: "built", g: 4 },
+    { jp: "〜を買う", b: "buy", p: "bought", pp: "bought", g: 3 },
+    { jp: "〜をつかまえる", b: "catch", p: "caught", pp: "caught", g: 3 },
+    { jp: "来る", b: "come", p: "came", pp: "come", g: 7 },
+    { jp: "〜を切る", b: "cut", p: "cut", pp: "cut", g: 1 },
+    { jp: "〜をする", b: "do", p: "did", pp: "done", g: 7 },
+    { jp: "〜を描く", b: "draw", p: "drew", pp: "drawn", g: 5 },
+    { jp: "〜を飲む", b: "drink", p: "drank", pp: "drunk", g: 2 },
+    { jp: "〜を運転する", b: "drive", p: "drove", pp: "driven", g: 6 },
+    { jp: "〜を食べる", b: "eat", p: "ate", pp: "eaten", g: 7 },
+    { jp: "落ちる", b: "fall", p: "fell", pp: "fallen", g: 7 },
+    { jp: "感じる", b: "feel", p: "felt", pp: "felt", g: 4 },
+    { jp: "〜を見つける", b: "find", p: "found", pp: "found", g: 7 },
+    { jp: "飛ぶ", b: "fly", p: "flew", pp: "flown", g: 5 },
+    { jp: "〜を忘れる", b: "forget", p: "forgot", pp: "forgotten", g: 6 },
+    { jp: "〜を得る", b: "get", p: "got", pp: "got", g: 6 },
+    { jp: "〜を与える", b: "give", p: "gave", pp: "given", g: 7 },
+    { jp: "行く", b: "go", p: "went", pp: "gone", g: 7 },
+    { jp: "成長する", b: "grow", p: "grew", pp: "grown", g: 5 },
+    { jp: "〜を持っている", b: "have", p: "had", pp: "had", g: 7 },
+    { jp: "〜が聞こえる", b: "hear", p: "heard", pp: "heard", g: 7 },
+    { jp: "〜を打つ", b: "hit", p: "hit", pp: "hit", g: 1 },
+    { jp: "〜を手に持つ", b: "hold", p: "held", pp: "held", g: 7 },
+    { jp: "〜を持ち続ける", b: "keep", p: "kept", pp: "kept", g: 4 },
+    { jp: "〜を知っている", b: "know", p: "knew", pp: "known", g: 5 },
+    { jp: "出発する", b: "leave", p: "left", pp: "left", g: 4 },
+    { jp: "横になる", b: "lie", p: "lay", pp: "lain", g: 7 },
+    { jp: "〜を失う", b: "lose", p: "lost", pp: "lost", g: 4 },
+    { jp: "〜を作る", b: "make", p: "made", pp: "made", g: 7 },
+    { jp: "〜を意味する", b: "mean", p: "meant", pp: "meant", g: 4 },
+    { jp: "〜と会う", b: "meet", p: "met", pp: "met", g: 4 },
+    { jp: "〜を置く", b: "put", p: "put", pp: "put", g: 1 },
+    { jp: "〜を読む", b: "read", p: "read", pp: "read", g: 1, note: "発音は「リード → レッド」。綴りは同じでも読み方が変わります。" },
+    { jp: "〜に乗る", b: "ride", p: "rode", pp: "ridden", g: 6 },
+    { jp: "走る", b: "run", p: "ran", pp: "run", g: 2 },
+    { jp: "〜と言う", b: "say", p: "said", pp: "said", g: 7 },
+    { jp: "〜が見える", b: "see", p: "saw", pp: "seen", g: 7 },
+    { jp: "〜を売る", b: "sell", p: "sold", pp: "sold", g: 7 },
+    { jp: "〜を送る", b: "send", p: "sent", pp: "sent", g: 4 },
+    { jp: "歌う", b: "sing", p: "sang", pp: "sung", g: 2 },
+    { jp: "座る", b: "sit", p: "sat", pp: "sat", g: 2 },
+    { jp: "〜を話す", b: "speak", p: "spoke", pp: "spoken", g: 6 },
+    { jp: "〜を過ごす", b: "spend", p: "spent", pp: "spent", g: 4 },
+    { jp: "立っている", b: "stand", p: "stood", pp: "stood", g: 7 },
+    { jp: "泳ぐ", b: "swim", p: "swam", pp: "swum", g: 2 },
+    { jp: "〜を持っていく", b: "take", p: "took", pp: "taken", g: 7 },
+    { jp: "〜を教える", b: "teach", p: "taught", pp: "taught", g: 3 },
+    { jp: "〜に話す", b: "tell", p: "told", pp: "told", g: 7 },
+    { jp: "〜と思う", b: "think", p: "thought", pp: "thought", g: 3 },
+    { jp: "〜を理解する", b: "understand", p: "understood", pp: "understood", g: 7 },
+    { jp: "〜を着ている", b: "wear", p: "wore", pp: "worn", g: 6 },
+    { jp: "勝つ", b: "win", p: "won", pp: "won", g: 6 },
+    { jp: "〜を書く", b: "write", p: "wrote", pp: "written", g: 6 }
+  ];
+  VERBS.forEach(function (v, i) { v.id = "v" + (i + 1); });
+  var GROUPS = {
+    1: "そのまま型（cut → cut）",
+    2: "母音が a になる型（begin → began）",
+    3: "-ought / -aught 型（bring → brought）",
+    4: "t で終わる型（build → built）",
+    5: "-ew 型（fly → flew）",
+    6: "真ん中が o の型（break → broke）",
+    7: "その他・まるごと変わる型（go → went）"
+  };
+
+  /* ===== 記録（ブラウザ内のみ）: 連続正解数 ===== */
+  var KEY = "ryu-fukisoku-v1";
+  var streaks = {};
+  function loadRecords() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (raw) { streaks = JSON.parse(raw) || {}; }
+    } catch (e) { streaks = {}; }
+  }
+  function saveRecords() {
+    try { localStorage.setItem(KEY, JSON.stringify(streaks)); } catch (e) {}
+  }
+  function streakOf(v) { return streaks[v.id] || 0; }
+  function isMastered(v) { return streakOf(v) >= 3; }
+  function masteredCount() { return VERBS.filter(isMastered).length; }
+
+  function $(id) { return document.getElementById(id); }
+  function showScreen(name) {
+    ["home", "quiz", "done"].forEach(function (s) {
+      $("screen-" + s).hidden = (s !== name);
+    });
+  }
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  /* ===== 音声 ===== */
+  function enVoice() {
+    var voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+    for (var i = 0; i < voices.length; i++) {
+      if (voices[i].lang && voices[i].lang.indexOf("en") === 0) { return voices[i]; }
+    }
+    return null;
+  }
+  function speakForms(v) {
+    if (!("speechSynthesis" in window)) { return; }
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(v.b + ", " + v.p + ", " + v.pp);
+    u.lang = "en-US"; u.rate = 0.85;
+    var vc = enVoice(); if (vc) { u.voice = vc; }
+    window.speechSynthesis.speak(u);
+  }
+  var listening = false;
+  function stopListen() {
+    listening = false;
+    if ("speechSynthesis" in window) { window.speechSynthesis.cancel(); }
+    $("listen-btn").textContent = "🔊 ぜんぶ聞く（原形・過去形・過去分詞）";
+    $("listen-status").textContent = "";
+  }
+  function startListen() {
+    if (!("speechSynthesis" in window)) { return; }
+    listening = true;
+    $("listen-btn").textContent = "⏹ 止める";
+    var idx = 0;
+    function step() {
+      if (!listening) { return; }
+      if (idx >= VERBS.length) { stopListen(); return; }
+      var v = VERBS[idx];
+      $("listen-status").textContent = (idx + 1) + " / 58：" + v.b + " - " + v.p + " - " + v.pp;
+      var u = new SpeechSynthesisUtterance(v.b + ", " + v.p + ", " + v.pp);
+      u.lang = "en-US"; u.rate = 0.85;
+      var vc = enVoice(); if (vc) { u.voice = vc; }
+      u.onend = function () { idx++; setTimeout(step, 350); };
+      u.onerror = function () { if (listening) { idx++; setTimeout(step, 350); } };
+      window.speechSynthesis.speak(u);
+    }
+    window.speechSynthesis.cancel();
+    step();
+  }
+
+  /* ===== ホーム ===== */
+  function renderHome() {
+    $("master-count").textContent = masteredCount();
+    $("master-bar").style.width = Math.round(masteredCount() / VERBS.length * 100) + "%";
+    $("start-weak").disabled = masteredCount() >= VERBS.length;
+    $("start-weak").textContent = masteredCount() >= VERBS.length
+      ? "苦手だけ（全部マスター済みです）"
+      : "苦手だけ（まだマスターしていない語）";
+    var html = "";
+    Object.keys(GROUPS).forEach(function (g) {
+      var items = VERBS.filter(function (v) { return v.g === Number(g); });
+      var m = items.filter(isMastered).length;
+      html += '<button class="group-btn" data-group="' + g + '">' + GROUPS[g] +
+        '<span class="cnt">★ ' + m + " / " + items.length + "語</span></button>";
+    });
+    $("group-list").innerHTML = html;
+    var btns = $("group-list").querySelectorAll("button");
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].addEventListener("click", function () {
+        var g = Number(this.getAttribute("data-group"));
+        startQuiz(VERBS.filter(function (v) { return v.g === g; }), GROUPS[g]);
+      });
+    }
+    showScreen("home");
+  }
+
+  /* ===== クイズ ===== */
+  var queue = [], pos = 0, modeLabel = "", current = null, checked = false;
+  var sessTotal = 0, sessFirstOk = 0, sessNewMaster = 0, seenFirst = {};
+  function pickDir() {
+    var r = Math.random();
+    if (r < 0.55) { return "toPast"; }
+    if (r < 0.85) { return "jpToPast"; }
+    return "toBase";
+  }
+  function startQuiz(items, label) {
+    stopListen();
+    queue = shuffle(items).map(function (v) { return { v: v, dir: pickDir() }; });
+    pos = 0; modeLabel = label;
+    sessTotal = 0; sessFirstOk = 0; sessNewMaster = 0; seenFirst = {};
+    showScreen("quiz");
+    renderQuestion();
+  }
+  function starText(v) {
+    var s = streakOf(v);
+    if (s >= 3) { return "★ マスター済み（連続3回正解）"; }
+    if (s === 2) { return "☆ あと1回でマスター"; }
+    if (s === 1) { return "☆ 連続1回正解（あと2回）"; }
+    return "";
+  }
+  function renderQuestion() {
+    current = queue[pos];
+    checked = false;
+    var v = current.v;
+    $("quiz-pos").textContent = (pos + 1) + " / " + queue.length + " 問";
+    $("quiz-mode").textContent = modeLabel;
+    if (current.dir === "toPast") {
+      $("q-label").textContent = "原形 → 過去形を書こう";
+      $("q-text").textContent = v.b;
+      $("q-jp").textContent = v.jp;
+      $("answer-input").placeholder = "過去形を入力";
+    } else if (current.dir === "jpToPast") {
+      $("q-label").textContent = "日本語 → 過去形を書こう";
+      $("q-text").textContent = v.jp;
+      $("q-jp").textContent = "";
+      $("answer-input").placeholder = "過去形を入力";
+    } else {
+      $("q-label").textContent = "過去形 → 原形を書こう";
+      $("q-text").textContent = v.p;
+      $("q-jp").textContent = v.jp;
+      $("answer-input").placeholder = "原形を入力";
+    }
+    $("q-star").textContent = starText(v);
+    $("answer-input").value = "";
+    $("answer-input").disabled = false;
+    $("check-btn").hidden = false;
+    $("result-box").className = "result";
+    $("result-box").style.display = "none";
+    $("next-btn").hidden = true;
+    setTimeout(function () { $("answer-input").focus(); }, 50);
+  }
+  function normalize(s) {
+    return s.toLowerCase().replace(/\s+/g, " ").replace(/\s*\/\s*/g, "/").trim();
+  }
+  function isCorrect(v, dir, input) {
+    var n = normalize(input);
+    if (!n) { return false; }
+    if (dir === "toBase") { return n === normalize(v.b); }
+    var answers = v.acc ? v.acc : [v.p];
+    return answers.some(function (a) { return normalize(a) === n; });
+  }
+  function checkAnswer() {
+    if (checked || !current) { return; }
+    var v = current.v;
+    var val = $("answer-input").value;
+    if (!normalize(val)) { $("answer-input").focus(); return; }
+    checked = true;
+    var ok = isCorrect(v, current.dir, val);
+    var firstTime = !seenFirst[v.id];
+    if (firstTime) {
+      seenFirst[v.id] = true;
+      sessTotal++;
+      if (ok) { sessFirstOk++; }
+    }
+    var before = streakOf(v);
+    if (ok) {
+      streaks[v.id] = before + 1;
+      if (before < 3 && streaks[v.id] >= 3) { sessNewMaster++; }
+    } else {
+      streaks[v.id] = 0;
+      /* 間違えた語は、この回の後ろの方でもう一度出す（過去形を書く問題で） */
+      var insertAt = Math.min(pos + 4, queue.length);
+      queue.splice(insertAt, 0, { v: v, dir: "toPast" });
+    }
+    saveRecords();
+    $("answer-input").disabled = true;
+    $("check-btn").hidden = true;
+    var box = $("result-box");
+    box.style.display = "block";
+    box.className = "result " + (ok ? "ok" : "ng");
+    $("result-msg").textContent = ok
+      ? "⭕ 正解！" + (isMastered(v) ? " ★マスター達成！" : "（連続" + streakOf(v) + "回正解）")
+      : "✖ 残念。正しくは…";
+    $("forms-text").textContent = v.b + " → " + v.p + " → " + v.pp;
+    $("forms-jp").textContent = v.jp;
+    if (v.note) { $("forms-note").hidden = false; $("forms-note").textContent = "※ " + v.note; }
+    else { $("forms-note").hidden = true; }
+    $("next-btn").hidden = false;
+    $("quiz-pos").textContent = (pos + 1) + " / " + queue.length + " 問";
+  }
+  function nextQuestion() {
+    if ("speechSynthesis" in window) { window.speechSynthesis.cancel(); }
+    pos++;
+    if (pos >= queue.length) { finishRound(); } else { renderQuestion(); }
+  }
+  function skipQuestion() {
+    if ("speechSynthesis" in window) { window.speechSynthesis.cancel(); }
+    pos++;
+    if (pos >= queue.length) { finishRound(); } else { renderQuestion(); }
+  }
+  function finishRound() {
+    $("done-summary").textContent =
+      "今回は " + sessTotal + "語に挑戦して、1回目で書けたのは " + sessFirstOk + "語でした。" +
+      (sessNewMaster > 0 ? "新しくマスターした語：" + sessNewMaster + "語！" : "");
+    $("done-master").textContent = "マスター合計：" + masteredCount() + " / 58 語" +
+      (masteredCount() >= 58 ? "　全語マスター、完璧です！" : "（あと " + (58 - masteredCount()) + "語）");
+    $("again-weak-btn").disabled = masteredCount() >= VERBS.length;
+    showScreen("done");
+  }
+
+  /* ===== イベント ===== */
+  $("start-all").addEventListener("click", function () { startQuiz(VERBS, "全58語ミックス"); });
+  $("start-review").addEventListener("click", function () { startQuiz(VERBS, "全部復習"); });
+  $("start-weak").addEventListener("click", function () {
+    startQuiz(VERBS.filter(function (v) { return !isMastered(v); }), "苦手だけ");
+  });
+  $("listen-btn").addEventListener("click", function () { if (listening) { stopListen(); } else { startListen(); } });
+  $("check-btn").addEventListener("click", checkAnswer);
+  $("answer-input").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") { if (checked) { nextQuestion(); } else { checkAnswer(); } }
+  });
+  $("next-btn").addEventListener("click", nextQuestion);
+  $("skip-btn").addEventListener("click", skipQuestion);
+  $("speak-btn").addEventListener("click", function () { if (current) { speakForms(current.v); } });
+  $("again-all-btn").addEventListener("click", function () { startQuiz(VERBS, "全部もう一度"); });
+  $("again-weak-btn").addEventListener("click", function () {
+    startQuiz(VERBS.filter(function (v) { return !isMastered(v); }), "苦手だけ");
+  });
+  $("done-home-btn").addEventListener("click", renderHome);
+
+  loadRecords();
+  renderHome();
+</script>
+</body>
+</html>
