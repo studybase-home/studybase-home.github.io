@@ -61,35 +61,44 @@
   .send-chip {
     flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px;
     background: var(--surface); border: 1.5px solid var(--accent); color: var(--accent);
-    border-radius: 999px; padding: 7px 4px; min-height: 44px;
-    text-decoration: none; font-weight: 700; font-size: 0.9rem; box-shadow: var(--shadow);
+    border-radius: 999px; padding: 7px 4px; min-height: 44px; white-space: nowrap;
+    text-decoration: none; font-weight: 700; font-size: 0.92rem; box-shadow: var(--shadow);
   }
   .send-chip .icon { font-size: 1.05rem; line-height: 1; }
 
-  /* 教科タブ */
-  .tabs { display: flex; gap: 8px; margin: 0 0 12px; }
+  /* 教科タブ（ノートのインデックス風） */
+  .tabs { display: flex; gap: 5px; padding: 0 6px; }
   .tab {
     flex: 1; font-family: inherit; cursor: pointer;
-    padding: 9px 10px; min-height: 48px;
-    font-size: 1.05rem; font-weight: 700;
-    border-radius: 999px; border: 2px solid var(--line);
-    background: var(--surface); color: var(--ink-soft);
+    padding: 8px 4px 10px; min-height: 46px; margin-top: 6px;
+    font-size: 1rem; font-weight: 700; white-space: nowrap;
+    border: 2px solid var(--line); border-bottom: none;
+    border-radius: 12px 12px 0 0;
+    background: var(--surface-2); color: var(--ink-soft);
   }
-  .tab.active { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .tab.active {
+    background: var(--surface); color: var(--ink); font-weight: 800;
+    margin-top: 0; padding-top: 12px;
+  }
+  .panel {
+    background: var(--surface); border: 2px solid var(--line);
+    border-radius: 12px; padding: 10px; box-shadow: var(--shadow);
+  }
 
   /* カード：大きく見せるのは単元・番号（label）、種類名は小さく（sub）。並びは上が新しい順 */
   .card-link {
     display: flex; align-items: center; gap: 10px;
-    background: var(--surface); border: 1px solid var(--line);
+    background: var(--bg); border: 1px solid var(--line);
     border-radius: 12px; padding: 10px 14px; margin: 0 0 7px;
-    text-decoration: none; color: var(--ink); box-shadow: var(--shadow);
+    text-decoration: none; color: var(--ink);
     min-height: 52px;
   }
+  .card-link:last-child { margin-bottom: 0; }
   .card-link .icon { font-size: 1.25rem; line-height: 1; flex: 0 0 auto; }
   .card-link .label { font-size: 1.2rem; font-weight: 700; }
   .card-link .sub { display: block; font-size: 0.8rem; font-weight: 400; color: var(--ink-soft); }
   .card-link .arrow { margin-left: auto; color: var(--ink-soft); font-size: 1.15rem; flex: 0 0 auto; }
-  .empty-note { color: var(--ink-soft); font-size: 0.88rem; margin: 2px 0 0; }
+  .empty-note { color: var(--ink-soft); font-size: 0.92rem; margin: 4px 2px; }
 
   .foot { color: var(--ink-soft); font-size: 0.78rem; margin-top: 24px; }
 </style>
@@ -106,18 +115,20 @@
   <p class="send-note">プリントを送る（種類を選んでください）</p>
   <div class="send-row">
     <a class="send-chip" href="https://www.dropbox.com/request/zs3qxr4jho7sdmsmszya"><span class="icon">📷</span>英語</a>
-    <a class="send-chip" href="https://www.dropbox.com/request/pyv94loexft184q9eguj"><span class="icon">❓</span>解説がほしい</a>
+    <a class="send-chip" href="https://www.dropbox.com/request/pyv94loexft184q9eguj"><span class="icon">❓</span>解説希望</a>
     <a class="send-chip" href="https://www.dropbox.com/request/j4u46ahkm0bo2dwwyrmn"><span class="icon">📄</span>その他</a>
   </div>
 
-  <!-- 教科タブ -->
+  <!-- 教科タブ（インデックス風） -->
   <div class="tabs">
     <button class="tab active" data-tab="english">英語</button>
     <button class="tab" data-tab="math">数学</button>
+    <button class="tab" data-tab="japanese">国語</button>
+    <button class="tab" data-tab="social">社会</button>
   </div>
 
   <!-- ===== 英語（上が新しい順） ===== -->
-  <section id="panel-english">
+  <section class="panel" id="panel-english">
     <!-- 新しいカードは、この下ではなく一番上に追加する -->
     <a class="card-link" href="apps/eigo-fukisoku-list.html">
       <span class="icon">📋</span>
@@ -140,7 +151,7 @@
   </section>
 
   <!-- ===== 数学（上が新しい順） ===== -->
-  <section id="panel-math" hidden>
+  <section class="panel" id="panel-math" hidden>
     <!-- 新しいカードは、この下ではなく一番上に追加する -->
     <a class="card-link" href="notes/dodecagon-proof.html">
       <span class="icon">📐</span>
@@ -150,17 +161,33 @@
     </a>
   </section>
 
+  <!-- ===== 国語 ===== -->
+  <section class="panel" id="panel-japanese" hidden>
+    <p class="empty-note">まだプリントがありません。これから増えます。</p>
+  </section>
+
+  <!-- ===== 社会 ===== -->
+  <section class="panel" id="panel-social" hidden>
+    <p class="empty-note">まだプリントがありません。これから増えます。</p>
+  </section>
+
   <p class="foot">記録（できた・できない）は、このスマホのブラウザの中だけに保存されます。</p>
 
 </div>
 <script>
   var tabs = document.querySelectorAll(".tab");
+  var panels = {
+    english: document.getElementById("panel-english"),
+    math: document.getElementById("panel-math"),
+    japanese: document.getElementById("panel-japanese"),
+    social: document.getElementById("panel-social")
+  };
   tabs.forEach(function (t) {
     t.addEventListener("click", function () {
       tabs.forEach(function (x) { x.classList.remove("active"); });
       t.classList.add("active");
-      document.getElementById("panel-english").hidden = t.getAttribute("data-tab") !== "english";
-      document.getElementById("panel-math").hidden = t.getAttribute("data-tab") !== "math";
+      var key = t.getAttribute("data-tab");
+      Object.keys(panels).forEach(function (k) { panels[k].hidden = (k !== key); });
     });
   });
 </script>
