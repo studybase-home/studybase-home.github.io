@@ -94,9 +94,9 @@
     </div>
     <div class="card">
       <p class="q-label">聞いて覚える</p>
-      <button class="wide-btn" id="listen-btn">🔊 ぜんぶ聞く（原形・過去形・過去分詞）</button>
+      <button class="wide-btn" id="listen-btn">🔊 ぜんぶ聞く（原形・過去形）</button>
       <p class="listen-status" id="listen-status"></p>
-      <p class="note">58語ぜんぶを「go, went, gone」の形で読み上げます。聞きながら声に出して言ってみましょう。</p>
+      <p class="note">58語ぜんぶを「go, went」の形で読み上げます。聞きながら声に出して言ってみましょう。</p>
     </div>
     <p class="note">記録はこのブラウザの中だけに保存されます。</p>
   </div>
@@ -116,7 +116,7 @@
         <p class="forms" id="forms-text"></p>
         <p class="forms-jp" id="forms-jp"></p>
         <p class="forms-note" id="forms-note" hidden></p>
-        <button class="speak-btn" id="speak-btn">🔊 3つの形を聞いて、声に出して言ってみよう</button>
+        <button class="speak-btn" id="speak-btn">🔊 聞いて、声に出して言ってみよう</button>
       </div>
       <div class="judge-row">
         <button class="start-btn" id="next-btn" hidden>次へ →</button>
@@ -254,7 +254,7 @@
   function speakForms(v) {
     if (!("speechSynthesis" in window)) { return; }
     window.speechSynthesis.cancel();
-    var u = new SpeechSynthesisUtterance(v.b + ", " + v.p + ", " + v.pp);
+    var u = new SpeechSynthesisUtterance(v.b + ", " + v.p);
     u.lang = "en-US"; u.rate = 0.85;
     var vc = enVoice(); if (vc) { u.voice = vc; }
     window.speechSynthesis.speak(u);
@@ -263,7 +263,7 @@
   function stopListen() {
     listening = false;
     if ("speechSynthesis" in window) { window.speechSynthesis.cancel(); }
-    $("listen-btn").textContent = "🔊 ぜんぶ聞く（原形・過去形・過去分詞）";
+    $("listen-btn").textContent = "🔊 ぜんぶ聞く（原形・過去形）";
     $("listen-status").textContent = "";
   }
   function startListen() {
@@ -275,8 +275,8 @@
       if (!listening) { return; }
       if (idx >= VERBS.length) { stopListen(); return; }
       var v = VERBS[idx];
-      $("listen-status").textContent = (idx + 1) + " / 58：" + v.b + " - " + v.p + " - " + v.pp;
-      var u = new SpeechSynthesisUtterance(v.b + ", " + v.p + ", " + v.pp);
+      $("listen-status").textContent = (idx + 1) + " / 58：" + v.b + " - " + v.p;
+      var u = new SpeechSynthesisUtterance(v.b + ", " + v.p);
       u.lang = "en-US"; u.rate = 0.85;
       var vc = enVoice(); if (vc) { u.voice = vc; }
       u.onend = function () { idx++; setTimeout(step, 350); };
@@ -410,7 +410,7 @@
     $("result-msg").textContent = ok
       ? "⭕ 正解！" + (isMastered(v) ? " ★マスター達成！" : "（連続" + streakOf(v) + "回正解）")
       : "✖ 残念。正しくは…";
-    $("forms-text").textContent = v.b + " → " + v.p + " → " + v.pp;
+    $("forms-text").textContent = v.b + " → " + v.p;
     $("forms-jp").textContent = v.jp;
     if (v.note) { $("forms-note").hidden = false; $("forms-note").textContent = "※ " + v.note; }
     else { $("forms-note").hidden = true; }
