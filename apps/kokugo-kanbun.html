@@ -43,9 +43,10 @@
   .q-dir{font-size:14px; font-weight:700; color:var(--accent); margin:2px 0 4px;}
   .q-inst{font-size:13px; color:var(--sub); margin-bottom:10px; line-height:1.6;}
   .fail-badge{display:none; background:#fdecec; color:var(--ng); border-radius:8px; padding:6px 10px; font-size:13px; font-weight:700; margin-bottom:10px;}
-  .chars{display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 4px;}
-  .char-box{position:relative; width:56px; height:72px; border:2px solid var(--line); border-radius:10px; background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; user-select:none;}
-  .char-box .ch{font-size:30px; font-weight:700; line-height:1; padding-bottom:12px;}
+  .chars{display:flex; flex-direction:column; flex-wrap:nowrap; align-items:center; gap:8px; margin:8px 0 4px;}
+  .chars.multi{flex-wrap:wrap; align-content:center; direction:rtl;}
+  .char-box{position:relative; width:54px; height:58px; border:2px solid var(--line); border-radius:10px; background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; user-select:none;}
+  .char-box .ch{font-size:28px; font-weight:700; line-height:1; padding-bottom:10px;}
   .char-box .mk{position:absolute; left:5px; bottom:3px; font-size:15px; font-weight:700; color:var(--accent2);}
   .char-box .given{position:absolute; right:5px; bottom:3px; font-size:13px; font-weight:700; color:#98a2b8;}
   .char-box .num{position:absolute; top:-9px; right:-7px; min-width:26px; height:26px; border-radius:999px; background:var(--accent); color:#fff; font-size:15px; font-weight:700; display:none; align-items:center; justify-content:center; padding:0 5px;}
@@ -53,10 +54,10 @@
   .char-box.picked .num{display:flex;}
   .char-box.good{border-color:var(--ok); background:#e7f7ee;}
   .char-box.bad{border-color:var(--ng); background:#fdecec;}
-  .char-box .ans{position:absolute; left:0; right:0; bottom:-24px; text-align:center; font-size:14px; font-weight:700; color:var(--ng); display:none;}
+  .char-box .ans{position:absolute; left:3px; top:2px; font-size:13px; font-weight:700; color:var(--ng); display:none;}
   .char-box.bad .ans{display:block;}
   .char-box .ans-mark{color:var(--ng);}
-  .chars.checked{margin-bottom:30px;}
+  .chars.checked{margin-bottom:8px;}
   .btn-row{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;}
   .btn{flex:1; min-width:100px; border:none; border-radius:10px; padding:13px 10px; font-size:15px; font-weight:700; cursor:pointer; min-height:48px;}
   .btn.primary{background:var(--accent); color:#fff;}
@@ -360,6 +361,15 @@ function renderChars(){
   var wrap = el("chars");
   wrap.innerHTML = "";
   wrap.classList.toggle("checked", checked);
+  var n = s.text.length;
+  if (n > 9) {
+    wrap.classList.add("multi");
+    var rows = Math.ceil(n / 2);
+    wrap.style.height = (rows * 58 + (rows - 1) * 8) + "px";
+  } else {
+    wrap.classList.remove("multi");
+    wrap.style.height = "";
+  }
   s.text.split("").forEach(function(ch, i){
     var box = document.createElement("div");
     box.className = "char-box";
