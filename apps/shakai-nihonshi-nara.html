@@ -182,6 +182,7 @@
     width: 100%; border: none; background: transparent; color: var(--ink-soft);
     font-size: 1rem; font-weight: 700; padding: 10px; min-height: 46px;
   }
+  .imi-box{display:none; margin-top:18px; font-size:.76rem; color:#9aa3ab; line-height:1.7;}
 </style>
 </head>
 <body>
@@ -281,6 +282,7 @@
     <button class="show-a-btn" id="next-btn" hidden>つぎへ →</button>
     <button class="back-top-btn" id="back-top-btn">トップに戻る</button>
     <button class="ghost-btn" id="skip-btn" style="margin-top:10px;">記録しないで次へ →</button>
+    <div class="imi-box" id="imi-box"></div>
   </div>
 
   <!-- ===== 結果画面 ===== -->
@@ -803,6 +805,7 @@
       $("q-hint").hidden = true;
     }
     $("a-area").hidden = true;
+    $("imi-box").style.display = "none";
     $("show-a-btn").hidden = false;
     $("dontknow-btn").hidden = !!it.confirm;
     $("next-btn").hidden = true;
@@ -826,6 +829,25 @@
       $("judge-row").hidden = true;
       $("next-btn").hidden = false;
     }
+    /* 答え合わせのときは、答えの用語の解説を一番下に小さく出す（全教科共通ルール） */
+    var ansText = (it.a || []).join("").replace(/\s/g, "");
+    var desc = "";
+    if (GLOSSARY[ansText]) {
+      desc = "解説：" + GLOSSARY[ansText];
+    } else {
+      var terms = Object.keys(GLOSSARY).filter(function (t) { return ansText.indexOf(t) >= 0; })
+        .sort(function (x, y) { return y.length - x.length; });
+      var kept = [];
+      terms.forEach(function (t) {
+        if (!kept.some(function (k) { return k.indexOf(t) >= 0; })) { kept.push(t); }
+      });
+      if (kept.length) {
+        desc = kept.map(function (t) { return t + "：" + GLOSSARY[t]; }).join("　／　");
+      }
+    }
+    var ib = $("imi-box");
+    ib.textContent = desc;
+    ib.style.display = desc ? "block" : "none";
   }
   function finishRound() {
     $("done-summary").textContent =
