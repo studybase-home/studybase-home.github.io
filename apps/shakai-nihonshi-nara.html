@@ -121,6 +121,15 @@
   .err-item { background: var(--surface); border-radius: 12px; padding: 10px 12px; margin: 8px 0; }
   .err-ng { margin: 0 0 4px; color: #c0392b; font-weight: 700; }
   .err-ok { margin: 0; line-height: 1.6; }
+  .err-fix-btn {
+    margin-top: 10px; width: 100%; border: 2px solid #e0655a; background: #fff; color: #c0392b;
+    border-radius: 999px; font-size: 1rem; font-weight: 700; padding: 8px 18px; min-height: 46px;
+  }
+  .err-done { margin: 8px 0 0; font-weight: 700; color: var(--good); }
+  .err-reset {
+    margin-top: 8px; border: none; background: none; color: var(--ink-soft);
+    font-size: 0.85rem; text-decoration: underline; padding: 6px 0; min-height: 32px;
+  }
   .speak-btn {
     margin-top: 14px; border: 2px solid var(--accent); background: #fff; color: var(--accent);
     border-radius: 999px; font-size: 1rem; font-weight: 700; padding: 8px 18px; min-height: 44px;
@@ -164,23 +173,29 @@
 
   <div class="err-box">
     <h2>📝 ノートの誤りチェック</h2>
-    <p class="err-lead">ノートの内容を教科書の内容と照らし合わせて確認しました。次の4点は直しておきましょう。それ以外の内容は合っていました。</p>
-    <div class="err-item">
+    <p class="err-lead">ノートの内容を教科書の内容と照らし合わせて確認しました。あと <span id="err-remain">4</span> 点、直しておきましょう。それ以外の内容は合っていました。</p>
+    <div class="err-item" data-err="gunka">
       <p class="err-ng">ノート1.5枚目・7行目あたり：租（口分田の収穫の3%）の納め先が「国府」</p>
       <p class="err-ok">正しくは <strong>郡家（ぐんが＝郡の役所の倉）</strong> です。租は郡家に納めるもので、国府ではありません。</p>
+      <button class="err-fix-btn" data-fix="gunka">ノートを修正した</button>
     </div>
-    <div class="err-item">
+    <div class="err-item" data-err="nutari">
       <p class="err-ng">ノート2枚目・20行目あたり：淳足柵</p>
       <p class="err-ok">正しくは <strong>渟足柵（ぬたりのさく）</strong>。「渟」の字が正しく、読みは「さく」です（磐舟柵も「いわふねのさく」）。</p>
+      <button class="err-fix-btn" data-fix="nutari">ノートを修正した</button>
     </div>
-    <div class="err-item">
+    <div class="err-item" data-err="abe">
       <p class="err-ng">ノート2枚目・21行目あたり：阿信比羅夫・有明天皇</p>
       <p class="err-ok">正しくは <strong>阿倍比羅夫（あべのひらふ）</strong>。蝦夷征討の遠征は658〜660年ごろで、<strong>斉明天皇</strong>の時代です。「有明」という名の天皇はいません。</p>
+      <button class="err-fix-btn" data-fix="abe">ノートを修正した</button>
     </div>
-    <div class="err-item">
+    <div class="err-item" data-err="shinra">
       <p class="err-ng">ノート2枚目・1行目：新羅（696〜935）</p>
       <p class="err-ok">正しくは <strong>676〜935年</strong>。新羅は676年に朝鮮半島を統一し、935年に高麗（こうらい）に滅ぼされました。</p>
+      <button class="err-fix-btn" data-fix="shinra">ノートを修正した</button>
     </div>
+    <p class="err-done" id="err-all-done" hidden>ノートの誤りは、ぜんぶ修正できました 🎉</p>
+    <button class="err-reset" id="err-reset" hidden>修正済みを元に戻す</button>
   </div>
 
   <!-- ===== トップ画面 ===== -->
@@ -374,6 +389,46 @@
   }
 
   /* ===== トップ画面の描画 ===== */
+
+  /* ===== ノートの誤り：修正済みの管理 ===== */
+  var ERR_STORE_KEY = "ryunosuke.shakai-nara.fixed-errors.v1";
+  var fixedErrors = {};
+  try {
+    var savedErr = localStorage.getItem(ERR_STORE_KEY);
+    if (savedErr) fixedErrors = JSON.parse(savedErr) || {};
+  } catch (e) { fixedErrors = {}; }
+
+  function saveFixedErrors() {
+    try { localStorage.setItem(ERR_STORE_KEY, JSON.stringify(fixedErrors)); } catch (e) {}
+  }
+
+  function renderErrors() {
+    var items = document.querySelectorAll(".err-item[data-err]");
+    var remain = 0;
+    items.forEach(function (el) {
+      var fixed = !!fixedErrors[el.getAttribute("data-err")];
+      el.hidden = fixed;
+      if (!fixed) remain++;
+    });
+    var remainEl = $("err-remain");
+    if (remainEl) remainEl.textContent = remain;
+    $("err-all-done").hidden = remain !== 0;
+    $("err-reset").hidden = remain === items.length;
+  }
+
+  document.querySelectorAll(".err-fix-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      fixedErrors[btn.getAttribute("data-fix")] = true;
+      saveFixedErrors();
+      renderErrors();
+    });
+  });
+  $("err-reset").addEventListener("click", function () {
+    fixedErrors = {};
+    saveFixedErrors();
+    renderErrors();
+  });
+
   function renderHome() {
     var total = ALL_ITEMS.length;
     var ok = countOk(ALL_ITEMS);
@@ -535,6 +590,7 @@
     $("start-btn").disabled = true;
     $("home-note").textContent = "問題はまだ入っていません。プリントが届いたら追加されます。";
   } else {
+    renderErrors();
     renderHome();
   }
 </script>
