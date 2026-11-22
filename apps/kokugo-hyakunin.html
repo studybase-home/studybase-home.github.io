@@ -170,6 +170,8 @@ function saveJSON(key, obj){
 }
 var records = loadJSON(REC_KEY);
 var failCounts = loadJSON(FAIL_KEY);
+var ROUND_KEY = "ryunosuke.kokugo-hyakunin.round.v1";
+var roundDone = loadJSON(ROUND_KEY);  /* 「全部の問題」で一周した分の記録 */
 
 var ITEMS = []; /* {poem, pos} 全50通り */
 POEMS.forEach(function(p){
@@ -219,7 +221,9 @@ function renderHome(){
   var done = 0;
   ITEMS.forEach(function(it){ if (records[itemId(it)] === "o") done++; });
   el("progress-text").textContent = "全" + ITEMS.length + "問中、" + done + "問 できました。";
-  el("all-count").textContent = poolItems("all").length + "問（10首 × 隠れる場所5通り）";
+  var allItemsH = poolItems("all");
+  var remainH = allItemsH.filter(function(it){ return !roundDone[itemId(it)]; }).length;
+  el("all-count").textContent = allItemsH.length + "問（10首 × 隠れる場所5通り）" + (remainH > 0 && remainH < allItemsH.length ? "・一周の途中：残り" + remainH + "問から再開" : "");
   var r = poolItems("retry"), e = poolItems("ever");
   el("retry-count").textContent = r.length + "問";
   el("ever-count").textContent = e.length + "問";
@@ -246,6 +250,16 @@ function showScreen(name){
 function startQuiz(mode){
   var items = poolItems(mode);
   if (items.length === 0) return;
+  if (mode === "all"){
+    /* 一周の続きから：まだやっていない問題だけを出す。一周終わっていたらリセットして全部から */
+    var remaining = items.filter(function(it){ return !roundDone[itemId(it)]; });
+    if (remaining.length === 0){
+      items.forEach(function(it){ delete roundDone[itemId(it)]; });
+      saveJSON(ROUND_KEY, roundDone);
+      remaining = items;
+    }
+    items = remaining;
+  }
   quizList = mode === "all" ? shuffle(items) : items;
   quizIdx = 0;
   quizCorrect = 0;
@@ -324,6 +338,8 @@ function doCheck(){
   var correct = cur.poem.ku[cur.pos];
   var ok = curChoices[selected] === correct;
   var k = itemId(cur);
+  roundDone[k] = true;
+  saveJSON(ROUND_KEY, roundDone);
   if (ok){
     records[k] = "o";
     quizCorrect++;

@@ -244,9 +244,12 @@ saveJSON(FAIL_KEY, failCounts);
 
 var currentDirMode = "a";   /* a / b / mix */
 var currentPat = "all";
-var quizList = [];          /* {s, dir} */
+var quizList = [];          /* {s, dir, confirm} */
 var quizIdx = 0;
 var quizCorrect = 0;
+var quizReal = 0;           /* 確認コピーを除いた問題数 */
+var ROUND_KEY = "ryunosuke.kokugo-kanbun.round.v1";
+var roundDone = loadJSON(ROUND_KEY);  /* 「全部の問題」で一周した分の記録 */
 var cur = null;             /* 現在の問題 {s, dir} */
 var taps = [];              /* 記号→数字：タップした字の位置の並び */
 var myMarks = {};           /* 数字→記号：位置→記号 */
@@ -302,7 +305,8 @@ function renderHome(){
   });
   el("progress-text").textContent = "全" + SENTENCES.length + "文 × 2種類 = " + total + "問中、" + done + "問 できました。";
   var all = poolItems("all"), retry = poolItems("retry"), ever = poolItems("ever");
-  el("all-count").textContent = all.length + "問";
+  var remain = all.filter(function(it){ return !roundDone[keyOf(it.s, it.dir)]; }).length;
+  el("all-count").textContent = all.length + "問" + (remain > 0 && remain < all.length ? "（一周の途中：残り" + remain + "問から再開）" : "");
   el("retry-count").textContent = retry.length + "問";
   el("ever-count").textContent = ever.length + "問";
   el("start-retry").classList.toggle("disabled", retry.length === 0);
@@ -318,9 +322,19 @@ function showScreen(name){
 
 function startQuiz(mode){
   var items = poolItems(mode);
-  if (mode === "all") items = shuffle(items);
+  if (mode === "all"){
+    /* 一周の続きから：まだやっていない問題だけを出す。一周終わっていたらリセットして全部から */
+    var remaining = items.filter(function(it){ return !roundDone[keyOf(it.s, it.dir)]; });
+    if (remaining.length === 0){
+      items.forEach(function(it){ delete roundDone[keyOf(it.s, it.dir)]; });
+      saveJSON(ROUND_KEY, roundDone);
+      remaining = items;
+    }
+    items = shuffle(remaining);
+  }
   if (items.length === 0) return;
   quizList = items;
+  quizReal = items.length;
   quizIdx = 0;
   quizCorrect = 0;
   showScreen("quiz");
@@ -334,13 +348,13 @@ function renderQuestion(){
   myMarks = {};
   checked = false;
   el("q-count").textContent = (quizIdx + 1) + " / " + quizList.length + " 問";
-  el("q-dir").textContent = d === "a" ? "記号 → 数字" : "数字 → 記号";
+  el("q-dir").textContent = (cur.confirm ? "もう一度（記録には入りません）・" : "") + (d === "a" ? "記号 → 数字" : "数字 → 記号");
   el("q-inst").textContent = d === "a"
     ? "返り点を見て、読む順番に字をタップして番号をふろう。"
     : "下の数字が読む順番です。字をタップして、合う返り点を付けよう（タップするたびに記号が切り替わります）。全部の字につけ終わったら答え合わせ。";
   var fc = failCounts[keyOf(s, d)] || 0;
   var badge = el("fail-badge");
-  if (fc >= 1){
+  if (fc >= 1 && !cur.confirm){
     badge.style.display = "block";
     badge.textContent = "この問題は今まで " + fc + "回 できなかった";
   } else {
@@ -451,19 +465,28 @@ function doCheck(){
   checked = true;
   el("chars").classList.add("checked");
   var k = keyOf(s, d);
-  if (ok){
-    records[k] = "o";
-    quizCorrect++;
-  } else {
-    records[k] = "x";
-    failCounts[k] = (failCounts[k] || 0) + 1;
-    saveJSON(FAIL_KEY, failCounts);
+  var isConfirm = !!cur.confirm;
+  if (!isConfirm){
+    roundDone[k] = true;
+    saveJSON(ROUND_KEY, roundDone);
+    if (ok){
+      records[k] = "o";
+      quizCorrect++;
+    } else {
+      records[k] = "x";
+      failCounts[k] = (failCounts[k] || 0) + 1;
+      saveJSON(FAIL_KEY, failCounts);
+      /* まちがえた問題は、少しあとでもう一度出す（確認用：結果は記録に入れない） */
+      quizList.splice(Math.min(quizIdx + 3, quizList.length), 0, {s: s, dir: d, confirm: true});
+    }
+    saveJSON(REC_KEY, records);
   }
-  saveJSON(REC_KEY, records);
   var r = el("result");
   r.style.display = "block";
   r.className = "result " + (ok ? "ok" : "ng");
   r.innerHTML = (ok ? "⭕ 正解です！" : "❌ まちがいがあります。赤い字の下が正解です。") +
+    (isConfirm ? '<div class="small">確認のためのもう一度です。記録には入りません。</div>'
+               : (!ok ? '<div class="small">この問題は、このあともう一度出ます。</div>' : "")) +
     '<div class="yomi">読み下し：' + s.yomi + "</div>";
   el("edit-btns").style.display = "none";
   var nb = el("next-btn");
@@ -476,8 +499,8 @@ function nextQuestion(){
   if (quizIdx < quizList.length){
     renderQuestion();
   } else {
-    el("done-score").textContent = quizCorrect + " / " + quizList.length + " 問 正解";
-    el("done-msg").textContent = quizCorrect === quizList.length
+    el("done-score").textContent = quizCorrect + " / " + quizReal + " 問 正解";
+    el("done-msg").textContent = quizCorrect === quizReal
       ? "全問正解です。この調子でいきましょう。"
       : "バツになった問題は、トップの「バツのままの問題だけ」からもう一度できます。";
     showScreen("done");

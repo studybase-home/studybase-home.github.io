@@ -320,6 +320,19 @@
   }
   var records = loadRecords(); /* id -> true（できた） / false（できなかった） */
 
+  var ROUND_KEY = STORE_KEY.replace("records", "round");
+  function loadRound() {
+    try {
+      var raw = localStorage.getItem(ROUND_KEY);
+      var obj = raw ? JSON.parse(raw) : {};
+      return (obj && typeof obj === "object") ? obj : {};
+    } catch (e) { return {}; }
+  }
+  function saveRound() {
+    try { localStorage.setItem(ROUND_KEY, JSON.stringify(roundDone)); } catch (e) {}
+  }
+  var roundDone = loadRound(); /* 「全部の問題」で一周した分の記録 */
+
   var FAIL_KEY = STORE_KEY.replace("records", "failcounts");
   function loadFails() {
     try {
@@ -429,7 +442,19 @@
 
   /* ===== クイズ画面 ===== */
   function startQuiz() {
-    var pool = currentMode === "retry" ? failedItems(currentSet) : (currentMode === "ever" ? everItems(currentSet) : SETS[currentSet].items.slice());
+    var pool;
+    if (currentMode === "retry") pool = failedItems(currentSet);
+    else if (currentMode === "ever") pool = everItems(currentSet);
+    else {
+      /* 一周の続きから：まだやっていない問題だけを出す。一周終わっていたらリセットして全部から */
+      var full = SETS[currentSet].items.slice();
+      pool = full.filter(function (it) { return !roundDone[it.id]; });
+      if (pool.length === 0) {
+        full.forEach(function (it) { delete roundDone[it.id]; });
+        saveRound();
+        pool = full;
+      }
+    }
     if (pool.length === 0) return;
     order = currentMode === "all" ? (currentOrder === "shuffle" ? shuffle(pool) : pool.slice()) : pool.slice();
     pos = 0; roundOk = 0; roundNg = 0; roundSkip = 0;
@@ -526,6 +551,8 @@
     var it = order[pos];
     records[it.id] = false;
     saveRecords();
+    roundDone[it.id] = true;
+    saveRound();
     addFail(it.id);
     roundNg++;
     order.splice(Math.min(pos + 3, order.length), 0, { id: it.id, q: it.q, a: it.a, hint: it.hint, note: it.note, cat: it.cat, confirm: true });
@@ -546,6 +573,7 @@
     var it = order[pos];
     records[it.id] = ok;
     saveRecords();
+    if (!it.confirm) { roundDone[it.id] = true; saveRound(); }
     if (!ok && !it.confirm) addFail(it.id);
     if (ok) { roundOk++; } else {
       roundNg++;
