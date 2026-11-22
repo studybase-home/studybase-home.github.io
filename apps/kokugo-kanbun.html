@@ -476,8 +476,8 @@ function doCheck(){
       records[k] = "x";
       failCounts[k] = (failCounts[k] || 0) + 1;
       saveJSON(FAIL_KEY, failCounts);
-      /* まちがえた問題は、少しあとでもう一度出す（確認用：結果は記録に入れない） */
-      quizList.splice(Math.min(quizIdx + 3, quizList.length), 0, {s: s, dir: d, confirm: true});
+      /* まちがえた問題は、すぐ次にもう一度出す（確認用：結果は記録に入れない） */
+      quizList.splice(Math.min(quizIdx + 1, quizList.length), 0, {s: s, dir: d, confirm: true});
     }
     saveJSON(REC_KEY, records);
   }
@@ -486,7 +486,7 @@ function doCheck(){
   r.className = "result " + (ok ? "ok" : "ng");
   r.innerHTML = (ok ? "⭕ 正解です！" : "❌ まちがいがあります。赤い字の下が正解です。") +
     (isConfirm ? '<div class="small">確認のためのもう一度です。記録には入りません。</div>'
-               : (!ok ? '<div class="small">この問題は、このあともう一度出ます。</div>' : "")) +
+               : (!ok ? '<div class="small">この問題は、次にもう一度出ます。</div>' : "")) +
     '<div class="yomi">読み下し：' + s.yomi + "</div>";
   el("edit-btns").style.display = "none";
   var nb = el("next-btn");

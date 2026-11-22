@@ -245,6 +245,18 @@
   function saveStats() {
     try { localStorage.setItem(STATS_KEY, JSON.stringify(stats)); } catch (e) {}
   }
+  var ROUND_KEY = "ryu-fukisoku-round-v1";
+  var roundDone = {};
+  function loadRound() {
+    try {
+      var raw = localStorage.getItem(ROUND_KEY);
+      if (raw) { roundDone = JSON.parse(raw) || {}; }
+    } catch (e) { roundDone = {}; }
+  }
+  function saveRound() {
+    try { localStorage.setItem(ROUND_KEY, JSON.stringify(roundDone)); } catch (e) {}
+  }
+  loadRound();
   function recordAttempt(v, ok) {
     var s = stats[v.id] || { t: 0, o: 0 };
     s.t++; if (ok) { s.o++; }
@@ -322,6 +334,10 @@
   /* ===== ホーム ===== */
   function renderHome() {
     $("master-count").textContent = masteredCount();
+    var remainF = VERBS.filter(function (v) { return !roundDone[v.id]; }).length;
+    $("start-all").textContent = remainF > 0 && remainF < VERBS.length
+      ? "全58語ミックス スタート（一周の途中：残り" + remainF + "語）"
+      : "全58語ミックス スタート";
     $("master-bar").style.width = Math.round(masteredCount() / VERBS.length * 100) + "%";
     $("start-weak").disabled = masteredCount() >= VERBS.length;
     $("start-weak").textContent = masteredCount() >= VERBS.length
@@ -353,6 +369,16 @@
     if (r < 0.55) { return "toPast"; }
     if (r < 0.85) { return "jpToPast"; }
     return "toBase";
+  }
+  function startRoundQuiz(label) {
+    /* 一周の続きから：まだやっていない語だけを出す。一周終わっていたらリセットして全部から */
+    var remaining = VERBS.filter(function (v) { return !roundDone[v.id]; });
+    if (remaining.length === 0) {
+      roundDone = {};
+      saveRound();
+      remaining = VERBS.slice();
+    }
+    startQuiz(remaining, label);
   }
   function startQuiz(items, label, ordered) {
     stopListen();
@@ -441,6 +467,8 @@
       return;
     }
     recordAttempt(v, ok);
+    roundDone[v.id] = true;
+    saveRound();
     var firstTime = !seenFirst[v.id];
     if (firstTime) {
       seenFirst[v.id] = true;
@@ -453,10 +481,7 @@
       if (before < 3 && streaks[v.id] >= 3) { sessNewMaster++; }
     } else {
       streaks[v.id] = 0;
-      /* 間違えた語は、この回の後ろの方でもう一度出す（過去形を書く問題で） */
-      var insertAt = Math.min(pos + 4, queue.length);
-      queue.splice(insertAt, 0, { v: v, dir: "toPast" });
-      /* 直後に、同じ問題を自分で入力して確認する（確認で正しく書けても「できた」には数えない） */
+      /* 直後に、同じ問題を自分で入力して確認する（確認で正しく書けても「できた」には数えない）。本番のやり直しは別の機会に */
       queue.splice(Math.min(pos + 1, queue.length), 0, { v: v, dir: current.dir, confirm: true });
     }
     saveRecords();
@@ -489,8 +514,9 @@
     streaks[v.id] = 0;
   loadStats();
     recordAttempt(v, false);
+    roundDone[v.id] = true;
+    saveRound();
     queue.splice(Math.min(pos + 1, queue.length), 0, { v: v, dir: current.dir, confirm: true });
-    queue.splice(Math.min(pos + 5, queue.length), 0, { v: v, dir: "toPast" });
     saveRecords();
     $("answer-input").disabled = true;
     $("check-btn").hidden = true;
@@ -524,8 +550,8 @@
   }
 
   /* ===== イベント ===== */
-  $("start-all").addEventListener("click", function () { startQuiz(VERBS, "全58語ミックス"); });
-  $("start-review").addEventListener("click", function () { startQuiz(VERBS, "全部復習"); });
+  $("start-all").addEventListener("click", function () { startRoundQuiz("全58語ミックス"); });
+  $("start-review").addEventListener("click", function () { startRoundQuiz("全部復習"); });
   $("start-weak").addEventListener("click", function () {
     var weak = VERBS.filter(function (v) { return !isMastered(v); });
     weak.sort(function (a, b) {
