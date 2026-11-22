@@ -85,6 +85,23 @@
     border-radius: 12px; padding: 10px; box-shadow: var(--shadow);
   }
 
+  /* 教科カラー（虎太郎のSAPIXアプリと共通。英語だけ別の色＝白系） */
+  .tab[data-tab="english"] { --subj: #e8e8e8; }
+  .tab[data-tab="math"] { --subj: #2563eb; }
+  .tab[data-tab="japanese"] { --subj: #dc2626; }
+  .tab[data-tab="science"] { --subj: #059669; }
+  .tab[data-tab="social"] { --subj: #d97706; }
+  .tab { border-color: var(--subj); color: var(--subj); }
+  .tab.active { background: var(--subj); border-color: var(--subj); color: #fff; }
+  .tab[data-tab="english"].active { color: #1a1a1a; }
+  /* 枠は教科カラー、中はかなり薄い同じ色 */
+  #panel-english { --subj: #e8e8e8; --tint: rgba(232, 232, 232, 0.07); }
+  #panel-math { --subj: #2563eb; --tint: rgba(37, 99, 235, 0.10); }
+  #panel-japanese { --subj: #dc2626; --tint: rgba(220, 38, 38, 0.08); }
+  #panel-science { --subj: #059669; --tint: rgba(5, 150, 105, 0.10); }
+  #panel-social { --subj: #d97706; --tint: rgba(217, 119, 6, 0.10); }
+  .panel { border-color: var(--subj); background: var(--tint); }
+
   /* カード：大きく見せるのは単元・番号（label）、種類名は小さく（sub）。並びは上が新しい順 */
   .card-link {
     display: flex; align-items: center; gap: 10px;
@@ -125,6 +142,7 @@
     <button class="tab active" data-tab="english">英語</button>
     <button class="tab" data-tab="math">数学</button>
     <button class="tab" data-tab="japanese">国語</button>
+    <button class="tab" data-tab="science">理科</button>
     <button class="tab" data-tab="social">社会</button>
   </div>
 
@@ -182,6 +200,11 @@
     </a>
   </section>
 
+  <!-- ===== 理科（上が新しい順） ===== -->
+  <section class="panel" id="panel-science" hidden>
+    <p class="empty-note">まだ教材がありません</p>
+  </section>
+
   <!-- ===== 社会 ===== -->
   <section class="panel" id="panel-social" hidden>
     <!-- 新しいカードはこのパネルの一番上に追加する -->
@@ -203,6 +226,7 @@
     english: document.getElementById("panel-english"),
     math: document.getElementById("panel-math"),
     japanese: document.getElementById("panel-japanese"),
+    science: document.getElementById("panel-science"),
     social: document.getElementById("panel-social")
   };
   document.querySelectorAll(".card-date").forEach(function (el) {
