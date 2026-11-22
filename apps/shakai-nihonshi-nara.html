@@ -296,6 +296,13 @@
 
 </div>
 
+  <div class="term-modal" id="term-modal" hidden>
+    <div class="term-card">
+      <p class="term-name" id="term-name"></p>
+      <p class="term-desc" id="term-desc"></p>
+      <button class="term-close" id="term-close">閉じる</button>
+    </div>
+  </div>
 <script>
   /* ===== 問題データ（既存アプリ「英作文 一問一答（NT L9 英文＋単語）」から移行） ===== */
   var PRE = [
@@ -885,8 +892,8 @@
       $("term-modal").hidden = false;
     }
   });
-  $("term-close").addEventListener("click", function () { $("term-modal").hidden = true; });
-  $("term-modal").addEventListener("click", function (e) { if (e.target === $("term-modal")) $("term-modal").hidden = true; });
+  var termCloseBtn = $("term-close"); if (termCloseBtn) termCloseBtn.addEventListener("click", function () { $("term-modal").hidden = true; });
+  var termModalEl = $("term-modal"); if (termModalEl) termModalEl.addEventListener("click", function (e) { if (e.target === termModalEl) termModalEl.hidden = true; });
 
   /* 問題データが無い場合の表示（データ移行前の安全策） */
   if (ALL_ITEMS.length === 0) {
@@ -898,12 +905,5 @@
     renderHome();
   }
 </script>
-  <div class="term-modal" id="term-modal" hidden>
-    <div class="term-card">
-      <p class="term-name" id="term-name"></p>
-      <p class="term-desc" id="term-desc"></p>
-      <button class="term-close" id="term-close">閉じる</button>
-    </div>
-  </div>
 </body>
 </html>
