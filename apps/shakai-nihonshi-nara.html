@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<meta name="theme-color" content="#0f6b5c" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="一問一答" />
+<link rel="apple-touch-icon" href="../icon-180.png" />
+<link rel="icon" href="../icon-180.png" />
+<title>日本史 奈良時代｜一問一答</title>
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --surface: #ffffff;
+    --surface-2: #ece7db;
+    --ink: #1c2420;
+    --ink-soft: #5a655f;
+    --line: #d8d2c4;
+    --accent: #0f6b5c;
+    --accent-ink: #ffffff;
+    --accent-soft: #dcebe6;
+    --good: #1e7d32;
+    --good-bg: #e2f0e3;
+    --bad: #b3261e;
+    --bad-bg: #f9e3e1;
+    --shadow: 0 2px 10px rgba(28, 36, 32, 0.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #171b19;
+      --surface: #222825;
+      --surface-2: #2c332f;
+      --ink: #eef1ee;
+      --ink-soft: #a7b3ab;
+      --line: #3a423d;
+      --accent: #3aa88f;
+      --accent-ink: #0d1512;
+      --accent-soft: #24382f;
+      --good: #7fc98a;
+      --good-bg: #24382a;
+      --bad: #f0938c;
+      --bad-bg: #3d2725;
+      --shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+    line-height: 1.6;
+  }
+  button { font-family: inherit; cursor: pointer; }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 16px 16px 56px; }
+
+  .back { color: var(--accent); text-decoration: none; font-size: 1rem; font-weight: 700; }
+  h1 { font-size: 1.6rem; margin: 10px 0 2px; }
+  .sub { margin: 0 0 18px; color: var(--ink-soft); font-size: 0.92rem; }
+
+  /* 進み具合 */
+  .progress-box {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+    padding: 12px 14px; box-shadow: var(--shadow); margin-bottom: 14px;
+  }
+  .progress-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 1rem; margin-bottom: 8px; }
+  .progress-row .num { font-weight: 700; font-size: 1.1rem; }
+  .bar { height: 12px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+  .bar-fill { height: 100%; background: var(--accent); border-radius: 999px; transition: width 0.3s; }
+  .progress-note { margin: 8px 0 0; color: var(--ink-soft); font-size: 0.9rem; }
+
+  /* セット切替タブ */
+  .tabs { display: flex; gap: 6px; background: var(--surface-2); border-radius: 12px; padding: 5px; margin-bottom: 14px; }
+  .tab {
+    flex: 1; border: none; border-radius: 9px; background: transparent;
+    color: var(--ink-soft); font-size: 1.05rem; font-weight: 700; padding: 8px 6px; min-height: 46px;
+  }
+  .tab .tab-count { display: block; font-size: 0.78rem; font-weight: 600; opacity: 0.85; }
+  .tab[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+
+  /* モード選択 */
+  .mode-box { display: flex; gap: 10px; margin-bottom: 18px; }
+  .mode-btn {
+    flex: 1; border: 2px solid var(--line); background: var(--surface); color: var(--ink);
+    border-radius: 14px; padding: 10px 8px; font-size: 1.0rem; font-weight: 700; min-height: 50px;
+  }
+  .mode-btn .cnt { display: block; font-size: 0.8rem; font-weight: 600; color: var(--ink-soft); }
+  .mode-btn[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+  .mode-btn:disabled { opacity: 0.45; }
+
+  .start-btn {
+    width: 100%; border: none; border-radius: 16px; background: var(--accent); color: var(--accent-ink);
+    font-size: 1.18rem; font-weight: 700; padding: 13px; min-height: 56px; box-shadow: var(--shadow);
+  }
+  .start-btn:disabled { opacity: 0.45; }
+  .note { color: var(--ink-soft); font-size: 0.92rem; margin-top: 12px; }
+
+  /* クイズ */
+  .quiz-head { display: flex; justify-content: space-between; color: var(--ink-soft); font-size: 0.95rem; margin-bottom: 10px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 18px;
+    padding: 18px 16px; box-shadow: var(--shadow); margin-bottom: 14px; min-height: 160px;
+  }
+  .chip {
+    display: inline-block; background: var(--accent-soft); color: var(--ink);
+    border-radius: 999px; padding: 3px 12px; font-size: 0.82rem; font-weight: 700; margin-bottom: 12px;
+  }
+  .q-text { font-size: 1.5rem; font-weight: 700; margin: 0; line-height: 1.55; }
+  .q-hint { color: var(--ink-soft); font-size: 0.95rem; margin: 10px 0 0; }
+  .a-area { border-top: 2px dashed var(--line); margin-top: 20px; padding-top: 18px; }
+  .a-text { font-size: 1.4rem; font-weight: 700; margin: 0; line-height: 1.55; color: var(--accent); }
+  .a-note { color: var(--ink-soft); font-size: 0.92rem; margin: 10px 0 0; }
+
+  .err-box { background: #fdf3f2; border: 2px solid #e5b4ae; border-radius: 16px; padding: 16px 18px; margin: 14px 0 20px; }
+  .err-box h2 { font-size: 1.1rem; margin: 0 0 6px; }
+  .err-lead { color: var(--ink-soft); font-size: 0.9rem; margin: 0 0 10px; line-height: 1.6; }
+  .err-item { background: var(--surface); border-radius: 12px; padding: 10px 12px; margin: 8px 0; }
+  .err-ng { margin: 0 0 4px; color: #c0392b; font-weight: 700; }
+  .err-ok { margin: 0; line-height: 1.6; }
+  .speak-btn {
+    margin-top: 14px; border: 2px solid var(--accent); background: #fff; color: var(--accent);
+    border-radius: 999px; font-size: 1rem; font-weight: 700; padding: 8px 18px; min-height: 44px;
+  }
+  .dontknow-btn {
+    width: 100%; border: 2px solid #e0655a; background: var(--surface); color: #c0392b;
+    border-radius: 16px; font-size: 1.05rem; font-weight: 700; padding: 12px; min-height: 54px; margin-top: 10px;
+  }
+  .show-a-btn {
+    width: 100%; border: 2px solid var(--accent); background: var(--surface); color: var(--accent);
+    border-radius: 16px; font-size: 1.1rem; font-weight: 700; padding: 12px; min-height: 54px;
+  }
+  .judge-row { display: flex; gap: 10px; }
+  .judge-row button { flex: 1; border: none; border-radius: 16px; font-size: 1.1rem; font-weight: 700; padding: 12px 8px; min-height: 54px; }
+  .ok-btn { background: var(--good-bg); color: var(--good); }
+  .ng-btn { background: var(--bad-bg); color: var(--bad); }
+
+  /* 結果 */
+  .done-box { text-align: center; padding-top: 24px; }
+  .done-box h2 { font-size: 1.5rem; margin: 0 0 8px; }
+  .done-box p { font-size: 1.05rem; margin: 0 0 24px; }
+  .done-box button { margin-bottom: 10px; }
+  .wide-btn {
+    width: 100%; border: 2px solid var(--line); background: var(--surface); color: var(--ink);
+    border-radius: 16px; font-size: 1.05rem; font-weight: 700; padding: 12px; min-height: 52px;
+  }
+  .wide-btn:disabled { opacity: 0.45; }
+  .ghost-btn {
+    width: 100%; border: none; background: transparent; color: var(--ink-soft);
+    font-size: 1rem; font-weight: 700; padding: 10px; min-height: 46px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="back" href="../index.html">‹ RYU学習ポータルに戻る</a>
+  <h1>日本史：奈良時代</h1>
+  <p class="sub">社会・日本史 一問一答（ノート① 律令のしくみ 16問・ノート② 平城京と領土の拡大 20問）</p>
+  <p class="sub" style="margin-top:-6px;">時代：奈良時代（律令国家と平城京）／作成：2026年11月22日</p>
+
+  <div class="err-box">
+    <h2>📝 ノートの誤りチェック</h2>
+    <p class="err-lead">ノートの内容を教科書の内容と照らし合わせて確認しました。次の3点は直しておきましょう。それ以外の内容は合っていました。</p>
+    <div class="err-item">
+      <p class="err-ng">ノート：淳足柵</p>
+      <p class="err-ok">正しくは <strong>渟足柵（ぬたりのさく）</strong>。「渟」の字が正しく、読みは「さく」です（磐舟柵も「いわふねのさく」）。</p>
+    </div>
+    <div class="err-item">
+      <p class="err-ng">ノート：阿信比羅夫・有明天皇</p>
+      <p class="err-ok">正しくは <strong>阿倍比羅夫（あべのひらふ）</strong>。蝦夷征討の遠征は658〜660年ごろで、<strong>斉明天皇</strong>の時代です。「有明」という名の天皇はいません。</p>
+    </div>
+    <div class="err-item">
+      <p class="err-ng">ノート：新羅（696〜935）</p>
+      <p class="err-ok">正しくは <strong>676〜935年</strong>。新羅は676年に朝鮮半島を統一し、935年に高麗（こうらい）に滅ぼされました。</p>
+    </div>
+  </div>
+
+  <!-- ===== トップ画面 ===== -->
+  <div id="screen-home">
+    <div class="progress-box">
+      <div class="progress-row"><span>進み具合</span><span class="num" id="progress-text">全36問中 できた 0問</span></div>
+      <div class="bar"><div class="bar-fill" id="progress-bar" style="width:0%"></div></div>
+      <p class="progress-note" id="progress-note"></p>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="問題の種類">
+      <button class="tab" id="tab-sent" role="tab" aria-selected="true">ノート① 律令のしくみ<span class="tab-count">全16問</span></button>
+      <button class="tab" id="tab-word" role="tab" aria-selected="false">ノート② 平城京と領土の拡大<span class="tab-count">全20問</span></button>
+    </div>
+
+    <div class="mode-box">
+      <button class="mode-btn" id="mode-all" aria-pressed="true">全部の問題</button>
+      <button class="mode-btn" id="mode-retry" aria-pressed="false">できなかった問題だけ<span class="cnt" id="retry-count"></span></button>
+    </div>
+
+    <button class="start-btn" id="start-btn">スタート</button>
+    <p class="note" id="home-note"></p>
+    <p class="note">記録はこのブラウザの中だけに保存されます。</p>
+  </div>
+
+  <!-- ===== クイズ画面 ===== -->
+  <div id="screen-quiz" hidden>
+    <div class="quiz-head"><span id="quiz-pos"></span><span id="quiz-set"></span></div>
+    <div class="card">
+      <span class="chip" id="q-chip" hidden></span>
+      <p class="q-text" id="q-text"></p>
+      <p class="q-hint" id="q-hint" hidden></p>
+      <div class="a-area" id="a-area" hidden>
+        <p class="a-text" id="a-text"></p>
+        <p class="a-note" id="a-note" hidden></p>
+      </div>
+    </div>
+    <button class="show-a-btn" id="show-a-btn">答えを見る</button>
+    <button class="dontknow-btn" id="dontknow-btn">わからない</button>
+    <div class="judge-row" id="judge-row" hidden>
+      <button class="ok-btn" id="ok-btn">⭕ できた</button>
+      <button class="ng-btn" id="ng-btn">✖ できなかった</button>
+    </div>
+    <button class="show-a-btn" id="next-btn" hidden>つぎへ →</button>
+    <button class="ghost-btn" id="skip-btn" style="margin-top:10px;">記録しないで次へ →</button>
+  </div>
+
+  <!-- ===== 結果画面 ===== -->
+  <div id="screen-done" hidden>
+    <div class="done-box">
+      <h2>おつかれさま！</h2>
+      <p id="done-summary"></p>
+      <button class="start-btn" id="again-btn">もう一度（同じ設定）</button>
+      <button class="wide-btn" id="done-retry-btn">できなかった問題だけやる</button>
+      <button class="ghost-btn" id="done-home-btn">トップに戻る</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  /* ===== 問題データ（既存アプリ「英作文 一問一答（NT L9 英文＋単語）」から移行） ===== */
+  var SENTENCES = [
+    { q: ["太政官で、天皇を補佐した公卿（くぎょう）の3つの役職は？"], a: ["左大臣・太政大臣・右大臣"] },
+    { q: ["八省のうち、文官の人事や教育を担当した省は？"], a: ["式部省"] },
+    { q: ["八省のうち、外交を担当した省は？"], a: ["治部省"] },
+    { q: ["官人の不正を取り締まった機関は？"], a: ["弾正台"] },
+    { q: ["九州の民政・軍事・外交を担当した機関は？"], a: ["大宰府"] },
+    { q: ["京の一般民政を担当した役所は？"], a: ["京職（左京職・右京職）"] },
+    { q: ["国司に任命されたのは、どのような人？"], a: ["中央の貴族"] },
+    { q: ["郡司に任命されたのは、どのような人？"], a: ["その地域の豪族"] },
+    { q: ["里長に任命されたのは、どのような人？"], a: ["有力な農民"] },
+    { q: ["四等官制の4つを、上の位から順に言うと？"], a: ["長官（かみ）・次官（すけ）・判官（じょう）・主典（さかん）"] },
+    { q: ["国司の四等官を、上の位から順に言うと？"], a: ["守・介・掾・目"] },
+    { q: ["位階に応じた官職が与えられる制度を何という？"], a: ["官位相当の制"] },
+    { q: ["貴族の子弟に、父の位階に応じて一定の位が与えられる制度は？"], a: ["蔭位の制"] },
+    { q: ["五刑を、軽いものから順に言うと？"], a: ["笞・杖・徒・流・死"] },
+    { q: ["班田収授や氏姓の確認のために、6年ごとに作られた台帳は？"], a: ["戸籍"] },
+    { q: ["庸・調を徴収するために、毎年作られた台帳は？"], a: ["計帳"] }
+  ];
+
+  var WORD_CATS = ["① 動詞（表現含む）", "② 名詞（表現含む）", "③ 形容詞（表現含む）", "④ 副詞（表現含む）"];
+  var WORDS = [
+    { q: ["平城京へ都が移されたのは何年？そのときの天皇は？"], a: ["710年・元明天皇"], note: "藤原京から移転した" },
+    { q: ["平城京は、唐のどの都にならって作られた？"], a: ["長安"] },
+    { q: ["東西南北に走る道で都を区画する仕組みを何という？"], a: ["条坊制"] },
+    { q: ["平城京の東西に置かれ、市司が監督したものは？"], a: ["市"] },
+    { q: ["7世紀に天武天皇の時代に作られた、早い時期の貨幣は？"], a: ["富本銭"] },
+    { q: ["708年に鋳造された貨幣は？"], a: ["和同開珎"] },
+    { q: ["和同開珎の原料となった銅が産出されたのは何国？"], a: ["武蔵国"] },
+    { q: ["貨幣の流通を広めるため、711年に出された法は？"], a: ["蓄銭叙位法"] },
+    { q: ["和同開珎から乾元大宝まで、12種類の貨幣の総称は？"], a: ["皇朝十二銭"] },
+    { q: ["官道では、約16kmごとに何が置かれた？"], a: ["駅家"], note: "駅鈴を持つ官人が利用できた" },
+    { q: ["647年に置かれた柵（さく）は？"], a: ["渟足柵（ぬたりのさく）"], note: "ノートの漢字と読みに注意（誤りチェック参照）" },
+    { q: ["648年に置かれた柵（さく）は？"], a: ["磐舟柵（いわふねのさく）"] },
+    { q: ["蝦夷征討で秋田地方まで遠征した将軍は？"], a: ["阿倍比羅夫"], note: "658〜660年ごろ、斉明天皇の時代" },
+    { q: ["724年に陸奥国に設置された城柵は？"], a: ["多賀城"], note: "聖武天皇の時代。陸奥の国府が置かれた" },
+    { q: ["733年に出羽柵が移されて改称した城は？"], a: ["秋田城"] },
+    { q: ["713年に九州南部に置かれた国は？"], a: ["大隅国"], note: "隼人をおさえるため" },
+    { q: ["720年に起きた隼人の乱を鎮圧したのは？"], a: ["大伴旅人"] },
+    { q: ["元明・元正天皇を補佐した人物は？"], a: ["藤原不比等"] },
+    { q: ["698〜926年に存続し、日本と友好的だった国は？"], a: ["渤海"] },
+    { q: ["676年に朝鮮半島を統一し、935年まで続いた国は？"], a: ["新羅"] }
+  ];
+
+  /* 各問題に安定したIDを付ける（記録の保存キー） */
+  SENTENCES.forEach(function (it, i) { it.id = "s" + (i + 1); });
+  WORDS.forEach(function (it, i) { it.id = "w" + (i + 1); });
+
+  var SETS = {
+    sent: { label: "ノート① 律令のしくみ", items: SENTENCES },
+    word: { label: "ノート② 平城京と領土の拡大", items: WORDS }
+  };
+  var ALL_ITEMS = SENTENCES.concat(WORDS);
+
+  /* ===== 記録（localStorage：このブラウザの中だけ） ===== */
+  var STORE_KEY = "ryunosuke.shakai-nara.records.v1";
+  function loadRecords() {
+    try {
+      var raw = localStorage.getItem(STORE_KEY);
+      var obj = raw ? JSON.parse(raw) : {};
+      return (obj && typeof obj === "object") ? obj : {};
+    } catch (e) { return {}; }
+  }
+  function saveRecords() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(records)); } catch (e) {}
+  }
+  var records = loadRecords(); /* id -> true（できた） / false（できなかった） */
+
+  function countOk(items) {
+    return items.filter(function (it) { return records[it.id] === true; }).length;
+  }
+  function failedItems(setKey) {
+    return SETS[setKey].items.filter(function (it) { return records[it.id] === false; });
+  }
+
+  /* ===== 画面の状態 ===== */
+  var currentSet = "sent";
+  var currentMode = "all"; /* "all" | "retry" */
+  var order = [];          /* 出題する問題の配列 */
+  var pos = 0;
+  var roundOk = 0, roundNg = 0, roundSkip = 0;
+
+  function $(id) { return document.getElementById(id); }
+  function showScreen(name) {
+    $("screen-home").hidden = name !== "home";
+    $("screen-quiz").hidden = name !== "quiz";
+    $("screen-done").hidden = name !== "done";
+  }
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+  function linesHtml(lines) {
+    return lines.map(function (s) {
+      return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }).join("<br>");
+  }
+
+  /* ===== トップ画面の描画 ===== */
+  function renderHome() {
+    var total = ALL_ITEMS.length;
+    var ok = countOk(ALL_ITEMS);
+    $("progress-text").textContent = "全" + total + "問中 できた " + ok + "問";
+    $("progress-bar").style.width = (total ? Math.round(ok / total * 100) : 0) + "%";
+    var ngAll = ALL_ITEMS.filter(function (it) { return records[it.id] === false; }).length;
+    var yetAll = total - ok - ngAll;
+    $("progress-note").textContent = "できなかった " + ngAll + "問 ／ まだやっていない " + yetAll + "問";
+
+    $("tab-sent").setAttribute("aria-selected", currentSet === "sent" ? "true" : "false");
+    $("tab-word").setAttribute("aria-selected", currentSet === "word" ? "true" : "false");
+    $("mode-all").setAttribute("aria-pressed", currentMode === "all" ? "true" : "false");
+    $("mode-retry").setAttribute("aria-pressed", currentMode === "retry" ? "true" : "false");
+
+    var failed = failedItems(currentSet);
+    $("retry-count").textContent = SETS[currentSet].label + "のできなかった問題 " + failed.length + "問";
+    $("mode-retry").disabled = failed.length === 0;
+
+    var pool = currentMode === "retry" ? failed : SETS[currentSet].items;
+    $("start-btn").disabled = pool.length === 0;
+    $("home-note").textContent = pool.length === 0
+      ? "できなかった問題はありません。「全部の問題」で練習できます。"
+      : "「" + SETS[currentSet].label + "」の" +
+        (currentMode === "retry" ? "できなかった問題 " + pool.length + "問" : "全" + pool.length + "問") +
+        "をシャッフルして出題します。";
+    showScreen("home");
+  }
+
+  /* ===== クイズ画面 ===== */
+  function startQuiz() {
+    var pool = currentMode === "retry" ? failedItems(currentSet) : SETS[currentSet].items.slice();
+    if (pool.length === 0) return;
+    order = shuffle(pool);
+    pos = 0; roundOk = 0; roundNg = 0; roundSkip = 0;
+    showScreen("quiz");
+    renderQuestion();
+  }
+  function renderQuestion() {
+    var it = order[pos];
+    $("quiz-pos").textContent = (pos + 1) + " / " + order.length + " 問目";
+    $("quiz-set").textContent = SETS[currentSet].label + (currentMode === "retry" ? "（できなかった問題）" : "");
+    if (it.confirm) {
+      $("q-chip").hidden = false;
+      $("q-chip").textContent = "確認（もう一度）";
+    } else if (currentSet === "word" && typeof it.cat === "number") {
+      $("q-chip").hidden = false;
+      $("q-chip").textContent = WORD_CATS[it.cat];
+    } else {
+      $("q-chip").hidden = true;
+    }
+    $("q-text").innerHTML = linesHtml(it.q);
+    if (it.hint) {
+      $("q-hint").hidden = false;
+      $("q-hint").textContent = "ヒント：" + it.hint;
+    } else {
+      $("q-hint").hidden = true;
+    }
+    $("a-area").hidden = true;
+    $("show-a-btn").hidden = false;
+    $("dontknow-btn").hidden = !!it.confirm;
+    $("next-btn").hidden = true;
+    $("skip-btn").hidden = !!it.confirm;
+    $("judge-row").hidden = true;
+  }
+  function showAnswer() {
+    var it = order[pos];
+    $("a-text").innerHTML = linesHtml(it.a);
+    if (it.note) {
+      $("a-note").hidden = false;
+      $("a-note").textContent = "※ " + it.note;
+    } else {
+      $("a-note").hidden = true;
+    }
+    $("a-area").hidden = false;
+    $("show-a-btn").hidden = true;
+    $("dontknow-btn").hidden = true;
+    $("judge-row").hidden = false;
+    if (it.confirm) {
+      $("judge-row").hidden = true;
+      $("next-btn").hidden = false;
+    }
+  }
+  function finishRound() {
+    $("done-summary").textContent =
+      "今回は " + order.length + "問中、できた " + roundOk + "問・できなかった " + roundNg + "問" +
+      (roundSkip > 0 ? "・スキップ " + roundSkip + "問" : "") + "でした。" +
+      "（全体では 全" + ALL_ITEMS.length + "問中 できた " + countOk(ALL_ITEMS) + "問）";
+    $("done-retry-btn").disabled = failedItems(currentSet).length === 0;
+    showScreen("done");
+  }
+  function skipQuestion() {
+    if ("speechSynthesis" in window) { window.speechSynthesis.cancel(); }
+    roundSkip++;
+    pos++;
+    if (pos >= order.length) {
+      finishRound();
+    } else {
+      renderQuestion();
+    }
+  }
+  function dontKnow() {
+    var it = order[pos];
+    records[it.id] = false;
+    saveRecords();
+    roundNg++;
+    order.splice(Math.min(pos + 3, order.length), 0, { id: it.id, q: it.q, a: it.a, hint: it.hint, note: it.note, cat: it.cat, confirm: true });
+    showAnswer();
+    $("judge-row").hidden = true;
+    $("skip-btn").hidden = true;
+    $("next-btn").hidden = false;
+  }
+  function goNext() {
+    pos++;
+    if (pos >= order.length) {
+      finishRound();
+    } else {
+      renderQuestion();
+    }
+  }
+  function judge(ok) {
+    var it = order[pos];
+    records[it.id] = ok;
+    saveRecords();
+    if (ok) { roundOk++; } else {
+      roundNg++;
+      if (!it.confirm) {
+        order.splice(Math.min(pos + 3, order.length), 0, { id: it.id, q: it.q, a: it.a, hint: it.hint, note: it.note, cat: it.cat, confirm: true });
+      }
+    }
+    pos++;
+    if (pos >= order.length) {
+      finishRound();
+    } else {
+      renderQuestion();
+    }
+  }
+
+  /* ===== イベント ===== */
+  $("tab-sent").addEventListener("click", function () { currentSet = "sent"; renderHome(); });
+  $("tab-word").addEventListener("click", function () { currentSet = "word"; renderHome(); });
+  $("mode-all").addEventListener("click", function () { currentMode = "all"; renderHome(); });
+  $("mode-retry").addEventListener("click", function () { currentMode = "retry"; renderHome(); });
+  $("start-btn").addEventListener("click", startQuiz);
+  $("show-a-btn").addEventListener("click", showAnswer);
+  $("skip-btn").addEventListener("click", skipQuestion);
+  $("dontknow-btn").addEventListener("click", dontKnow);
+  $("next-btn").addEventListener("click", goNext);
+  $("ok-btn").addEventListener("click", function () { judge(true); });
+  $("ng-btn").addEventListener("click", function () { judge(false); });
+  $("again-btn").addEventListener("click", startQuiz);
+  $("done-retry-btn").addEventListener("click", function () { currentMode = "retry"; startQuiz(); });
+  $("done-home-btn").addEventListener("click", renderHome);
+
+  /* 問題データが無い場合の表示（データ移行前の安全策） */
+  if (ALL_ITEMS.length === 0) {
+    $("progress-text").textContent = "問題データ待ち";
+    $("start-btn").disabled = true;
+    $("home-note").textContent = "問題はまだ入っていません。プリントが届いたら追加されます。";
+  } else {
+    renderHome();
+  }
+</script>
+</body>
+</html>
