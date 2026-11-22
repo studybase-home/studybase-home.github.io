@@ -138,6 +138,10 @@
     width: 100%; border: 2px solid #e0655a; background: var(--surface); color: #c0392b;
     border-radius: 16px; font-size: 1.05rem; font-weight: 700; padding: 12px; min-height: 54px; margin-top: 10px;
   }
+  .back-top-btn {
+    width: 100%; border: 2px solid var(--line); background: var(--surface); color: var(--ink-soft);
+    border-radius: 16px; font-size: 1rem; font-weight: 700; padding: 12px; min-height: 50px; margin-top: 14px;
+  }
   .show-a-btn {
     width: 100%; border: 2px solid var(--accent); background: var(--surface); color: var(--accent);
     border-radius: 16px; font-size: 1.1rem; font-weight: 700; padding: 12px; min-height: 54px;
@@ -217,6 +221,12 @@
       <button class="mode-btn" id="mode-retry" aria-pressed="false">できなかった問題だけ<span class="cnt" id="retry-count"></span></button>
     </div>
 
+    <p class="note" style="margin: 12px 0 6px;">出題の順番</p>
+    <div class="mode-box">
+      <button class="mode-btn" id="order-shuffle" aria-pressed="true">シャッフル</button>
+      <button class="mode-btn" id="order-seq" aria-pressed="false">ノートの順番</button>
+    </div>
+
     <button class="start-btn" id="start-btn">スタート</button>
     <p class="note" id="home-note"></p>
     <p class="note">記録はこのブラウザの中だけに保存されます。</p>
@@ -241,6 +251,7 @@
       <button class="ng-btn" id="ng-btn">✖ できなかった</button>
     </div>
     <button class="show-a-btn" id="next-btn" hidden>つぎへ →</button>
+    <button class="back-top-btn" id="back-top-btn">トップに戻る</button>
     <button class="ghost-btn" id="skip-btn" style="margin-top:10px;">記録しないで次へ →</button>
   </div>
 
@@ -364,6 +375,7 @@
   /* ===== 画面の状態 ===== */
   var currentSet = "sent";
   var currentMode = "all"; /* "all" | "retry" */
+  var currentOrder = "shuffle"; /* "shuffle" | "seq" */
   var order = [];          /* 出題する問題の配列 */
   var pos = 0;
   var roundOk = 0, roundNg = 0, roundSkip = 0;
@@ -443,6 +455,8 @@
     $("tab-word").setAttribute("aria-selected", currentSet === "word" ? "true" : "false");
     $("mode-all").setAttribute("aria-pressed", currentMode === "all" ? "true" : "false");
     $("mode-retry").setAttribute("aria-pressed", currentMode === "retry" ? "true" : "false");
+    $("order-shuffle").setAttribute("aria-pressed", currentOrder === "shuffle" ? "true" : "false");
+    $("order-seq").setAttribute("aria-pressed", currentOrder === "seq" ? "true" : "false");
 
     var failed = failedItems(currentSet);
     $("retry-count").textContent = SETS[currentSet].label + "のできなかった問題 " + failed.length + "問";
@@ -454,7 +468,7 @@
       ? "できなかった問題はありません。「全部の問題」で練習できます。"
       : "「" + SETS[currentSet].label + "」の" +
         (currentMode === "retry" ? "できなかった問題 " + pool.length + "問" : "全" + pool.length + "問") +
-        "をシャッフルして出題します。";
+        (currentOrder === "shuffle" ? "をシャッフルして出題します。" : "をノートの順番のまま出題します。");
     showScreen("home");
   }
 
@@ -462,7 +476,7 @@
   function startQuiz() {
     var pool = currentMode === "retry" ? failedItems(currentSet) : SETS[currentSet].items.slice();
     if (pool.length === 0) return;
-    order = shuffle(pool);
+    order = currentOrder === "shuffle" ? shuffle(pool) : pool.slice();
     pos = 0; roundOk = 0; roundNg = 0; roundSkip = 0;
     showScreen("quiz");
     renderQuestion();
@@ -573,6 +587,9 @@
   $("tab-word").addEventListener("click", function () { currentSet = "word"; renderHome(); });
   $("mode-all").addEventListener("click", function () { currentMode = "all"; renderHome(); });
   $("mode-retry").addEventListener("click", function () { currentMode = "retry"; renderHome(); });
+  $("order-shuffle").addEventListener("click", function () { currentOrder = "shuffle"; renderHome(); });
+  $("order-seq").addEventListener("click", function () { currentOrder = "seq"; renderHome(); });
+  $("back-top-btn").addEventListener("click", renderHome);
   $("start-btn").addEventListener("click", startQuiz);
   $("show-a-btn").addEventListener("click", showAnswer);
   $("skip-btn").addEventListener("click", skipQuestion);
