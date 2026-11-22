@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="漢文 返り点ドリル">
+<title>漢文 返り点ドリル</title>
+<style>
+  :root{
+    --bg:#f4f6fb; --card:#ffffff; --ink:#1c2333; --sub:#5b6478;
+    --accent:#2f5fd0; --accent2:#e8710a; --ok:#1d9e57; --ng:#d23c3c;
+    --line:#d9deea;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{margin:0; font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; background:var(--bg); color:var(--ink);}
+  header{background:linear-gradient(135deg,#2b3a67,#2f5fd0); color:#fff; padding:18px 16px 14px;}
+  header .back{color:#cfe0ff; text-decoration:none; font-size:13px;}
+  header h1{margin:6px 0 2px; font-size:22px;}
+  header .era{font-size:13px; opacity:.9;}
+  header .date{font-size:12px; opacity:.75; margin-top:2px;}
+  main{max-width:640px; margin:0 auto; padding:14px 14px 40px;}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px; margin-bottom:14px;}
+  .card h2{margin:0 0 8px; font-size:16px;}
+  .small{font-size:13px; color:var(--sub); line-height:1.6;}
+  details.rules summary{font-size:15px; font-weight:700; cursor:pointer; padding:4px 0;}
+  details.rules ul{margin:8px 0 4px; padding-left:20px; font-size:14px; line-height:1.9;}
+  .label{font-size:13px; font-weight:700; color:var(--sub); margin:12px 0 6px;}
+  .chips{display:flex; flex-wrap:wrap; gap:8px;}
+  .chip{border:2px solid var(--line); background:#fff; border-radius:999px; padding:9px 14px; font-size:14px; font-weight:700; cursor:pointer; min-height:44px;}
+  .chip.on{border-color:var(--accent); background:#e8effe; color:var(--accent);}
+  .mode-box{display:block; width:100%; text-align:left; border:2px solid var(--line); background:#fff; border-radius:12px; padding:13px 14px; margin-bottom:10px; cursor:pointer; min-height:52px;}
+  .mode-box .t{font-size:16px; font-weight:700;}
+  .mode-box .d{font-size:12px; color:var(--sub); margin-top:2px;}
+  .mode-box:active{background:#eef2fd;}
+  .mode-box.disabled{opacity:.45; pointer-events:none;}
+  .progress{font-size:13px; color:var(--sub); margin-top:6px;}
+  /* quiz */
+  #quiz-screen{display:none;}
+  .q-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;}
+  .q-count{font-size:13px; color:var(--sub); font-weight:700;}
+  .home-btn{border:1px solid var(--line); background:#fff; border-radius:8px; padding:8px 12px; font-size:13px; cursor:pointer; min-height:40px;}
+  .q-dir{font-size:14px; font-weight:700; color:var(--accent); margin:2px 0 4px;}
+  .q-inst{font-size:13px; color:var(--sub); margin-bottom:10px; line-height:1.6;}
+  .fail-badge{display:none; background:#fdecec; color:var(--ng); border-radius:8px; padding:6px 10px; font-size:13px; font-weight:700; margin-bottom:10px;}
+  .chars{display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 4px;}
+  .char-box{position:relative; width:56px; height:72px; border:2px solid var(--line); border-radius:10px; background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; user-select:none;}
+  .char-box .ch{font-size:30px; font-weight:700; line-height:1; padding-bottom:12px;}
+  .char-box .mk{position:absolute; left:5px; bottom:3px; font-size:15px; font-weight:700; color:var(--accent2);}
+  .char-box .given{position:absolute; right:5px; bottom:3px; font-size:13px; font-weight:700; color:#98a2b8;}
+  .char-box .num{position:absolute; top:-9px; right:-7px; min-width:26px; height:26px; border-radius:999px; background:var(--accent); color:#fff; font-size:15px; font-weight:700; display:none; align-items:center; justify-content:center; padding:0 5px;}
+  .char-box.picked{border-color:var(--accent); background:#e8effe;}
+  .char-box.picked .num{display:flex;}
+  .char-box.good{border-color:var(--ok); background:#e7f7ee;}
+  .char-box.bad{border-color:var(--ng); background:#fdecec;}
+  .char-box .ans{position:absolute; left:0; right:0; bottom:-24px; text-align:center; font-size:14px; font-weight:700; color:var(--ng); display:none;}
+  .char-box.bad .ans{display:block;}
+  .char-box .ans-mark{color:var(--ng);}
+  .chars.checked{margin-bottom:30px;}
+  .btn-row{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;}
+  .btn{flex:1; min-width:100px; border:none; border-radius:10px; padding:13px 10px; font-size:15px; font-weight:700; cursor:pointer; min-height:48px;}
+  .btn.primary{background:var(--accent); color:#fff;}
+  .btn.ghost{background:#fff; border:2px solid var(--line); color:var(--ink);}
+  .btn:disabled{opacity:.4;}
+  .result{display:none; border-radius:12px; padding:12px 14px; margin-top:14px; font-size:15px; line-height:1.7;}
+  .result.ok{background:#e7f7ee; border:1px solid var(--ok);}
+  .result.ng{background:#fdecec; border:1px solid var(--ng);}
+  .result .yomi{font-size:16px; font-weight:700; margin-top:4px;}
+  /* done */
+  #done-screen{display:none; text-align:center;}
+  #done-screen .score{font-size:34px; font-weight:800; margin:10px 0;}
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="../index.html">← RYU学習ポータルに戻る</a>
+  <h1>漢文 返り点ドリル</h1>
+  <div class="era">レ点・一二点・一二三点・上下点 ― 読む順番の練習</div>
+  <div class="date">作成：2026年11月22日</div>
+</header>
+<main>
+  <!-- ホーム -->
+  <section id="home-screen">
+    <div class="card">
+      <details class="rules">
+        <summary>返り点のルール（確認）</summary>
+        <ul>
+          <li><b>レ点</b>：その字は、すぐ次の字を読んでから読む。</li>
+          <li><b>一・二点</b>：二点の字は、一点の字を読んでから読む（一点まで進んで、二点に戻る）。</li>
+          <li><b>一・二・三点</b>：三点の字は、二点の字を読んでから読む。</li>
+          <li><b>上・下点</b>：一・二点と同じ働き。下点の字は、上点の字を読んでから読む。</li>
+        </ul>
+      </details>
+      <div class="progress" id="progress-text"></div>
+    </div>
+
+    <div class="card">
+      <h2>問題の種類</h2>
+      <div class="chips" id="dir-chips">
+        <button class="chip on" data-dir="a">記号 → 数字</button>
+        <button class="chip" data-dir="b">数字 → 記号</button>
+        <button class="chip" data-dir="mix">ミックス</button>
+      </div>
+      <div class="small" style="margin-top:8px;">
+        「記号 → 数字」は、返り点を見て読む順番にタップする問題。<br>
+        「数字 → 記号」は、読む順番の数字を見て、字をタップして返り点を付ける問題（タップするたびに記号が切り替わります）。
+      </div>
+      <div class="label">返り点のパターン</div>
+      <div class="chips" id="pat-chips">
+        <button class="chip on" data-pat="all">全部</button>
+        <button class="chip" data-pat="レ">レ点</button>
+        <button class="chip" data-pat="一二">一二点</button>
+        <button class="chip" data-pat="一二三">一二三点</button>
+        <button class="chip" data-pat="上下">上下点</button>
+        <button class="chip" data-pat="ミックス">ミックス</button>
+        <button class="chip" data-pat="そのまま">そのまま</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>練習をはじめる</h2>
+      <button class="mode-box" id="start-all">
+        <div class="t">全部の問題</div>
+        <div class="d" id="all-count"></div>
+      </button>
+      <button class="mode-box" id="start-retry">
+        <div class="t">バツのままの問題だけ</div>
+        <div class="d" id="retry-count"></div>
+      </button>
+      <button class="mode-box" id="start-ever">
+        <div class="t">1回でもバツになった問題（最後の確認）</div>
+        <div class="d" id="ever-count"></div>
+      </button>
+    </div>
+  </section>
+
+  <!-- クイズ -->
+  <section id="quiz-screen">
+    <div class="q-head">
+      <div class="q-count" id="q-count"></div>
+      <button class="home-btn" id="quiz-home-btn">トップに戻る</button>
+    </div>
+    <div class="q-dir" id="q-dir"></div>
+    <div class="q-inst" id="q-inst"></div>
+    <div class="fail-badge" id="fail-badge"></div>
+    <div class="chars" id="chars"></div>
+    <div class="btn-row" id="edit-btns">
+      <button class="btn ghost" id="undo-btn">1つ消す</button>
+      <button class="btn ghost" id="clear-btn">全部消す</button>
+      <button class="btn primary" id="check-btn">答え合わせ</button>
+    </div>
+    <div class="result" id="result"></div>
+    <div class="btn-row">
+      <button class="btn primary hidden" id="next-btn">次の問題へ</button>
+    </div>
+  </section>
+
+  <!-- 終了 -->
+  <section id="done-screen">
+    <div class="card">
+      <h2>おつかれさま！</h2>
+      <div class="score" id="done-score"></div>
+      <div class="small" id="done-msg"></div>
+      <div class="btn-row" style="margin-top:16px;">
+        <button class="btn ghost" id="done-retry-btn">バツの問題だけ</button>
+        <button class="btn primary" id="done-home-btn">トップに戻る</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+"use strict";
+/* 文データ：marks は字の位置（0始まり）→ 返り点。order は読む順番（字の位置の並び）。 */
+var SENTENCES = [
+  /* 教科書の文（矛盾・揠苗助長・守株待兎） */
+  { id:"k01", text:"楚人有鬻盾與矛者", marks:{"2":"下","3":"二","6":"一","7":"上"}, order:[0,1,4,5,6,3,7,2], yomi:"楚人に盾と矛とを鬻ぐ者有り", pat:"ミックス" },
+  { id:"k02", text:"誉之曰", marks:{"0":"レ"}, order:[1,0,2], yomi:"之を誉めて曰はく", pat:"レ" },
+  { id:"k03", text:"吾盾之堅", marks:{}, order:[0,1,2,3], yomi:"吾が盾の堅きこと", pat:"そのまま" },
+  { id:"k04", text:"莫能陥也", marks:{"0":"二","2":"一"}, order:[1,2,0,3], yomi:"能く陥すもの莫きなり", pat:"一二" },
+  { id:"k05", text:"又誉其矛曰", marks:{"1":"二","3":"一"}, order:[0,2,3,1,4], yomi:"又、其の矛を誉めて曰はく", pat:"一二" },
+  { id:"k06", text:"吾矛之利", marks:{}, order:[0,1,2,3], yomi:"吾が矛の利きこと", pat:"そのまま" },
+  { id:"k07", text:"於物無不陥也", marks:{"0":"レ","2":"レ","3":"レ"}, order:[1,0,4,3,2,5], yomi:"物に於て陥さざる無し", pat:"レ" },
+  { id:"k08", text:"或謂之曰", marks:{"1":"レ"}, order:[0,2,1,3], yomi:"或る人、之に謂いて曰はく", pat:"レ" },
+  { id:"k09", text:"以子之矛", marks:{"0":"二","3":"一"}, order:[1,2,3,0], yomi:"子の矛を以て", pat:"一二" },
+  { id:"k10", text:"陥子之盾何如", marks:{"0":"二","3":"一"}, order:[1,2,3,0,4,5], yomi:"子の盾を陥さば何如", pat:"一二" },
+  { id:"k11", text:"其人弗能応也", marks:{"2":"レ","3":"レ"}, order:[0,1,4,3,2,5], yomi:"其の人、応ふること能はざるなり", pat:"レ" },
+  { id:"k12", text:"謂其人曰", marks:{"0":"二","2":"一"}, order:[1,2,0,3], yomi:"其の人に謂いて曰はく", pat:"一二" },
+  { id:"k13", text:"予助苗長矣", marks:{"1":"レ"}, order:[0,2,1,3,4], yomi:"予、苗を助けて長ぜしめたり", pat:"レ" },
+  { id:"k14", text:"其子趨而往視之", marks:{"5":"レ"}, order:[0,1,2,3,4,6,5], yomi:"其の子、趨りて往きて之を視る", pat:"レ" },
+  { id:"k15", text:"宋人有耕者", marks:{"2":"二","4":"一"}, order:[0,1,3,4,2], yomi:"宋人に耕す者有り", pat:"一二" },
+  { id:"k16", text:"田中有株", marks:{"2":"レ"}, order:[0,1,3,2], yomi:"田の中に株有り", pat:"レ" },
+  /* レ点の練習 */
+  { id:"k17", text:"園中有樹", marks:{"2":"レ"}, order:[0,1,3,2], yomi:"園の中に樹有り", pat:"レ" },
+  { id:"k18", text:"池中有魚", marks:{"2":"レ"}, order:[0,1,3,2], yomi:"池の中に魚有り", pat:"レ" },
+  { id:"k19", text:"門前有市", marks:{"2":"レ"}, order:[0,1,3,2], yomi:"門前に市有り", pat:"レ" },
+  { id:"k20", text:"倉中有米", marks:{"2":"レ"}, order:[0,1,3,2], yomi:"倉の中に米有り", pat:"レ" },
+  { id:"k21", text:"山有寺", marks:{"1":"レ"}, order:[0,2,1], yomi:"山に寺有り", pat:"レ" },
+  { id:"k22", text:"門有客", marks:{"1":"レ"}, order:[0,2,1], yomi:"門に客有り", pat:"レ" },
+  /* 一二点の練習 */
+  { id:"k23", text:"人有善行", marks:{"1":"二","3":"一"}, order:[0,2,3,1], yomi:"人に善行有り", pat:"一二" },
+  { id:"k24", text:"国有賢臣", marks:{"1":"二","3":"一"}, order:[0,2,3,1], yomi:"国に賢臣有り", pat:"一二" },
+  { id:"k25", text:"王有大志", marks:{"1":"二","3":"一"}, order:[0,2,3,1], yomi:"王に大志有り", pat:"一二" },
+  { id:"k26", text:"師有高名", marks:{"1":"二","3":"一"}, order:[0,2,3,1], yomi:"師に高名有り", pat:"一二" },
+  { id:"k27", text:"村有老翁", marks:{"1":"二","3":"一"}, order:[0,2,3,1], yomi:"村に老翁有り", pat:"一二" },
+  { id:"k28", text:"昔者有賢人", marks:{"2":"二","4":"一"}, order:[0,1,3,4,2], yomi:"昔、賢人有り", pat:"一二" },
+  /* 一二三点の練習 */
+  { id:"k29", text:"客見花笑", marks:{"0":"二","2":"一","3":"三"}, order:[1,2,0,3], yomi:"花を見て、客は笑う", pat:"一二三" },
+  { id:"k30", text:"子聞声喜", marks:{"0":"二","2":"一","3":"三"}, order:[1,2,0,3], yomi:"声を聞いて、子は喜ぶ", pat:"一二三" },
+  { id:"k31", text:"王見民喜", marks:{"0":"二","2":"一","3":"三"}, order:[1,2,0,3], yomi:"民を見て、王は喜ぶ", pat:"一二三" },
+  { id:"k32", text:"鳥聞声飛", marks:{"0":"二","2":"一","3":"三"}, order:[1,2,0,3], yomi:"声を聞いて、鳥は飛ぶ", pat:"一二三" },
+  /* 上下点の練習 */
+  { id:"k33", text:"国有賢臣家有孝子", marks:{"1":"二","3":"一","5":"下","7":"上"}, order:[0,2,3,1,4,6,7,5], yomi:"国に賢臣有り、家に孝子有り", pat:"上下" },
+  { id:"k34", text:"人有善行天有晴日", marks:{"1":"二","3":"一","5":"下","7":"上"}, order:[0,2,3,1,4,6,7,5], yomi:"人に善行有り、天に晴日有り", pat:"上下" },
+  { id:"k35", text:"客見花入園", marks:{"0":"下","1":"二","2":"一","3":"上"}, order:[2,1,3,0,4], yomi:"花を見て、客は園に入る", pat:"上下" },
+  { id:"k36", text:"子迎友入家", marks:{"0":"下","1":"二","2":"一","3":"上"}, order:[2,1,3,0,4], yomi:"友を迎えて、子は家に入る", pat:"上下" },
+  /* ミックス */
+  { id:"k37", text:"人見花鳥有声", marks:{"0":"二","2":"一","4":"レ"}, order:[1,2,0,3,5,4], yomi:"花を見る人。鳥に声有り", pat:"ミックス" },
+  { id:"k38", text:"園中有花鳥有声", marks:{"2":"レ","5":"レ"}, order:[0,1,3,2,4,6,5], yomi:"園の中に花有り、鳥に声有り", pat:"ミックス" }
+];
+
+var REC_KEY = "ryunosuke.kokugo-kanbun.records.v1";
+var FAIL_KEY = "ryunosuke.kokugo-kanbun.failcounts.v1";
+var MARK_CYCLE = ["", "レ", "一", "二", "三", "上", "下"];
+
+function loadJSON(key){
+  try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : {}; } catch(e){ return {}; }
+}
+function saveJSON(key, obj){
+  try { localStorage.setItem(key, JSON.stringify(obj)); } catch(e){}
+}
+var records = loadJSON(REC_KEY);
+var failCounts = loadJSON(FAIL_KEY);
+/* バツのままなのに回数が無いものは1回として補う */
+SENTENCES.forEach(function(s){
+  ["a","b"].forEach(function(d){
+    var k = s.id + ":" + d;
+    if (records[k] === "x" && !failCounts[k]) failCounts[k] = 1;
+  });
+});
+saveJSON(FAIL_KEY, failCounts);
+
+var currentDirMode = "a";   /* a / b / mix */
+var currentPat = "all";
+var quizList = [];          /* {s, dir} */
+var quizIdx = 0;
+var quizCorrect = 0;
+var cur = null;             /* 現在の問題 {s, dir} */
+var taps = [];              /* 記号→数字：タップした字の位置の並び */
+var myMarks = {};           /* 数字→記号：位置→記号 */
+var checked = false;
+
+function el(id){ return document.getElementById(id); }
+function keyOf(s, dir){ return s.id + ":" + dir; }
+function posOf(s){ /* 字の位置 → 読む順番（1始まり） */
+  var pos = {};
+  s.order.forEach(function(ci, i){ pos[ci] = i + 1; });
+  return pos;
+}
+function dirsForMode(){
+  if (currentDirMode === "mix") return ["a","b"];
+  return [currentDirMode];
+}
+function poolItems(mode){
+  var items = [];
+  SENTENCES.forEach(function(s){
+    if (currentPat !== "all" && s.pat !== currentPat) return;
+    dirsForMode().forEach(function(d){
+      var k = keyOf(s, d);
+      if (mode === "all") items.push({s:s, dir:d});
+      else if (mode === "retry" && records[k] === "x") items.push({s:s, dir:d});
+      else if (mode === "ever" && (failCounts[k] || 0) >= 1) items.push({s:s, dir:d});
+    });
+  });
+  if (mode !== "all"){
+    items.sort(function(x, y){
+      var fx = failCounts[keyOf(x.s, x.dir)] || 0;
+      var fy = failCounts[keyOf(y.s, y.dir)] || 0;
+      return fy - fx;
+    });
+  }
+  return items;
+}
+function shuffle(arr){
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+function renderHome(){
+  var total = 0, done = 0;
+  SENTENCES.forEach(function(s){
+    ["a","b"].forEach(function(d){
+      total++;
+      if (records[keyOf(s, d)] === "o") done++;
+    });
+  });
+  el("progress-text").textContent = "全" + SENTENCES.length + "文 × 2種類 = " + total + "問中、" + done + "問 できました。";
+  var all = poolItems("all"), retry = poolItems("retry"), ever = poolItems("ever");
+  el("all-count").textContent = all.length + "問";
+  el("retry-count").textContent = retry.length + "問";
+  el("ever-count").textContent = ever.length + "問";
+  el("start-retry").classList.toggle("disabled", retry.length === 0);
+  el("start-ever").classList.toggle("disabled", ever.length === 0);
+}
+
+function showScreen(name){
+  el("home-screen").style.display = name === "home" ? "" : "none";
+  el("quiz-screen").style.display = name === "quiz" ? "" : "none";
+  el("done-screen").style.display = name === "done" ? "" : "none";
+  window.scrollTo(0, 0);
+}
+
+function startQuiz(mode){
+  var items = poolItems(mode);
+  if (mode === "all") items = shuffle(items);
+  if (items.length === 0) return;
+  quizList = items;
+  quizIdx = 0;
+  quizCorrect = 0;
+  showScreen("quiz");
+  renderQuestion();
+}
+
+function renderQuestion(){
+  cur = quizList[quizIdx];
+  var s = cur.s, d = cur.dir;
+  taps = [];
+  myMarks = {};
+  checked = false;
+  el("q-count").textContent = (quizIdx + 1) + " / " + quizList.length + " 問";
+  el("q-dir").textContent = d === "a" ? "記号 → 数字" : "数字 → 記号";
+  el("q-inst").textContent = d === "a"
+    ? "返り点を見て、読む順番に字をタップして番号をふろう。"
+    : "下の数字が読む順番です。字をタップして、合う返り点を付けよう（タップするたびに記号が切り替わります）。全部の字につけ終わったら答え合わせ。";
+  var fc = failCounts[keyOf(s, d)] || 0;
+  var badge = el("fail-badge");
+  if (fc >= 1){
+    badge.style.display = "block";
+    badge.textContent = "この問題は今まで " + fc + "回 できなかった";
+  } else {
+    badge.style.display = "none";
+  }
+  el("result").style.display = "none";
+  el("next-btn").classList.add("hidden");
+  el("edit-btns").style.display = "";
+  el("undo-btn").style.display = d === "a" ? "" : "none";
+  el("clear-btn").textContent = d === "a" ? "全部消す" : "記号を全部消す";
+  renderChars();
+  updateCheckBtn();
+}
+
+function renderChars(){
+  var s = cur.s, d = cur.dir;
+  var pos = posOf(s);
+  var wrap = el("chars");
+  wrap.innerHTML = "";
+  wrap.classList.toggle("checked", checked);
+  s.text.split("").forEach(function(ch, i){
+    var box = document.createElement("div");
+    box.className = "char-box";
+    box.dataset.idx = i;
+    var mk = d === "a" ? (s.marks[i] || "") : (myMarks[i] || "");
+    var html = '<div class="ch">' + ch + "</div>";
+    if (mk) html += '<div class="mk">' + mk + "</div>";
+    if (d === "b") html += '<div class="given">' + pos[i] + "</div>";
+    if (d === "a"){
+      var ti = taps.indexOf(i);
+      if (ti >= 0){
+        box.classList.add("picked");
+        html += '<div class="num">' + (ti + 1) + "</div>";
+      }
+    }
+    box.innerHTML = html;
+    box.addEventListener("click", function(){ onCharTap(i); });
+    wrap.appendChild(box);
+  });
+}
+
+function onCharTap(i){
+  if (checked) return;
+  var s = cur.s, d = cur.dir;
+  if (d === "a"){
+    var ti = taps.indexOf(i);
+    if (ti >= 0) taps.splice(ti, 1);
+    else taps.push(i);
+  } else {
+    var curMk = myMarks[i] || "";
+    var ni = MARK_CYCLE.indexOf(curMk);
+    var next = MARK_CYCLE[(ni + 1) % MARK_CYCLE.length];
+    if (next) myMarks[i] = next; else delete myMarks[i];
+  }
+  renderChars();
+  updateCheckBtn();
+}
+
+function updateCheckBtn(){
+  var s = cur.s, d = cur.dir;
+  if (d === "a") el("check-btn").disabled = taps.length !== s.text.length;
+  else el("check-btn").disabled = false;
+}
+
+function doCheck(){
+  if (checked) return;
+  var s = cur.s, d = cur.dir;
+  var ok = true;
+  var boxes = el("chars").children;
+  if (d === "a"){
+    for (var i = 0; i < s.text.length; i++){
+      var correctNum = s.order.indexOf(i) + 1;
+      var myNum = taps.indexOf(i) + 1;
+      var good = myNum === correctNum;
+      if (!good) ok = false;
+      boxes[i].classList.add(good ? "good" : "bad");
+      if (!good){
+        var a = document.createElement("div");
+        a.className = "ans";
+        a.textContent = correctNum;
+        boxes[i].appendChild(a);
+      }
+    }
+  } else {
+    for (var j = 0; j < s.text.length; j++){
+      var correctMk = s.marks[j] || "";
+      var myMk = myMarks[j] || "";
+      var good2 = myMk === correctMk;
+      if (!good2) ok = false;
+      boxes[j].classList.add(good2 ? "good" : "bad");
+      if (!good2){
+        var a2 = document.createElement("div");
+        a2.className = "ans ans-mark";
+        a2.textContent = correctMk ? correctMk : "なし";
+        boxes[j].appendChild(a2);
+      }
+    }
+  }
+  checked = true;
+  el("chars").classList.add("checked");
+  var k = keyOf(s, d);
+  if (ok){
+    records[k] = "o";
+    quizCorrect++;
+  } else {
+    records[k] = "x";
+    failCounts[k] = (failCounts[k] || 0) + 1;
+    saveJSON(FAIL_KEY, failCounts);
+  }
+  saveJSON(REC_KEY, records);
+  var r = el("result");
+  r.style.display = "block";
+  r.className = "result " + (ok ? "ok" : "ng");
+  r.innerHTML = (ok ? "⭕ 正解です！" : "❌ まちがいがあります。赤い字の下が正解です。") +
+    '<div class="yomi">読み下し：' + s.yomi + "</div>";
+  el("edit-btns").style.display = "none";
+  var nb = el("next-btn");
+  nb.classList.remove("hidden");
+  nb.textContent = quizIdx + 1 < quizList.length ? "次の問題へ" : "結果を見る";
+}
+
+function nextQuestion(){
+  quizIdx++;
+  if (quizIdx < quizList.length){
+    renderQuestion();
+  } else {
+    el("done-score").textContent = quizCorrect + " / " + quizList.length + " 問 正解";
+    el("done-msg").textContent = quizCorrect === quizList.length
+      ? "全問正解です。この調子でいきましょう。"
+      : "バツになった問題は、トップの「バツのままの問題だけ」からもう一度できます。";
+    showScreen("done");
+    renderHome();
+  }
+}
+
+/* イベント */
+el("dir-chips").addEventListener("click", function(e){
+  var b = e.target.closest(".chip"); if (!b) return;
+  currentDirMode = b.dataset.dir;
+  this.querySelectorAll(".chip").forEach(function(c){ c.classList.toggle("on", c === b); });
+  renderHome();
+});
+el("pat-chips").addEventListener("click", function(e){
+  var b = e.target.closest(".chip"); if (!b) return;
+  currentPat = b.dataset.pat;
+  this.querySelectorAll(".chip").forEach(function(c){ c.classList.toggle("on", c === b); });
+  renderHome();
+});
+el("start-all").addEventListener("click", function(){ startQuiz("all"); });
+el("start-retry").addEventListener("click", function(){ startQuiz("retry"); });
+el("start-ever").addEventListener("click", function(){ startQuiz("ever"); });
+el("quiz-home-btn").addEventListener("click", function(){ showScreen("home"); renderHome(); });
+el("undo-btn").addEventListener("click", function(){
+  if (checked) return;
+  taps.pop();
+  renderChars(); updateCheckBtn();
+});
+el("clear-btn").addEventListener("click", function(){
+  if (checked) return;
+  taps = []; myMarks = {};
+  renderChars(); updateCheckBtn();
+});
+el("check-btn").addEventListener("click", doCheck);
+el("next-btn").addEventListener("click", nextQuestion);
+el("done-home-btn").addEventListener("click", function(){ showScreen("home"); renderHome(); });
+el("done-retry-btn").addEventListener("click", function(){ startQuiz("retry"); });
+
+renderHome();
+</script>
+</body>
+</html>
