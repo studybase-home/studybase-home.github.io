@@ -189,7 +189,7 @@
 
   <a class="back" href="../index.html">‹ RYU学習ポータルに戻る</a>
   <h1>日本史：奈良時代</h1>
-  <p class="sub">社会・日本史 一問一答（ノート0.5 律令国家のしくみ 17問・ノート① 律令のしくみ 27問・ノート1.5 民衆の生活と遣唐使 29問・ノート② 平城京と領土の拡大 34問）</p>
+  <p class="sub">社会・日本史 一問一答（ノート0.5 律令国家のしくみ 18問・ノート① 律令のしくみ 30問・ノート1.5 民衆の生活と遣唐使 29問・ノート② 平城京と領土の拡大 35問）</p>
   <p class="sub" style="margin-top:-6px;">時代：奈良時代（律令国家と平城京）／作成：2026年11月22日</p>
 
   <div class="err-box">
@@ -222,16 +222,16 @@
   <!-- ===== トップ画面 ===== -->
   <div id="screen-home">
     <div class="progress-box">
-      <div class="progress-row"><span>進み具合</span><span class="num" id="progress-text">全107問中 できた 0問</span></div>
+      <div class="progress-row"><span>進み具合</span><span class="num" id="progress-text">全112問中 できた 0問</span></div>
       <div class="bar"><div class="bar-fill" id="progress-bar" style="width:0%"></div></div>
       <p class="progress-note" id="progress-note"></p>
     </div>
 
     <div class="tabs" role="tablist" aria-label="問題の種類">
-      <button class="tab" id="tab-pre" role="tab" aria-selected="true">ノート0.5 律令国家のしくみ<span class="tab-count">全17問</span></button>
-      <button class="tab" id="tab-sent" role="tab" aria-selected="false">ノート① 律令のしくみ<span class="tab-count">全27問</span></button>
+      <button class="tab" id="tab-pre" role="tab" aria-selected="true">ノート0.5 律令国家のしくみ<span class="tab-count">全18問</span></button>
+      <button class="tab" id="tab-sent" role="tab" aria-selected="false">ノート① 律令のしくみ<span class="tab-count">全30問</span></button>
       <button class="tab" id="tab-mid" role="tab" aria-selected="false">ノート1.5 民衆の生活と遣唐使<span class="tab-count">全29問</span></button>
-      <button class="tab" id="tab-word" role="tab" aria-selected="false">ノート② 平城京と領土の拡大<span class="tab-count">全34問</span></button>
+      <button class="tab" id="tab-word" role="tab" aria-selected="false">ノート② 平城京と領土の拡大<span class="tab-count">全35問</span></button>
     </div>
 
     <p class="note" style="margin: 12px 0 6px;">レベル（2つ全部クリアで、この範囲の内容を全部カバーできます）</p>
@@ -315,7 +315,8 @@
     { lv: 1, q: ["大納言の下に置かれた役職は？"], a: ["少納言"] },
     { lv: 1, q: ["このページに書かれている八省のうち、4つを言うと？"], a: ["中務省・式部省・治部省・民部省"] },
     { lv: 2, q: ["律令の「律」と「令」は、それぞれ何を定めたもの？"], a: ["律は刑罰（罪と罰）、令は政治のしくみや税などの決まり"] },
-    { lv: 2, q: ["左弁官・右弁官（弁官）は、何を担当した？"], a: ["八省の事務の統括・連絡（太政官の事務局）"] }
+    { lv: 2, q: ["左弁官・右弁官（弁官）は、何を担当した？"], a: ["八省の事務の統括・連絡（太政官の事務局）"] },
+    { lv: 2, q: ["養老律令を作った人物は？"], a: ["藤原不比等"] }
   ];
 
   var SENTENCES = [
@@ -344,8 +345,11 @@
     { lv: 2, q: ["摂津国の内政を担当した役所は？"], a: ["摂津職"] },
     { lv: 2, q: ["国司の役所を何という？"], a: ["国府（国衙）"] },
     { lv: 2, q: ["郡司の役所を何という？"], a: ["郡衙（郡家）"] },
-    { lv: 2, q: ["里は、何戸で構成された？"], a: ["50戸"] },
-    { lv: 2, q: ["八虐とは、どのような罪？"], a: ["国家・天皇・尊属（目上の親族）に対する罪"] }
+    { lv: 2, q: ["里は、何戸で構成された？"], a: ["郷戸50戸"] },
+    { lv: 2, q: ["八虐とは、どのような罪？"], a: ["国家・天皇・尊属（目上の親族）に対する罪"] },
+    { lv: 2, q: ["郷戸は、何戸の房戸で構成された？"], a: ["2〜3戸"] },
+    { lv: 2, q: ["五刑のうち、笞刑と杖刑は、どのような刑？"], a: ["竹や棒で打つ刑"] },
+    { lv: 2, q: ["五刑のうち、徒刑と流刑は、どのような刑？"], a: ["徒刑は懲役（働かされる刑）、流刑は島流し"] }
   ];
 
   var MID = [
@@ -415,7 +419,8 @@
     { lv: 2, q: ["出羽柵が置かれたのは何年で、その後置かれた国は？"], a: ["708年・出羽国"] },
     { lv: 2, q: ["多賀城が置かれたのは、太平洋側と日本海側のどちら？"], a: ["太平洋側（今の宮城県）"] },
     { lv: 2, q: ["多賀城には、国府のほかに何が置かれた？"], a: ["陸奥鎮守府"] },
-    { lv: 2, q: ["政府は、九州南部の人々を何と呼び、どう扱った？"], a: ["隼人と呼び、異民族とみなした"] }
+    { lv: 2, q: ["政府は、九州南部の人々を何と呼び、どう扱った？"], a: ["隼人と呼び、異民族とみなした"] },
+    { lv: 2, q: ["平城京には、平城宮のほかに、どのような建物があった？"], a: ["貴族・官人の邸宅や大寺院"] }
   ];
 
   /* 各問題に安定したIDを付ける（記録の保存キー） */
@@ -517,6 +522,8 @@
     return a;
   }
   var GLOSSARY = {
+    "房戸": "郷戸を構成する小さな戸。房戸2〜3戸で郷戸1戸になった。",
+    "郷戸": "房戸2〜3戸からなる大きな戸。郷戸50戸で里が作られた。",
     "左弁官": "太政官の事務局（弁官）の1つ。八省の事務の連絡・統括を担当した。",
     "右弁官": "太政官の事務局（弁官）の1つ。八省の事務の連絡・統括を担当した。",
     "五衛府": "都（京）や宮城の警備にあたった軍事機関の総称。",
