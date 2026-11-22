@@ -111,8 +111,7 @@
       <div class="chips" id="src-chips">
         <button class="chip on" data-src="all">全部</button>
         <button class="chip" data-src="text">教科書の文</button>
-        <button class="chip" data-src="classic">有名な漢文（初見）</button>
-        <button class="chip" data-src="practice">練習文</button>
+        <button class="chip" data-src="nontext">教科書以外の文</button>
       </div>
       <div class="label">返り点のパターン</div>
       <div class="chips" id="pat-chips">
@@ -300,7 +299,8 @@ function poolItems(mode){
   var items = [];
   SENTENCES.forEach(function(s){
     if (currentPat !== "all" && s.pat !== currentPat) return;
-    if (currentSrc !== "all" && s.src !== currentSrc) return;
+    if (currentSrc === "text" && s.src !== "text") return;
+    if (currentSrc === "nontext" && s.src === "text") return;
     dirsForMode().forEach(function(d){
       var k = keyOf(s, d);
       if (mode === "all") items.push({s:s, dir:d});
