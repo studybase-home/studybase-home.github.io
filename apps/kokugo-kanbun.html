@@ -309,9 +309,9 @@ function renderHome(){
 }
 
 function showScreen(name){
-  el("home-screen").style.display = name === "home" ? "" : "none";
-  el("quiz-screen").style.display = name === "quiz" ? "" : "none";
-  el("done-screen").style.display = name === "done" ? "" : "none";
+  el("home-screen").style.display = name === "home" ? "block" : "none";
+  el("quiz-screen").style.display = name === "quiz" ? "block" : "none";
+  el("done-screen").style.display = name === "done" ? "block" : "none";
   window.scrollTo(0, 0);
 }
 

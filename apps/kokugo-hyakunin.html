@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="百人一首ドリル">
+<title>百人一首 51〜60 あなうめドリル</title>
+<style>
+  :root{
+    --bg:#f4f6fb; --card:#ffffff; --ink:#1c2333; --sub:#5b6478;
+    --accent:#2f5fd0; --accent2:#e8710a; --ok:#1d9e57; --ng:#d23c3c;
+    --line:#d9deea;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{margin:0; font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; background:var(--bg); color:var(--ink);}
+  header{background:linear-gradient(135deg,#5b2a86,#2f5fd0); color:#fff; padding:18px 16px 14px;}
+  header .back{color:#e3d7ff; text-decoration:none; font-size:13px;}
+  header h1{margin:6px 0 2px; font-size:22px;}
+  header .era{font-size:13px; opacity:.9;}
+  header .date{font-size:12px; opacity:.75; margin-top:2px;}
+  main{max-width:640px; margin:0 auto; padding:14px 14px 40px;}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px; margin-bottom:14px;}
+  .card h2{margin:0 0 8px; font-size:16px;}
+  .small{font-size:13px; color:var(--sub); line-height:1.6;}
+  .mode-box{display:block; width:100%; text-align:left; border:2px solid var(--line); background:#fff; border-radius:12px; padding:13px 14px; margin-bottom:10px; cursor:pointer; min-height:52px;}
+  .mode-box .t{font-size:16px; font-weight:700;}
+  .mode-box .d{font-size:12px; color:var(--sub); margin-top:2px;}
+  .mode-box:active{background:#eef2fd;}
+  .mode-box.disabled{opacity:.45; pointer-events:none;}
+  .progress{font-size:13px; color:var(--sub); margin-top:6px;}
+  details.list summary{font-size:15px; font-weight:700; cursor:pointer; padding:4px 0;}
+  .poem-item{border-top:1px solid var(--line); padding:10px 0;}
+  .poem-item:first-of-type{border-top:none;}
+  .poem-item .no{font-size:12px; font-weight:700; color:var(--accent);}
+  .poem-item .txt{font-size:16px; line-height:1.7; margin:2px 0;}
+  .poem-item .auth{font-size:12px; color:var(--sub); text-align:right;}
+  /* quiz */
+  #quiz-screen{display:none;}
+  .q-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;}
+  .q-count{font-size:13px; color:var(--sub); font-weight:700;}
+  .home-btn{border:1px solid var(--line); background:#fff; border-radius:8px; padding:8px 12px; font-size:13px; cursor:pointer; min-height:40px;}
+  .q-no{font-size:14px; font-weight:700; color:var(--accent); margin:2px 0 6px;}
+  .fail-badge{display:none; background:#fdecec; color:var(--ng); border-radius:8px; padding:6px 10px; font-size:13px; font-weight:700; margin-bottom:10px;}
+  .poem-box{background:#fff; border:2px solid var(--line); border-radius:12px; padding:16px; margin-bottom:14px;}
+  .poem-box .ku{font-size:20px; font-weight:700; line-height:1.5; padding:3px 0;}
+  .poem-box .ku.blank{display:inline-block; background:#fdf3e3; border:2px dashed var(--accent2); border-radius:8px; color:var(--accent2); padding:2px 14px; margin:3px 0;}
+  .poem-box .ku.revealed{background:#e7f7ee; border:2px solid var(--ok); border-radius:8px; color:var(--ink); padding:2px 14px;}
+  .choices{display:flex; flex-direction:column; gap:10px;}
+  .choice{border:2px solid var(--line); background:#fff; border-radius:12px; padding:14px; font-size:18px; font-weight:700; text-align:left; cursor:pointer; min-height:52px; width:100%;}
+  .choice.sel{border-color:var(--accent); background:#e8effe;}
+  .choice.good{border-color:var(--ok); background:#e7f7ee;}
+  .choice.bad{border-color:var(--ng); background:#fdecec;}
+  .choice:disabled{cursor:default;}
+  .btn-row{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;}
+  .btn{flex:1; min-width:100px; border:none; border-radius:10px; padding:13px 10px; font-size:15px; font-weight:700; cursor:pointer; min-height:48px;}
+  .btn.primary{background:var(--accent); color:#fff;}
+  .btn.ghost{background:#fff; border:2px solid var(--line); color:var(--ink);}
+  .btn:disabled{opacity:.4;}
+  .result{display:none; border-radius:12px; padding:12px 14px; margin-top:14px; font-size:15px; line-height:1.7;}
+  .result.ok{background:#e7f7ee; border:1px solid var(--ok);}
+  .result.ng{background:#fdecec; border:1px solid var(--ng);}
+  .result .full{font-size:15px; margin-top:6px; line-height:1.8;}
+  .result .auth{font-size:13px; color:var(--sub); text-align:right;}
+  /* done */
+  #done-screen{display:none; text-align:center;}
+  #done-screen .score{font-size:34px; font-weight:800; margin:10px 0;}
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="../index.html">← RYU学習ポータルに戻る</a>
+  <h1>百人一首 あなうめドリル</h1>
+  <div class="era">歌番号51〜60 ― 隠れた句を4つの選択肢から当てる</div>
+  <div class="date">作成：2026年11月22日</div>
+</header>
+<main>
+  <!-- ホーム -->
+  <section id="home-screen">
+    <div class="card">
+      <h2>問題の形式</h2>
+      <div class="small">
+        歌（五・七・五・七・七）の中の1つの句が隠れています。隠れた句に入るものを、4つの選択肢から選んでください。隠れる場所は毎回ランダムです。
+      </div>
+      <div class="progress" id="progress-text"></div>
+    </div>
+
+    <div class="card">
+      <h2>練習をはじめる</h2>
+      <button class="mode-box" id="start-all">
+        <div class="t">全部の問題</div>
+        <div class="d" id="all-count"></div>
+      </button>
+      <button class="mode-box" id="start-retry">
+        <div class="t">バツのままの問題だけ</div>
+        <div class="d" id="retry-count"></div>
+      </button>
+      <button class="mode-box" id="start-ever">
+        <div class="t">1回でもバツになった問題（最後の確認）</div>
+        <div class="d" id="ever-count"></div>
+      </button>
+    </div>
+
+    <div class="card">
+      <details class="list">
+        <summary>歌の一覧（51〜60）― 覚える用</summary>
+        <div id="poem-list"></div>
+      </details>
+    </div>
+  </section>
+
+  <!-- クイズ -->
+  <section id="quiz-screen">
+    <div class="q-head">
+      <div class="q-count" id="q-count"></div>
+      <button class="home-btn" id="quiz-home-btn">トップに戻る</button>
+    </div>
+    <div class="q-no" id="q-no"></div>
+    <div class="fail-badge" id="fail-badge"></div>
+    <div class="poem-box" id="poem-box"></div>
+    <div class="choices" id="choices"></div>
+    <div class="btn-row">
+      <button class="btn primary" id="check-btn" disabled>答え合わせ</button>
+    </div>
+    <div class="result" id="result"></div>
+    <div class="btn-row">
+      <button class="btn primary hidden" id="next-btn">次の問題へ</button>
+    </div>
+  </section>
+
+  <!-- 終了 -->
+  <section id="done-screen">
+    <div class="card">
+      <h2>おつかれさま！</h2>
+      <div class="score" id="done-score"></div>
+      <div class="small" id="done-msg"></div>
+      <div class="btn-row" style="margin-top:16px;">
+        <button class="btn ghost" id="done-retry-btn">バツの問題だけ</button>
+        <button class="btn primary" id="done-home-btn">トップに戻る</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+"use strict";
+var POEMS = [
+  { no:51, author:"藤原実方朝臣", ku:["かくとだに","えやは伊吹の","さしも草","さしも知らじな","燃ゆる思ひを"] },
+  { no:52, author:"藤原道信朝臣", ku:["明けぬれば","暮るるものとは","知りながら","なほうらめしき","朝ぼらけかな"] },
+  { no:53, author:"右大将道綱母", ku:["嘆きつつ","ひとり寝る夜の","明くる間は","いかに久しき","ものとかは知る"] },
+  { no:54, author:"儀同三司母", ku:["忘れじの","行く末までは","かたければ","今日を限りの","命ともがな"] },
+  { no:55, author:"大納言公任", ku:["滝の音は","絶えて久しく","なりぬれど","名こそ流れて","なほ聞こえけれ"] },
+  { no:56, author:"和泉式部", ku:["あらざらむ","この世のほかの","思ひ出に","今ひとたびの","逢ふこともがな"] },
+  { no:57, author:"紫式部", ku:["めぐり逢ひて","見しやそれとも","分かぬ間に","雲隠れにし","夜半の月かな"] },
+  { no:58, author:"大弐三位", ku:["有馬山","猪名の笹原","風吹けば","いでそよ人を","忘れやはする"] },
+  { no:59, author:"赤染衛門", ku:["やすらはで","寝なましものを","小夜更けて","かたぶくまでの","月を見しかな"] },
+  { no:60, author:"小式部内侍", ku:["大江山","いく野の道の","遠ければ","まだふみも見ず","天の橋立"] }
+];
+var KU_LEN = [5, 7, 5, 7, 7];
+
+var REC_KEY = "ryunosuke.kokugo-hyakunin.records.v1";
+var FAIL_KEY = "ryunosuke.kokugo-hyakunin.failcounts.v1";
+
+function loadJSON(key){
+  try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : {}; } catch(e){ return {}; }
+}
+function saveJSON(key, obj){
+  try { localStorage.setItem(key, JSON.stringify(obj)); } catch(e){}
+}
+var records = loadJSON(REC_KEY);
+var failCounts = loadJSON(FAIL_KEY);
+
+var ITEMS = []; /* {poem, pos} 全50通り */
+POEMS.forEach(function(p){
+  for (var i = 0; i < 5; i++) ITEMS.push({ poem:p, pos:i });
+});
+function itemId(it){ return it.poem.no + "-" + (it.pos + 1); }
+ITEMS.forEach(function(it){
+  var k = itemId(it);
+  if (records[k] === "x" && !failCounts[k]) failCounts[k] = 1;
+});
+saveJSON(FAIL_KEY, failCounts);
+
+var quizList = [];
+var quizIdx = 0;
+var quizCorrect = 0;
+var cur = null;
+var curChoices = [];
+var selected = -1;
+var checked = false;
+
+function el(id){ return document.getElementById(id); }
+function shuffle(arr){
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+function poolItems(mode){
+  var items = ITEMS.filter(function(it){
+    var k = itemId(it);
+    if (mode === "all") return true;
+    if (mode === "retry") return records[k] === "x";
+    if (mode === "ever") return (failCounts[k] || 0) >= 1;
+    return false;
+  });
+  if (mode !== "all"){
+    items.sort(function(x, y){
+      return (failCounts[itemId(y)] || 0) - (failCounts[itemId(x)] || 0);
+    });
+  }
+  return items;
+}
+
+function renderHome(){
+  var done = 0;
+  ITEMS.forEach(function(it){ if (records[itemId(it)] === "o") done++; });
+  el("progress-text").textContent = "全" + ITEMS.length + "問中、" + done + "問 できました。";
+  el("all-count").textContent = poolItems("all").length + "問（10首 × 隠れる場所5通り）";
+  var r = poolItems("retry"), e = poolItems("ever");
+  el("retry-count").textContent = r.length + "問";
+  el("ever-count").textContent = e.length + "問";
+  el("start-retry").classList.toggle("disabled", r.length === 0);
+  el("start-ever").classList.toggle("disabled", e.length === 0);
+  var list = el("poem-list");
+  list.innerHTML = "";
+  POEMS.forEach(function(p){
+    var d = document.createElement("div");
+    d.className = "poem-item";
+    d.innerHTML = '<div class="no">第' + p.no + '番</div><div class="txt">' +
+      p.ku.join("　") + '</div><div class="auth">' + p.author + "</div>";
+    list.appendChild(d);
+  });
+}
+
+function showScreen(name){
+  el("home-screen").style.display = name === "home" ? "block" : "none";
+  el("quiz-screen").style.display = name === "quiz" ? "block" : "none";
+  el("done-screen").style.display = name === "done" ? "block" : "none";
+  window.scrollTo(0, 0);
+}
+
+function startQuiz(mode){
+  var items = poolItems(mode);
+  if (items.length === 0) return;
+  quizList = mode === "all" ? shuffle(items) : items;
+  quizIdx = 0;
+  quizCorrect = 0;
+  showScreen("quiz");
+  renderQuestion();
+}
+
+function makeChoices(it){
+  var correct = it.poem.ku[it.pos];
+  var others = shuffle(POEMS.filter(function(p){ return p.no !== it.poem.no; }));
+  var choices = [correct];
+  for (var i = 0; i < others.length && choices.length < 4; i++){
+    choices.push(others[i].ku[it.pos]);
+  }
+  return shuffle(choices);
+}
+
+function renderQuestion(){
+  cur = quizList[quizIdx];
+  selected = -1;
+  checked = false;
+  curChoices = makeChoices(cur);
+  el("q-count").textContent = (quizIdx + 1) + " / " + quizList.length + " 問";
+  el("q-no").textContent = "第" + cur.poem.no + "番の歌 ― " + (cur.pos + 1) + "番目の句（" + KU_LEN[cur.pos] + "音）が隠れています";
+  var fc = failCounts[itemId(cur)] || 0;
+  var badge = el("fail-badge");
+  if (fc >= 1){
+    badge.style.display = "block";
+    badge.textContent = "この問題は今まで " + fc + "回 できなかった";
+  } else {
+    badge.style.display = "none";
+  }
+  renderPoem(false);
+  var wrap = el("choices");
+  wrap.innerHTML = "";
+  curChoices.forEach(function(c, i){
+    var b = document.createElement("button");
+    b.className = "choice";
+    b.textContent = c;
+    b.addEventListener("click", function(){
+      if (checked) return;
+      selected = i;
+      wrap.querySelectorAll(".choice").forEach(function(x, j){
+        x.classList.toggle("sel", j === i);
+      });
+      el("check-btn").disabled = false;
+    });
+    wrap.appendChild(b);
+  });
+  el("check-btn").disabled = true;
+  el("check-btn").style.display = "";
+  el("result").style.display = "none";
+  el("next-btn").classList.add("hidden");
+}
+
+function renderPoem(revealed){
+  var box = el("poem-box");
+  box.innerHTML = "";
+  cur.poem.ku.forEach(function(k, i){
+    var d = document.createElement("div");
+    if (i === cur.pos){
+      d.className = "ku " + (revealed ? "revealed" : "blank");
+      d.textContent = revealed ? k : "？？？";
+      box.appendChild(d);
+    } else {
+      d.className = "ku";
+      d.textContent = k;
+      box.appendChild(d);
+    }
+  });
+}
+
+function doCheck(){
+  if (checked || selected < 0) return;
+  checked = true;
+  var correct = cur.poem.ku[cur.pos];
+  var ok = curChoices[selected] === correct;
+  var k = itemId(cur);
+  if (ok){
+    records[k] = "o";
+    quizCorrect++;
+  } else {
+    records[k] = "x";
+    failCounts[k] = (failCounts[k] || 0) + 1;
+    saveJSON(FAIL_KEY, failCounts);
+  }
+  saveJSON(REC_KEY, records);
+  el("choices").querySelectorAll(".choice").forEach(function(b){
+    b.disabled = true;
+    if (b.textContent === correct) b.classList.add("good");
+    else if (b.classList.contains("sel")) b.classList.add("bad");
+    b.classList.remove("sel");
+  });
+  renderPoem(true);
+  var r = el("result");
+  r.style.display = "block";
+  r.className = "result " + (ok ? "ok" : "ng");
+  r.innerHTML = (ok ? "⭕ 正解です！" : "❌ 正解は「" + correct + "」です。") +
+    '<div class="full">' + cur.poem.ku.join("　") + '</div>' +
+    '<div class="auth">第' + cur.poem.no + "番　" + cur.poem.author + "</div>";
+  el("check-btn").style.display = "none";
+  var nb = el("next-btn");
+  nb.classList.remove("hidden");
+  nb.textContent = quizIdx + 1 < quizList.length ? "次の問題へ" : "結果を見る";
+}
+
+function nextQuestion(){
+  quizIdx++;
+  if (quizIdx < quizList.length){
+    renderQuestion();
+  } else {
+    el("done-score").textContent = quizCorrect + " / " + quizList.length + " 問 正解";
+    el("done-msg").textContent = quizCorrect === quizList.length
+      ? "全問正解です。この調子でいきましょう。"
+      : "バツになった問題は、トップの「バツのままの問題だけ」からもう一度できます。歌の一覧で見直すのもおすすめです。";
+    showScreen("done");
+    renderHome();
+  }
+}
+
+el("start-all").addEventListener("click", function(){ startQuiz("all"); });
+el("start-retry").addEventListener("click", function(){ startQuiz("retry"); });
+el("start-ever").addEventListener("click", function(){ startQuiz("ever"); });
+el("quiz-home-btn").addEventListener("click", function(){ showScreen("home"); renderHome(); });
+el("check-btn").addEventListener("click", doCheck);
+el("next-btn").addEventListener("click", nextQuestion);
+el("done-home-btn").addEventListener("click", function(){ showScreen("home"); renderHome(); });
+el("done-retry-btn").addEventListener("click", function(){ startQuiz("retry"); });
+
+renderHome();
+</script>
+</body>
+</html>
