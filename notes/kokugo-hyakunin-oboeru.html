@@ -33,13 +33,10 @@
 <header>
   <a class="back" href="../index.html">← RYU学習ポータルに戻る</a>
   <h1>百人一首 51〜60 覚えるページ</h1>
-  <p>10首ぜんぶの歌と作者（読み仮名つき）。読み上げも聞けます</p>
+  <p>10首ぜんぶの歌と作者（読み仮名つき）</p>
   <p>作成：2026年11月22日</p>
 </header>
 <main>
-  <div class="card">
-    <button class="play-all" id="play-all">▶ 10首ぜんぶ読み上げ</button>
-  </div>
   <div id="poems"></div>
   <a class="to-drill" href="../apps/kokugo-hyakunin.html">覚えたらテストする → あなうめドリル</a>
 </main>
@@ -87,19 +84,6 @@ var POEMS = [
     kuH:["<ruby>大江山<rt>おおえやま</rt></ruby>","いく<ruby>野<rt>の</rt></ruby>の<ruby>道<rt>みち</rt></ruby>の","<ruby>遠<rt>とお</rt></ruby>ければ","まだふみも<ruby>見<rt>み</rt></ruby>ず","<ruby>天<rt>あま</rt></ruby>の<ruby>橋立<rt>はしだて</rt></ruby>"] }
 ];
 
-/* 読み上げ用：ふりがな通りの読み（漢字で読ませると読み間違えるため、かなで渡す） */
-var YOMI = {
-  51:"かくとだに、えやはいぶきの、さしもぐさ、さしもしらじな、もゆるおもいを",
-  52:"あけぬれば、くるるものとは、しりながら、なほうらめしき、あさぼらけかな",
-  53:"なげきつつ、ひとりねるよの、あくるまは、いかにひさしき、ものとかはしる",
-  54:"わすれじの、ゆくすえまでは、かたければ、けふをかぎりの、いのちともがな",
-  55:"たきのおとは、たえてひさしく、なりぬれど、なこそながれて、なほきこえけれ",
-  56:"あらざらむ、このよのほかの、おもいでに、いまひとたびの、あふこともがな",
-  57:"めぐりあひて、みしやそれとも、わかぬまに、くもがくれにし、よはのつきかな",
-  58:"ありまやま、いなのささはら、かぜふけば、いでそよひとを、わすれやはする",
-  59:"やすらはで、ねなましものを、さよふけて、かたぶくまでの、つきをみしかな",
-  60:"おおえやま、いくののみちの、とおければ、まだふみもみず、あまのはしだて"
-};
 
 var wrap = document.getElementById("poems");
 POEMS.forEach(function(p){
@@ -108,59 +92,13 @@ POEMS.forEach(function(p){
   var kami = p.kuH.slice(0,3).join('<span class="sep"> </span>');
   var shimo = p.kuH.slice(3).join('<span class="sep"> </span>');
   card.innerHTML =
-    '<div class="poem-head"><span class="poem-no">第' + p.no + '番</span>' +
-    '<button class="poem-play" data-no="' + p.no + '">▶ 読み上げ</button></div>' +
+    '<div class="poem-head"><span class="poem-no">第' + p.no + '番</span></div>' +
     '<div class="ku">' + kami + '</div>' +
     '<div class="ku shimo">' + shimo + '</div>' +
     '<div class="author">' + p.authorH + '</div>';
   wrap.appendChild(card);
 });
 
-var playing = false;
-function stopSpeak(){
-  playing = false;
-  if ("speechSynthesis" in window) window.speechSynthesis.cancel();
-  document.querySelectorAll(".playing").forEach(function(b){ b.classList.remove("playing"); });
-  var all = document.getElementById("play-all");
-  all.textContent = "▶ 10首ぜんぶ読み上げ";
-}
-function speakText(text, onend){
-  if (!("speechSynthesis" in window)) { if (onend) onend(); return; }
-  var u = new SpeechSynthesisUtterance(text);
-  u.lang = "ja-JP";
-  u.rate = 0.85;
-  if (onend) u.onend = onend;
-  window.speechSynthesis.speak(u);
-}
-function poemText(p){ return YOMI[p.no] || p.ku.join("、"); }
-
-document.querySelectorAll(".poem-play").forEach(function(btn){
-  btn.addEventListener("click", function(){
-    if (btn.classList.contains("playing")) { stopSpeak(); return; }
-    stopSpeak();
-    playing = true;
-    btn.classList.add("playing");
-    var p = POEMS.filter(function(x){ return x.no == btn.dataset.no; })[0];
-    speakText(poemText(p), function(){ btn.classList.remove("playing"); playing = false; });
-  });
-});
-
-document.getElementById("play-all").addEventListener("click", function(){
-  var all = document.getElementById("play-all");
-  if (playing) { stopSpeak(); return; }
-  if (!("speechSynthesis" in window)) return;
-  playing = true;
-  all.classList.add("playing");
-  all.textContent = "■ 止める";
-  var i = 0;
-  function next(){
-    if (!playing) return;
-    if (i >= POEMS.length) { stopSpeak(); return; }
-    var p = POEMS[i]; i++;
-    speakText(p.no + "番。 " + poemText(p), next);
-  }
-  next();
-});
 </script>
 </body>
 </html>
