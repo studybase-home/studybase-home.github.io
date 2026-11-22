@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="RYU学習ポータル">
+<title>百人一首 51〜60 覚えるページ | RYU学習ポータル</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { font-family:-apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif; background:#f2f5f9; color:#1c2b3a; padding-bottom:48px; }
+  header { background:linear-gradient(135deg, #1565c0, #1e88e5); color:#fff; padding:14px 16px 16px; }
+  header a.back { color:#dbeafe; text-decoration:none; font-size:13px; }
+  header h1 { font-size:21px; margin-top:6px; }
+  header p { font-size:12.5px; opacity:.92; margin-top:3px; }
+  main { padding:14px; max-width:760px; margin:0 auto; }
+  .card { background:#fff; border-radius:14px; padding:16px; box-shadow:0 1px 4px rgba(20,40,60,.08); margin-bottom:14px; }
+  .play-all { width:100%; min-height:52px; border:none; border-radius:12px; background:#1565c0; color:#fff; font-size:16px; font-weight:700; cursor:pointer; }
+  .play-all.playing { background:#b03a2e; }
+  .poem-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+  .poem-no { font-size:13px; font-weight:700; color:#1565c0; background:#e8effe; border-radius:999px; padding:3px 10px; }
+  .poem-play { border:2px solid #1565c0; background:#fff; color:#1565c0; border-radius:999px; min-height:40px; padding:0 14px; font-size:14px; font-weight:700; cursor:pointer; }
+  .poem-play.playing { background:#1565c0; color:#fff; }
+  .ku { font-size:20px; line-height:1.9; letter-spacing:.02em; }
+  .ku .sep { color:#b6c2cf; margin:0 .15em; }
+  .shimo { margin-top:2px; }
+  .author { text-align:right; font-size:13.5px; color:#5a6b7d; margin-top:8px; }
+  .to-drill { display:block; text-align:center; background:#fff; border-radius:14px; padding:16px; box-shadow:0 1px 4px rgba(20,40,60,.08); color:#1565c0; font-size:16px; font-weight:700; text-decoration:none; }
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="../index.html">← RYU学習ポータルに戻る</a>
+  <h1>百人一首 51〜60 覚えるページ</h1>
+  <p>10首ぜんぶの歌と作者。読み上げも聞けます</p>
+  <p>作成：2026年11月22日</p>
+</header>
+<main>
+  <div class="card">
+    <button class="play-all" id="play-all">▶ 10首ぜんぶ読み上げ</button>
+  </div>
+  <div id="poems"></div>
+  <a class="to-drill" href="../apps/kokugo-hyakunin.html">覚えたらテストする → あなうめドリル</a>
+</main>
+<script>
+var POEMS = [
+  { no:51, author:"藤原実方朝臣", ku:["かくとだに","えやは伊吹の","さしも草","さしも知らじな","燃ゆる思ひを"] },
+  { no:52, author:"藤原道信朝臣", ku:["明けぬれば","暮るるものとは","知りながら","なほうらめしき","朝ぼらけかな"] },
+  { no:53, author:"右大将道綱母", ku:["嘆きつつ","ひとり寝る夜の","明くる間は","いかに久しき","ものとかは知る"] },
+  { no:54, author:"儀同三司母", ku:["忘れじの","行く末までは","かたければ","今日を限りの","命ともがな"] },
+  { no:55, author:"大納言公任", ku:["滝の音は","絶えて久しく","なりぬれど","名こそ流れて","なほ聞こえけれ"] },
+  { no:56, author:"和泉式部", ku:["あらざらむ","この世のほかの","思ひ出に","今ひとたびの","逢ふこともがな"] },
+  { no:57, author:"紫式部", ku:["めぐり逢ひて","見しやそれとも","分かぬ間に","雲隠れにし","夜半の月かな"] },
+  { no:58, author:"大弐三位", ku:["有馬山","猪名の笹原","風吹けば","いでそよ人を","忘れやはする"] },
+  { no:59, author:"赤染衛門", ku:["やすらはで","寝なましものを","小夜更けて","かたぶくまでの","月を見しかな"] },
+  { no:60, author:"小式部内侍", ku:["大江山","いく野の道の","遠ければ","まだふみも見ず","天の橋立"] }
+];
+
+var wrap = document.getElementById("poems");
+POEMS.forEach(function(p){
+  var card = document.createElement("div");
+  card.className = "card";
+  var kami = p.ku.slice(0,3).join('<span class="sep"> </span>');
+  var shimo = p.ku.slice(3).join('<span class="sep"> </span>');
+  card.innerHTML =
+    '<div class="poem-head"><span class="poem-no">第' + p.no + '番</span>' +
+    '<button class="poem-play" data-no="' + p.no + '">▶ 読み上げ</button></div>' +
+    '<div class="ku">' + kami + '</div>' +
+    '<div class="ku shimo">' + shimo + '</div>' +
+    '<div class="author">' + p.author + '</div>';
+  wrap.appendChild(card);
+});
+
+var playing = false;
+function stopSpeak(){
+  playing = false;
+  if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+  document.querySelectorAll(".playing").forEach(function(b){ b.classList.remove("playing"); });
+  var all = document.getElementById("play-all");
+  all.textContent = "▶ 10首ぜんぶ読み上げ";
+}
+function speakText(text, onend){
+  if (!("speechSynthesis" in window)) { if (onend) onend(); return; }
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = "ja-JP";
+  u.rate = 0.85;
+  if (onend) u.onend = onend;
+  window.speechSynthesis.speak(u);
+}
+function poemText(p){ return p.ku.join("、"); }
+
+document.querySelectorAll(".poem-play").forEach(function(btn){
+  btn.addEventListener("click", function(){
+    if (btn.classList.contains("playing")) { stopSpeak(); return; }
+    stopSpeak();
+    playing = true;
+    btn.classList.add("playing");
+    var p = POEMS.filter(function(x){ return x.no == btn.dataset.no; })[0];
+    speakText(poemText(p), function(){ btn.classList.remove("playing"); playing = false; });
+  });
+});
+
+document.getElementById("play-all").addEventListener("click", function(){
+  var all = document.getElementById("play-all");
+  if (playing) { stopSpeak(); return; }
+  if (!("speechSynthesis" in window)) return;
+  playing = true;
+  all.classList.add("playing");
+  all.textContent = "■ 止める";
+  var i = 0;
+  function next(){
+    if (!playing) return;
+    if (i >= POEMS.length) { stopSpeak(); return; }
+    var p = POEMS[i]; i++;
+    speakText(p.no + "番。 " + poemText(p), next);
+  }
+  next();
+});
+</script>
+</body>
+</html>
