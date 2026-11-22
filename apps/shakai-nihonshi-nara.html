@@ -223,7 +223,10 @@
 
     <div class="mode-box">
       <button class="mode-btn" id="mode-all" aria-pressed="true">全部の問題</button>
-      <button class="mode-btn" id="mode-retry" aria-pressed="false">できなかった問題だけ<span class="cnt" id="retry-count"></span></button>
+      <button class="mode-btn" id="mode-retry" aria-pressed="false">バツのままの問題だけ<span class="cnt" id="retry-count"></span></button>
+    </div>
+    <div class="mode-box">
+      <button class="mode-btn" id="mode-ever" aria-pressed="false">1回でもバツになった問題（最後の確認）<span class="cnt" id="ever-count"></span></button>
     </div>
 
     <p class="note" style="margin: 12px 0 6px;">出題の順番</p>
@@ -404,6 +407,11 @@
     try { localStorage.setItem(FAIL_KEY, JSON.stringify(failCounts)); } catch (e) {}
   }
   function addFail(id) { failCounts[id] = (failCounts[id] || 0) + 1; saveFails(); }
+  /* カウントを始める前にバツだった問題は、1回として数える */
+  ALL_ITEMS.forEach(function (it) {
+    if (records[it.id] === false && !failCounts[it.id]) failCounts[it.id] = 1;
+  });
+  saveFails();
 
   function countOk(items) {
     return items.filter(function (it) { return records[it.id] === true; }).length;
@@ -411,6 +419,16 @@
   function failedItems(setKey) {
     return SETS[setKey].items
       .filter(function (it) { return records[it.id] === false; })
+      .map(function (it, i) { return { it: it, i: i }; })
+      .sort(function (x, y) {
+        var d = (failCounts[y.it.id] || 0) - (failCounts[x.it.id] || 0);
+        return d !== 0 ? d : x.i - y.i;
+      })
+      .map(function (w) { return w.it; });
+  }
+  function everItems(setKey) {
+    return SETS[setKey].items
+      .filter(function (it) { return (failCounts[it.id] || 0) >= 1; })
       .map(function (it, i) { return { it: it, i: i }; })
       .sort(function (x, y) {
         var d = (failCounts[y.it.id] || 0) - (failCounts[x.it.id] || 0);
@@ -503,28 +521,33 @@
     $("tab-word").setAttribute("aria-selected", currentSet === "word" ? "true" : "false");
     $("mode-all").setAttribute("aria-pressed", currentMode === "all" ? "true" : "false");
     $("mode-retry").setAttribute("aria-pressed", currentMode === "retry" ? "true" : "false");
+    $("mode-ever").setAttribute("aria-pressed", currentMode === "ever" ? "true" : "false");
     $("order-shuffle").setAttribute("aria-pressed", currentOrder === "shuffle" ? "true" : "false");
     $("order-seq").setAttribute("aria-pressed", currentOrder === "seq" ? "true" : "false");
 
     var failed = failedItems(currentSet);
-    $("retry-count").textContent = SETS[currentSet].label + "のできなかった問題 " + failed.length + "問";
+    $("retry-count").textContent = SETS[currentSet].label + "のバツのままの問題 " + failed.length + "問";
     $("mode-retry").disabled = failed.length === 0;
 
-    var pool = currentMode === "retry" ? failed : SETS[currentSet].items;
+    var ever = everItems(currentSet);
+    $("ever-count").textContent = SETS[currentSet].label + "の1回でもバツになった問題 " + ever.length + "問";
+    $("mode-ever").disabled = ever.length === 0;
+
+    var pool = currentMode === "retry" ? failed : (currentMode === "ever" ? ever : SETS[currentSet].items);
     $("start-btn").disabled = pool.length === 0;
     $("home-note").textContent = pool.length === 0
-      ? "できなかった問題はありません。「全部の問題」で練習できます。"
+      ? (currentMode === "ever" ? "1回でもバツになった問題はまだありません。" : "バツのままの問題はありません。「全部の問題」で練習できます。")
       : "「" + SETS[currentSet].label + "」の" +
-        (currentMode === "retry" ? "できなかった問題 " + pool.length + "問" : "全" + pool.length + "問") +
-        (currentMode === "retry" ? "を、できなかった回数が多い順に出題します。" : (currentOrder === "shuffle" ? "をシャッフルして出題します。" : "をノートの順番のまま出題します。"));
+        (currentMode === "retry" ? "バツのままの問題 " + pool.length + "問" : (currentMode === "ever" ? "1回でもバツになった問題 " + pool.length + "問" : "全" + pool.length + "問")) +
+        (currentMode === "all" ? (currentOrder === "shuffle" ? "をシャッフルして出題します。" : "をノートの順番のまま出題します。") : "を、できなかった回数が多い順に出題します。");
     showScreen("home");
   }
 
   /* ===== クイズ画面 ===== */
   function startQuiz() {
-    var pool = currentMode === "retry" ? failedItems(currentSet) : SETS[currentSet].items.slice();
+    var pool = currentMode === "retry" ? failedItems(currentSet) : (currentMode === "ever" ? everItems(currentSet) : SETS[currentSet].items.slice());
     if (pool.length === 0) return;
-    order = currentMode === "retry" ? pool.slice() : (currentOrder === "shuffle" ? shuffle(pool) : pool.slice());
+    order = currentMode === "all" ? (currentOrder === "shuffle" ? shuffle(pool) : pool.slice()) : pool.slice();
     pos = 0; roundOk = 0; roundNg = 0; roundSkip = 0;
     showScreen("quiz");
     renderQuestion();
@@ -532,7 +555,7 @@
   function renderQuestion() {
     var it = order[pos];
     $("quiz-pos").textContent = (pos + 1) + " / " + order.length + " 問目";
-    $("quiz-set").textContent = SETS[currentSet].label + (currentMode === "retry" ? "（できなかった問題）" : "");
+    $("quiz-set").textContent = SETS[currentSet].label + (currentMode === "retry" ? "（バツのままの問題）" : (currentMode === "ever" ? "（1回でもバツになった問題）" : ""));
     if (it.confirm) {
       $("q-chip").hidden = false;
       $("q-chip").textContent = "確認（もう一度）";
@@ -641,6 +664,7 @@
   $("tab-word").addEventListener("click", function () { currentSet = "word"; renderHome(); });
   $("mode-all").addEventListener("click", function () { currentMode = "all"; renderHome(); });
   $("mode-retry").addEventListener("click", function () { currentMode = "retry"; renderHome(); });
+  $("mode-ever").addEventListener("click", function () { currentMode = "ever"; renderHome(); });
   $("order-shuffle").addEventListener("click", function () { currentOrder = "shuffle"; renderHome(); });
   $("order-seq").addEventListener("click", function () { currentOrder = "seq"; renderHome(); });
   $("back-top-btn").addEventListener("click", renderHome);
