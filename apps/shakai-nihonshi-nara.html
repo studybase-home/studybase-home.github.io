@@ -234,6 +234,13 @@
       <button class="tab" id="tab-word" role="tab" aria-selected="false">ノート② 平城京と領土の拡大<span class="tab-count">全20問</span></button>
     </div>
 
+    <p class="note" style="margin: 12px 0 6px;">レベル（3つ全部クリアで、この範囲の内容を全部カバーできます）</p>
+    <div class="mode-box">
+      <button class="mode-btn" id="level-1" aria-pressed="true">基本問題<span class="cnt" id="lv1-count"></span></button>
+      <button class="mode-btn" id="level-2" aria-pressed="false">上級問題<span class="cnt" id="lv2-count"></span></button>
+      <button class="mode-btn" id="level-3" aria-pressed="false">全部確認問題<span class="cnt" id="lv3-count"></span></button>
+    </div>
+
     <div class="mode-box">
       <button class="mode-btn" id="mode-all" aria-pressed="true">全部の問題</button>
       <button class="mode-btn" id="mode-retry" aria-pressed="false">バツのままの問題だけ<span class="cnt" id="retry-count"></span></button>
@@ -293,90 +300,90 @@
 <script>
   /* ===== 問題データ（既存アプリ「英作文 一問一答（NT L9 英文＋単語）」から移行） ===== */
   var PRE = [
-    { q: ["701年に完成した律令は？"], a: ["大宝律令"] },
-    { q: ["大宝律令が作られたときの天皇は？"], a: ["文武天皇"] },
-    { q: ["大宝律令を作った中心人物2人は？"], a: ["刑部親王・藤原不比等"] },
-    { q: ["718年に作られた律令は？"], a: ["養老律令"] },
-    { q: ["養老律令が作られたときの天皇は？"], a: ["元正天皇"] },
-    { q: ["養老律令が実際に施行された年と、施行した人物は？"], a: ["757年・藤原仲麻呂"] },
-    { q: ["律令国家の統治機構を、二官八省を使って言うと？"], a: ["二官八省一台五衛府"] },
-    { q: ["二官とは、どの2つ？"], a: ["神祇官・太政官"] },
-    { q: ["神事（祭祀）を担当した官は？"], a: ["神祇官"] },
-    { q: ["政治全体を担当した官は？"], a: ["太政官"] },
-    { q: ["太政官の最高の役職は？"], a: ["太政大臣"] },
-    { q: ["太政大臣と並んで政治を担当した、2つの大臣は？"], a: ["左大臣・右大臣"] },
-    { q: ["大臣の下で、政務を処理した役職は？"], a: ["大納言"] },
-    { q: ["大納言の下に置かれた役職は？"], a: ["少納言"] },
-    { q: ["このページに書かれている八省のうち、4つを言うと？"], a: ["中務省・式部省・治部省・民部省"] }
+    { lv: 1, q: ["701年に完成した律令は？"], a: ["大宝律令"] },
+    { lv: 2, q: ["大宝律令が作られたときの天皇は？"], a: ["文武天皇"] },
+    { lv: 3, q: ["大宝律令を作った中心人物2人は？"], a: ["刑部親王・藤原不比等"] },
+    { lv: 1, q: ["718年に作られた律令は？"], a: ["養老律令"] },
+    { lv: 2, q: ["養老律令が作られたときの天皇は？"], a: ["元正天皇"] },
+    { lv: 2, q: ["養老律令が実際に施行された年と、施行した人物は？"], a: ["757年・藤原仲麻呂"] },
+    { lv: 2, q: ["律令国家の統治機構を、二官八省を使って言うと？"], a: ["二官八省一台五衛府"] },
+    { lv: 1, q: ["二官とは、どの2つ？"], a: ["神祇官・太政官"] },
+    { lv: 1, q: ["神事（祭祀）を担当した官は？"], a: ["神祇官"] },
+    { lv: 2, q: ["政治全体を担当した官は？"], a: ["太政官"] },
+    { lv: 1, q: ["太政官の最高の役職は？"], a: ["太政大臣"] },
+    { lv: 3, q: ["太政大臣と並んで政治を担当した、2つの大臣は？"], a: ["左大臣・右大臣"] },
+    { lv: 3, q: ["大臣の下で、政務を処理した役職は？"], a: ["大納言"] },
+    { lv: 3, q: ["大納言の下に置かれた役職は？"], a: ["少納言"] },
+    { lv: 3, q: ["このページに書かれている八省のうち、4つを言うと？"], a: ["中務省・式部省・治部省・民部省"] }
   ];
 
   var SENTENCES = [
-    { q: ["太政官で、天皇を補佐した公卿（くぎょう）の3つの役職は？"], a: ["左大臣・太政大臣・右大臣"] },
-    { q: ["八省のうち、文官の人事や教育を担当した省は？"], a: ["式部省"] },
-    { q: ["八省のうち、外交を担当した省は？"], a: ["治部省"] },
-    { q: ["官人の不正を取り締まった機関は？"], a: ["弾正台"] },
-    { q: ["九州の民政・軍事・外交を担当した機関は？"], a: ["大宰府"] },
-    { q: ["京の一般民政を担当した役所は？"], a: ["京職（左京職・右京職）"] },
-    { q: ["国司に任命されたのは、どのような人？"], a: ["中央の貴族"] },
-    { q: ["郡司に任命されたのは、どのような人？"], a: ["その地域の豪族"] },
-    { q: ["里長に任命されたのは、どのような人？"], a: ["有力な農民"] },
-    { q: ["四等官制の4つを、上の位から順に言うと？"], a: ["長官（かみ）・次官（すけ）・判官（じょう）・主典（さかん）"] },
-    { q: ["国司の四等官を、上の位から順に言うと？"], a: ["守・介・掾・目"] },
-    { q: ["位階に応じた官職が与えられる制度を何という？"], a: ["官位相当の制"] },
-    { q: ["貴族の子弟に、父の位階に応じて一定の位が与えられる制度は？"], a: ["蔭位の制"] },
-    { q: ["五刑を、軽いものから順に言うと？"], a: ["笞・杖・徒・流・死"] },
-    { q: ["班田収授や氏姓の確認のために、6年ごとに作られた台帳は？"], a: ["戸籍"] },
-    { q: ["庸・調を徴収するために、毎年作られた台帳は？"], a: ["計帳"] }
+    { lv: 3, q: ["太政官で、天皇を補佐した公卿（くぎょう）の3つの役職は？"], a: ["左大臣・太政大臣・右大臣"] },
+    { lv: 1, q: ["八省のうち、文官の人事や教育を担当した省は？"], a: ["式部省"] },
+    { lv: 2, q: ["八省のうち、外交を担当した省は？"], a: ["治部省"] },
+    { lv: 1, q: ["官人の不正を取り締まった機関は？"], a: ["弾正台"] },
+    { lv: 2, q: ["九州の民政・軍事・外交を担当した機関は？"], a: ["大宰府"] },
+    { lv: 3, q: ["京の一般民政を担当した役所は？"], a: ["京職（左京職・右京職）"] },
+    { lv: 1, q: ["国司に任命されたのは、どのような人？"], a: ["中央の貴族"] },
+    { lv: 1, q: ["郡司に任命されたのは、どのような人？"], a: ["その地域の豪族"] },
+    { lv: 3, q: ["里長に任命されたのは、どのような人？"], a: ["有力な農民"] },
+    { lv: 2, q: ["四等官制の4つを、上の位から順に言うと？"], a: ["長官（かみ）・次官（すけ）・判官（じょう）・主典（さかん）"] },
+    { lv: 3, q: ["国司の四等官を、上の位から順に言うと？"], a: ["守・介・掾・目"] },
+    { lv: 2, q: ["位階に応じた官職が与えられる制度を何という？"], a: ["官位相当の制"] },
+    { lv: 2, q: ["貴族の子弟に、父の位階に応じて一定の位が与えられる制度は？"], a: ["蔭位の制"] },
+    { lv: 3, q: ["五刑を、軽いものから順に言うと？"], a: ["笞・杖・徒・流・死"] },
+    { lv: 1, q: ["班田収授や氏姓の確認のために、6年ごとに作られた台帳は？"], a: ["戸籍"] },
+    { lv: 1, q: ["庸・調を徴収するために、毎年作られた台帳は？"], a: ["計帳"] }
   ];
 
   var MID = [
-    { q: ["班田収授法で、6歳以上の男子に与えられた田を何という？"], a: ["口分田"] },
-    { q: ["口分田の売買は、認められていた？"], a: ["禁止されていた"] },
-    { q: ["田を区画する仕組みを何という？"], a: ["条里制"] },
-    { q: ["租として納めたのは、口分田の収穫のどのくらい？"], a: ["約3%"] },
-    { q: ["租を納める先はどこ？"], a: ["郡家（郡の役所の倉）"], note: "ノートの「国府」は誤り（誤りチェック参照）" },
-    { q: ["絹・糸・布などの特産品を、成人男子が納めた税は？"], a: ["調"] },
-    { q: ["都での労役の代わりに、布を納めた税は？"], a: ["庸"] },
-    { q: ["国司のもとで労役に服する負担を何という？"], a: ["雑徭"] },
-    { q: ["稲を貸し付ける制度は？国家のものと豪族のものの呼び分けは？"], a: ["出挙（公出挙・私出挙）"] },
-    { q: ["兵士は、正丁何人に1人の割合で選ばれた？"], a: ["3〜4人に1人"] },
-    { q: ["兵士の武器と食料は、どうやって用意した？"], a: ["自分で用意した（自弁）"] },
-    { q: ["宮城の警備にあたった兵士を何という？"], a: ["衛士"] },
-    { q: ["九州の警備にあたり、東国の農民が多かった兵士は？"], a: ["防人"] },
-    { q: ["賤民（せんみん）の総称を何という？"], a: ["五色の賤"] },
-    { q: ["五色の賤のうち、官有のものを3つ言うと？"], a: ["陵戸・官戸・公奴婢"] },
-    { q: ["五色の賤のうち、私有のものを2つ言うと？"], a: ["家人・私奴婢"] },
-    { q: ["唐の存続期間と、都の名前は？"], a: ["618〜907年・長安"] },
-    { q: ["第1回の遣唐使が派遣された年と、大使の名前は？"], a: ["630年・犬上御田鍬"] },
-    { q: ["遣唐使の廃止を建議した人物と、その年は？"], a: ["菅原道真・894年"] },
-    { q: ["遣唐使の航路は、初めと後でどう変わった？"], a: ["初めは北路、新羅との関係が悪くなった後は南路（南島路）"] },
-    { q: ["唐に渡って帰国し、聖武天皇に仕えた2人は？"], a: ["吉備真備・玄昉"] },
-    { q: ["唐に渡ったまま、帰国できなかった人物は？"], a: ["阿倍仲麻呂"] },
-    { q: ["日本に戒律（かいりつ）を伝えた、唐の僧は？"], a: ["鑑真"] }
+    { lv: 1, q: ["班田収授法で、6歳以上の男子に与えられた田を何という？"], a: ["口分田"] },
+    { lv: 2, q: ["口分田の売買は、認められていた？"], a: ["禁止されていた"] },
+    { lv: 2, q: ["田を区画する仕組みを何という？"], a: ["条里制"] },
+    { lv: 1, q: ["租として納めたのは、口分田の収穫のどのくらい？"], a: ["約3%"] },
+    { lv: 2, q: ["租を納める先はどこ？"], a: ["郡家（郡の役所の倉）"], note: "ノートの「国府」は誤り（誤りチェック参照）" },
+    { lv: 1, q: ["絹・糸・布などの特産品を、成人男子が納めた税は？"], a: ["調"] },
+    { lv: 1, q: ["都での労役の代わりに、布を納めた税は？"], a: ["庸"] },
+    { lv: 2, q: ["国司のもとで労役に服する負担を何という？"], a: ["雑徭"] },
+    { lv: 2, q: ["稲を貸し付ける制度は？国家のものと豪族のものの呼び分けは？"], a: ["出挙（公出挙・私出挙）"] },
+    { lv: 3, q: ["兵士は、正丁何人に1人の割合で選ばれた？"], a: ["3〜4人に1人"] },
+    { lv: 2, q: ["兵士の武器と食料は、どうやって用意した？"], a: ["自分で用意した（自弁）"] },
+    { lv: 1, q: ["宮城の警備にあたった兵士を何という？"], a: ["衛士"] },
+    { lv: 1, q: ["九州の警備にあたり、東国の農民が多かった兵士は？"], a: ["防人"] },
+    { lv: 2, q: ["賤民（せんみん）の総称を何という？"], a: ["五色の賤"] },
+    { lv: 3, q: ["五色の賤のうち、官有のものを3つ言うと？"], a: ["陵戸・官戸・公奴婢"] },
+    { lv: 3, q: ["五色の賤のうち、私有のものを2つ言うと？"], a: ["家人・私奴婢"] },
+    { lv: 1, q: ["唐の存続期間と、都の名前は？"], a: ["618〜907年・長安"] },
+    { lv: 3, q: ["第1回の遣唐使が派遣された年と、大使の名前は？"], a: ["630年・犬上御田鍬"] },
+    { lv: 2, q: ["遣唐使の廃止を建議した人物と、その年は？"], a: ["菅原道真・894年"] },
+    { lv: 3, q: ["遣唐使の航路は、初めと後でどう変わった？"], a: ["初めは北路、新羅との関係が悪くなった後は南路（南島路）"] },
+    { lv: 3, q: ["唐に渡って帰国し、聖武天皇に仕えた2人は？"], a: ["吉備真備・玄昉"] },
+    { lv: 3, q: ["唐に渡ったまま、帰国できなかった人物は？"], a: ["阿倍仲麻呂"] },
+    { lv: 1, q: ["日本に戒律（かいりつ）を伝えた、唐の僧は？"], a: ["鑑真"] }
   ];
 
   var WORD_CATS = ["① 動詞（表現含む）", "② 名詞（表現含む）", "③ 形容詞（表現含む）", "④ 副詞（表現含む）"];
   var WORDS = [
-    { q: ["平城京へ都が移されたのは何年？そのときの天皇は？"], a: ["710年・元明天皇"], note: "藤原京から移転した" },
-    { q: ["平城京は、唐のどの都にならって作られた？"], a: ["長安"] },
-    { q: ["東西南北に走る道で都を区画する仕組みを何という？"], a: ["条坊制"] },
-    { q: ["平城京の東西に置かれ、市司が監督したものは？"], a: ["市"] },
-    { q: ["7世紀に天武天皇の時代に作られた、早い時期の貨幣は？"], a: ["富本銭"] },
-    { q: ["708年に鋳造された貨幣は？"], a: ["和同開珎"] },
-    { q: ["和同開珎の原料となった銅が産出されたのは何国？"], a: ["武蔵国"] },
-    { q: ["貨幣の流通を広めるため、711年に出された法は？"], a: ["蓄銭叙位法"] },
-    { q: ["和同開珎から乾元大宝まで、12種類の貨幣の総称は？"], a: ["皇朝十二銭"] },
-    { q: ["官道では、約16kmごとに何が置かれた？"], a: ["駅家"], note: "駅鈴を持つ官人が利用できた" },
-    { q: ["647年に置かれた柵（さく）は？"], a: ["渟足柵（ぬたりのさく）"], note: "ノートの漢字と読みに注意（誤りチェック参照）" },
-    { q: ["648年に置かれた柵（さく）は？"], a: ["磐舟柵（いわふねのさく）"] },
-    { q: ["蝦夷征討で秋田地方まで遠征した将軍は？"], a: ["阿倍比羅夫"], note: "658〜660年ごろ、斉明天皇の時代" },
-    { q: ["724年に陸奥国に設置された城柵は？"], a: ["多賀城"], note: "聖武天皇の時代。陸奥の国府が置かれた" },
-    { q: ["733年に出羽柵が移されて改称した城は？"], a: ["秋田城"] },
-    { q: ["713年に九州南部に置かれた国は？"], a: ["大隅国"], note: "隼人をおさえるため" },
-    { q: ["720年に起きた隼人の乱を鎮圧したのは？"], a: ["大伴旅人"] },
-    { q: ["元明・元正天皇を補佐した人物は？"], a: ["藤原不比等"] },
-    { q: ["698〜926年に存続し、日本と友好的だった国は？"], a: ["渤海"] },
-    { q: ["676年に朝鮮半島を統一し、935年まで続いた国は？"], a: ["新羅"] }
+    { lv: 1, q: ["平城京へ都が移されたのは何年？そのときの天皇は？"], a: ["710年・元明天皇"], note: "藤原京から移転した" },
+    { lv: 1, q: ["平城京は、唐のどの都にならって作られた？"], a: ["長安"] },
+    { lv: 1, q: ["東西南北に走る道で都を区画する仕組みを何という？"], a: ["条坊制"] },
+    { lv: 3, q: ["平城京の東西に置かれ、市司が監督したものは？"], a: ["市"] },
+    { lv: 2, q: ["7世紀に天武天皇の時代に作られた、早い時期の貨幣は？"], a: ["富本銭"] },
+    { lv: 1, q: ["708年に鋳造された貨幣は？"], a: ["和同開珎"] },
+    { lv: 2, q: ["和同開珎の原料となった銅が産出されたのは何国？"], a: ["武蔵国"] },
+    { lv: 2, q: ["貨幣の流通を広めるため、711年に出された法は？"], a: ["蓄銭叙位法"] },
+    { lv: 3, q: ["和同開珎から乾元大宝まで、12種類の貨幣の総称は？"], a: ["皇朝十二銭"] },
+    { lv: 2, q: ["官道では、約16kmごとに何が置かれた？"], a: ["駅家"], note: "駅鈴を持つ官人が利用できた" },
+    { lv: 2, q: ["647年に置かれた柵（さく）は？"], a: ["渟足柵（ぬたりのさく）"], note: "ノートの漢字と読みに注意（誤りチェック参照）" },
+    { lv: 2, q: ["648年に置かれた柵（さく）は？"], a: ["磐舟柵（いわふねのさく）"] },
+    { lv: 2, q: ["蝦夷征討で秋田地方まで遠征した将軍は？"], a: ["阿倍比羅夫"], note: "658〜660年ごろ、斉明天皇の時代" },
+    { lv: 1, q: ["724年に陸奥国に設置された城柵は？"], a: ["多賀城"], note: "聖武天皇の時代。陸奥の国府が置かれた" },
+    { lv: 3, q: ["733年に出羽柵が移されて改称した城は？"], a: ["秋田城"] },
+    { lv: 3, q: ["713年に九州南部に置かれた国は？"], a: ["大隅国"], note: "隼人をおさえるため" },
+    { lv: 3, q: ["720年に起きた隼人の乱を鎮圧したのは？"], a: ["大伴旅人"] },
+    { lv: 3, q: ["元明・元正天皇を補佐した人物は？"], a: ["藤原不比等"] },
+    { lv: 1, q: ["698〜926年に存続し、日本と友好的だった国は？"], a: ["渤海"] },
+    { lv: 1, q: ["676年に朝鮮半島を統一し、935年まで続いた国は？"], a: ["新羅"] }
   ];
 
   /* 各問題に安定したIDを付ける（記録の保存キー） */
@@ -430,7 +437,7 @@
     return items.filter(function (it) { return records[it.id] === true; }).length;
   }
   function failedItems(setKey) {
-    return SETS[setKey].items
+    return levelItems(setKey)
       .filter(function (it) { return records[it.id] === false; })
       .map(function (it, i) { return { it: it, i: i }; })
       .sort(function (x, y) {
@@ -440,7 +447,7 @@
       .map(function (w) { return w.it; });
   }
   function everItems(setKey) {
-    return SETS[setKey].items
+    return levelItems(setKey)
       .filter(function (it) { return (failCounts[it.id] || 0) >= 1; })
       .map(function (it, i) { return { it: it, i: i }; })
       .sort(function (x, y) {
@@ -454,6 +461,11 @@
   var currentSet = "pre";
   var currentMode = "all"; /* "all" | "retry" */
   var currentOrder = "shuffle"; /* "shuffle" | "seq" */
+  var currentLevel = 1; /* 1:基本 2:上級 3:全部確認 */
+  var LEVEL_NAMES = { 1: "基本問題", 2: "上級問題", 3: "全部確認問題" };
+  function levelItems(setKey) {
+    return SETS[setKey].items.filter(function (it) { return (it.lv || 1) === currentLevel; });
+  }
   var order = [];          /* 出題する問題の配列 */
   var pos = 0;
   var roundOk = 0, roundNg = 0, roundSkip = 0;
@@ -638,22 +650,29 @@
     $("mode-all").setAttribute("aria-pressed", currentMode === "all" ? "true" : "false");
     $("mode-retry").setAttribute("aria-pressed", currentMode === "retry" ? "true" : "false");
     $("mode-ever").setAttribute("aria-pressed", currentMode === "ever" ? "true" : "false");
+    $("level-1").setAttribute("aria-pressed", currentLevel === 1 ? "true" : "false");
+    $("level-2").setAttribute("aria-pressed", currentLevel === 2 ? "true" : "false");
+    $("level-3").setAttribute("aria-pressed", currentLevel === 3 ? "true" : "false");
+    [1, 2, 3].forEach(function (lv) {
+      var n = SETS[currentSet].items.filter(function (it) { return (it.lv || 1) === lv; }).length;
+      $("lv" + lv + "-count").textContent = "全" + n + "問";
+    });
     $("order-shuffle").setAttribute("aria-pressed", currentOrder === "shuffle" ? "true" : "false");
     $("order-seq").setAttribute("aria-pressed", currentOrder === "seq" ? "true" : "false");
 
     var failed = failedItems(currentSet);
-    $("retry-count").textContent = SETS[currentSet].label + "のバツのままの問題 " + failed.length + "問";
+    $("retry-count").textContent = SETS[currentSet].label + "・" + LEVEL_NAMES[currentLevel] + "のバツのままの問題 " + failed.length + "問";
     $("mode-retry").disabled = failed.length === 0;
 
     var ever = everItems(currentSet);
-    $("ever-count").textContent = SETS[currentSet].label + "の1回でもバツになった問題 " + ever.length + "問";
+    $("ever-count").textContent = SETS[currentSet].label + "・" + LEVEL_NAMES[currentLevel] + "の1回でもバツになった問題 " + ever.length + "問";
     $("mode-ever").disabled = ever.length === 0;
 
-    var pool = currentMode === "retry" ? failed : (currentMode === "ever" ? ever : SETS[currentSet].items);
+    var pool = currentMode === "retry" ? failed : (currentMode === "ever" ? ever : levelItems(currentSet));
     $("start-btn").disabled = pool.length === 0;
     $("home-note").textContent = pool.length === 0
       ? (currentMode === "ever" ? "1回でもバツになった問題はまだありません。" : "バツのままの問題はありません。「全部の問題」で練習できます。")
-      : "「" + SETS[currentSet].label + "」の" +
+      : "「" + SETS[currentSet].label + "・" + LEVEL_NAMES[currentLevel] + "」の" +
         (currentMode === "retry" ? "バツのままの問題 " + pool.length + "問" : (currentMode === "ever" ? "1回でもバツになった問題 " + pool.length + "問" : "全" + pool.length + "問")) +
         (currentMode === "all" ? (currentOrder === "shuffle" ? "をシャッフルして出題します。" : "をノートの順番のまま出題します。") : "を、できなかった回数が多い順に出題します。");
     showScreen("home");
@@ -661,7 +680,7 @@
 
   /* ===== クイズ画面 ===== */
   function startQuiz() {
-    var pool = currentMode === "retry" ? failedItems(currentSet) : (currentMode === "ever" ? everItems(currentSet) : SETS[currentSet].items.slice());
+    var pool = currentMode === "retry" ? failedItems(currentSet) : (currentMode === "ever" ? everItems(currentSet) : levelItems(currentSet).slice());
     if (pool.length === 0) return;
     order = currentMode === "all" ? (currentOrder === "shuffle" ? shuffle(pool) : pool.slice()) : pool.slice();
     pos = 0; roundOk = 0; roundNg = 0; roundSkip = 0;
@@ -671,7 +690,7 @@
   function renderQuestion() {
     var it = order[pos];
     $("quiz-pos").textContent = (pos + 1) + " / " + order.length + " 問目";
-    $("quiz-set").textContent = SETS[currentSet].label + (currentMode === "retry" ? "（バツのままの問題）" : (currentMode === "ever" ? "（1回でもバツになった問題）" : ""));
+    $("quiz-set").textContent = SETS[currentSet].label + "・" + LEVEL_NAMES[currentLevel] + (currentMode === "retry" ? "（バツのままの問題）" : (currentMode === "ever" ? "（1回でもバツになった問題）" : ""));
     if (it.confirm) {
       $("q-chip").hidden = false;
       $("q-chip").textContent = "確認（もう一度）";
@@ -781,6 +800,9 @@
   $("mode-all").addEventListener("click", function () { currentMode = "all"; renderHome(); });
   $("mode-retry").addEventListener("click", function () { currentMode = "retry"; renderHome(); });
   $("mode-ever").addEventListener("click", function () { currentMode = "ever"; renderHome(); });
+  $("level-1").addEventListener("click", function () { currentLevel = 1; renderHome(); });
+  $("level-2").addEventListener("click", function () { currentLevel = 2; renderHome(); });
+  $("level-3").addEventListener("click", function () { currentLevel = 3; renderHome(); });
   $("order-shuffle").addEventListener("click", function () { currentOrder = "shuffle"; renderHome(); });
   $("order-seq").addEventListener("click", function () { currentOrder = "seq"; renderHome(); });
   $("back-top-btn").addEventListener("click", renderHome);
