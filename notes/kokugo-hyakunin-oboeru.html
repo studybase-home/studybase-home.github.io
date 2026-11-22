@@ -21,10 +21,11 @@
   .poem-no { font-size:13px; font-weight:700; color:#1565c0; background:#e8effe; border-radius:999px; padding:3px 10px; }
   .poem-play { border:2px solid #1565c0; background:#fff; color:#1565c0; border-radius:999px; min-height:40px; padding:0 14px; font-size:14px; font-weight:700; cursor:pointer; }
   .poem-play.playing { background:#1565c0; color:#fff; }
-  .ku { font-size:20px; line-height:1.9; letter-spacing:.02em; }
+  .ku { font-size:20px; line-height:2.15; letter-spacing:.02em; }
   .ku .sep { color:#b6c2cf; margin:0 .15em; }
   .shimo { margin-top:2px; }
-  .author { text-align:right; font-size:13.5px; color:#5a6b7d; margin-top:8px; }
+  rt { color:#d32f2f; font-size:.5em; font-weight:600; }
+  .author { text-align:right; font-size:14.5px; color:#5a6b7d; margin-top:8px; }
   .to-drill { display:block; text-align:center; background:#fff; border-radius:14px; padding:16px; box-shadow:0 1px 4px rgba(20,40,60,.08); color:#1565c0; font-size:16px; font-weight:700; text-decoration:none; }
 </style>
 </head>
@@ -32,7 +33,7 @@
 <header>
   <a class="back" href="../index.html">← RYU学習ポータルに戻る</a>
   <h1>百人一首 51〜60 覚えるページ</h1>
-  <p>10首ぜんぶの歌と作者。読み上げも聞けます</p>
+  <p>10首ぜんぶの歌と作者（読み仮名つき）。読み上げも聞けます</p>
   <p>作成：2026年11月22日</p>
 </header>
 <main>
@@ -44,30 +45,60 @@
 </main>
 <script>
 var POEMS = [
-  { no:51, author:"藤原実方朝臣", ku:["かくとだに","えやは伊吹の","さしも草","さしも知らじな","燃ゆる思ひを"] },
-  { no:52, author:"藤原道信朝臣", ku:["明けぬれば","暮るるものとは","知りながら","なほうらめしき","朝ぼらけかな"] },
-  { no:53, author:"右大将道綱母", ku:["嘆きつつ","ひとり寝る夜の","明くる間は","いかに久しき","ものとかは知る"] },
-  { no:54, author:"儀同三司母", ku:["忘れじの","行く末までは","かたければ","今日を限りの","命ともがな"] },
-  { no:55, author:"大納言公任", ku:["滝の音は","絶えて久しく","なりぬれど","名こそ流れて","なほ聞こえけれ"] },
-  { no:56, author:"和泉式部", ku:["あらざらむ","この世のほかの","思ひ出に","今ひとたびの","逢ふこともがな"] },
-  { no:57, author:"紫式部", ku:["めぐり逢ひて","見しやそれとも","分かぬ間に","雲隠れにし","夜半の月かな"] },
-  { no:58, author:"大弐三位", ku:["有馬山","猪名の笹原","風吹けば","いでそよ人を","忘れやはする"] },
-  { no:59, author:"赤染衛門", ku:["やすらはで","寝なましものを","小夜更けて","かたぶくまでの","月を見しかな"] },
-  { no:60, author:"小式部内侍", ku:["大江山","いく野の道の","遠ければ","まだふみも見ず","天の橋立"] }
+  { no:51, author:"藤原実方朝臣",
+    authorH:"<ruby>藤原<rt>ふじわら</rt></ruby><ruby>実方<rt>さねかた</rt></ruby><ruby>朝臣<rt>あそん</rt></ruby>",
+    ku:["かくとだに","えやは伊吹の","さしも草","さしも知らじな","燃ゆる思ひを"],
+    kuH:["かくとだに","えやは<ruby>伊吹<rt>いぶき</rt></ruby>の","さしも<ruby>草<rt>ぐさ</rt></ruby>","さしも<ruby>知<rt>し</rt></ruby>らじな","<ruby>燃<rt>も</rt></ruby>ゆる<ruby>思<rt>おも</rt></ruby>ひを"] },
+  { no:52, author:"藤原道信朝臣",
+    authorH:"<ruby>藤原<rt>ふじわら</rt></ruby><ruby>道信<rt>みちのぶ</rt></ruby><ruby>朝臣<rt>あそん</rt></ruby>",
+    ku:["明けぬれば","暮るるものとは","知りながら","なほうらめしき","朝ぼらけかな"],
+    kuH:["<ruby>明<rt>あ</rt></ruby>けぬれば","<ruby>暮<rt>く</rt></ruby>るるものとは","<ruby>知<rt>し</rt></ruby>りながら","なほうらめしき","<ruby>朝<rt>あさ</rt></ruby>ぼらけかな"] },
+  { no:53, author:"右大将道綱母",
+    authorH:"<ruby>右大将<rt>うだいしょう</rt></ruby><ruby>道綱<rt>みちつな</rt></ruby><ruby>母<rt>はは</rt></ruby>",
+    ku:["嘆きつつ","ひとり寝る夜の","明くる間は","いかに久しき","ものとかは知る"],
+    kuH:["<ruby>嘆<rt>なげ</rt></ruby>きつつ","ひとり<ruby>寝<rt>ね</rt></ruby>る<ruby>夜<rt>よ</rt></ruby>の","<ruby>明<rt>あ</rt></ruby>くる<ruby>間<rt>ま</rt></ruby>は","いかに<ruby>久<rt>ひさ</rt></ruby>しき","ものとかは<ruby>知<rt>し</rt></ruby>る"] },
+  { no:54, author:"儀同三司母",
+    authorH:"<ruby>儀同三司<rt>ぎどうさんし</rt></ruby><ruby>母<rt>はは</rt></ruby>",
+    ku:["忘れじの","行く末までは","かたければ","今日を限りの","命ともがな"],
+    kuH:["<ruby>忘<rt>わす</rt></ruby>れじの","<ruby>行<rt>ゆ</rt></ruby>く<ruby>末<rt>すえ</rt></ruby>までは","かたければ","<ruby>今日<rt>けふ</rt></ruby>を<ruby>限<rt>かぎ</rt></ruby>りの","<ruby>命<rt>いのち</rt></ruby>ともがな"] },
+  { no:55, author:"大納言公任",
+    authorH:"<ruby>大納言<rt>だいなごん</rt></ruby><ruby>公任<rt>きんとう</rt></ruby>",
+    ku:["滝の音は","絶えて久しく","なりぬれど","名こそ流れて","なほ聞こえけれ"],
+    kuH:["<ruby>滝<rt>たき</rt></ruby>の<ruby>音<rt>おと</rt></ruby>は","<ruby>絶<rt>た</rt></ruby>えて<ruby>久<rt>ひさ</rt></ruby>しく","なりぬれど","<ruby>名<rt>な</rt></ruby>こそ<ruby>流<rt>なが</rt></ruby>れて","なほ<ruby>聞<rt>き</rt></ruby>こえけれ"] },
+  { no:56, author:"和泉式部",
+    authorH:"<ruby>和泉<rt>いずみ</rt></ruby><ruby>式部<rt>しきぶ</rt></ruby>",
+    ku:["あらざらむ","この世のほかの","思ひ出に","今ひとたびの","逢ふこともがな"],
+    kuH:["あらざらむ","この<ruby>世<rt>よ</rt></ruby>のほかの","<ruby>思<rt>おも</rt></ruby>ひ<ruby>出<rt>で</rt></ruby>に","<ruby>今<rt>いま</rt></ruby>ひとたびの","<ruby>逢<rt>あ</rt></ruby>ふこともがな"] },
+  { no:57, author:"紫式部",
+    authorH:"<ruby>紫<rt>むらさき</rt></ruby><ruby>式部<rt>しきぶ</rt></ruby>",
+    ku:["めぐり逢ひて","見しやそれとも","分かぬ間に","雲隠れにし","夜半の月かな"],
+    kuH:["めぐり<ruby>逢<rt>あ</rt></ruby>ひて","<ruby>見<rt>み</rt></ruby>しやそれとも","<ruby>分<rt>わ</rt></ruby>かぬ<ruby>間<rt>ま</rt></ruby>に","<ruby>雲隠<rt>くもがく</rt></ruby>れにし","<ruby>夜半<rt>よは</rt></ruby>の<ruby>月<rt>つき</rt></ruby>かな"] },
+  { no:58, author:"大弐三位",
+    authorH:"<ruby>大弐<rt>だいに</rt></ruby><ruby>三位<rt>さんみ</rt></ruby>",
+    ku:["有馬山","猪名の笹原","風吹けば","いでそよ人を","忘れやはする"],
+    kuH:["<ruby>有馬山<rt>ありまやま</rt></ruby>","<ruby>猪名<rt>いな</rt></ruby>の<ruby>笹原<rt>ささはら</rt></ruby>","<ruby>風<rt>かぜ</rt></ruby><ruby>吹<rt>ふ</rt></ruby>けば","いでそよ<ruby>人<rt>ひと</rt></ruby>を","<ruby>忘<rt>わす</rt></ruby>れやはする"] },
+  { no:59, author:"赤染衛門",
+    authorH:"<ruby>赤染<rt>あかぞめ</rt></ruby><ruby>衛門<rt>えもん</rt></ruby>",
+    ku:["やすらはで","寝なましものを","小夜更けて","かたぶくまでの","月を見しかな"],
+    kuH:["やすらはで","<ruby>寝<rt>ね</rt></ruby>なましものを","<ruby>小夜<rt>さよ</rt></ruby><ruby>更<rt>ふ</rt></ruby>けて","かたぶくまでの","<ruby>月<rt>つき</rt></ruby>を<ruby>見<rt>み</rt></ruby>しかな"] },
+  { no:60, author:"小式部内侍",
+    authorH:"<ruby>小式部<rt>こしきぶ</rt></ruby><ruby>内侍<rt>ないし</rt></ruby>",
+    ku:["大江山","いく野の道の","遠ければ","まだふみも見ず","天の橋立"],
+    kuH:["<ruby>大江山<rt>おおえやま</rt></ruby>","いく<ruby>野<rt>の</rt></ruby>の<ruby>道<rt>みち</rt></ruby>の","<ruby>遠<rt>とお</rt></ruby>ければ","まだふみも<ruby>見<rt>み</rt></ruby>ず","<ruby>天<rt>あま</rt></ruby>の<ruby>橋立<rt>はしだて</rt></ruby>"] }
 ];
 
 var wrap = document.getElementById("poems");
 POEMS.forEach(function(p){
   var card = document.createElement("div");
   card.className = "card";
-  var kami = p.ku.slice(0,3).join('<span class="sep"> </span>');
-  var shimo = p.ku.slice(3).join('<span class="sep"> </span>');
+  var kami = p.kuH.slice(0,3).join('<span class="sep"> </span>');
+  var shimo = p.kuH.slice(3).join('<span class="sep"> </span>');
   card.innerHTML =
     '<div class="poem-head"><span class="poem-no">第' + p.no + '番</span>' +
     '<button class="poem-play" data-no="' + p.no + '">▶ 読み上げ</button></div>' +
     '<div class="ku">' + kami + '</div>' +
     '<div class="ku shimo">' + shimo + '</div>' +
-    '<div class="author">' + p.author + '</div>';
+    '<div class="author">' + p.authorH + '</div>';
   wrap.appendChild(card);
 });
 
