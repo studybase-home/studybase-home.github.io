@@ -107,6 +107,13 @@
         「記号 → 数字」は、返り点を見て読む順番にタップする問題。<br>
         「数字 → 記号」は、読む順番の数字を見て、字をタップして返り点を付ける問題（タップするたびに記号が切り替わります）。
       </div>
+      <div class="label">文の種類</div>
+      <div class="chips" id="src-chips">
+        <button class="chip on" data-src="all">全部</button>
+        <button class="chip" data-src="text">教科書の文</button>
+        <button class="chip" data-src="classic">有名な漢文（初見）</button>
+        <button class="chip" data-src="practice">練習文</button>
+      </div>
       <div class="label">返り点のパターン</div>
       <div class="chips" id="pat-chips">
         <button class="chip on" data-pat="all">全部</button>
@@ -176,49 +183,71 @@
 /* 文データ：marks は字の位置（0始まり）→ 返り点。order は読む順番（字の位置の並び）。 */
 var SENTENCES = [
   /* 教科書の文（矛盾・揠苗助長・守株待兎） */
-  { id:"k01", text:"楚人有鬻盾與矛者", marks:{"2":"下","3":"二","5":"レ","6":"一","7":"上"}, order:[0,1,4,6,5,3,7,2], yomi:"楚人に盾と矛とを鬻ぐ者有り", pat:"ミックス" },
-  { id:"k02", text:"誉之曰", marks:{"0":"レ"}, order:[1,0,2], yomi:"之を誉めて曰はく", pat:"レ" },
-  { id:"k03", text:"吾盾之堅", marks:{}, order:[0,1,2,3], yomi:"吾が盾の堅きこと", pat:"そのまま" },
-  { id:"k04", text:"莫能陥也", marks:{"0":"二","2":"一"}, order:[1,2,0,3], yomi:"能く陥すもの莫きなり", pat:"一二" },
-  { id:"k05", text:"又誉其矛曰", marks:{"1":"二","3":"一"}, order:[0,2,3,1,4], yomi:"又、其の矛を誉めて曰はく", pat:"一二" },
-  { id:"k06", text:"吾矛之利", marks:{}, order:[0,1,2,3], yomi:"吾が矛の利きこと", pat:"そのまま" },
-  { id:"k07", text:"於物無不陥也", marks:{"0":"レ","2":"レ","3":"レ"}, order:[1,0,4,3,2,5], yomi:"物に於て陥さざる無し", pat:"レ" },
-  { id:"k08", text:"或謂之曰", marks:{"1":"レ"}, order:[0,2,1,3], yomi:"或る人、之に謂いて曰はく", pat:"レ" },
-  { id:"k09", text:"以子之矛", marks:{"0":"二","3":"一"}, order:[1,2,3,0], yomi:"子の矛を以て", pat:"一二" },
-  { id:"k10", text:"陥子之盾何如", marks:{"0":"二","3":"一"}, order:[1,2,3,0,4,5], yomi:"子の盾を陥さば何如", pat:"一二" },
-  { id:"k11", text:"其人弗能応也", marks:{"2":"レ","3":"レ"}, order:[0,1,4,3,2,5], yomi:"其の人、応ふること能はざるなり", pat:"レ" },
-  { id:"k12", text:"謂其人曰", marks:{"0":"二","2":"一"}, order:[1,2,0,3], yomi:"其の人に謂いて曰はく", pat:"一二" },
-  { id:"k13", text:"予助苗長矣", marks:{"1":"レ"}, order:[0,2,1,3,4], yomi:"予、苗を助けて長ぜしめたり", pat:"レ" },
-  { id:"k14", text:"其子趨而往視之", marks:{"5":"レ"}, order:[0,1,2,3,4,6,5], yomi:"其の子、趨りて往きて之を視る", pat:"レ" },
-  { id:"k15", text:"宋人有耕者", marks:{"2":"二","4":"一"}, order:[0,1,3,4,2], yomi:"宋人に耕す者有り", pat:"一二" },
-  { id:"k16", text:"田中有株", marks:{"2":"レ"}, order:[0,1,3,2], yomi:"田の中に株有り", pat:"レ" },
+  { id:"k01", text:"楚人有鬻盾與矛者", marks:{"2":"下","3":"二","5":"レ","6":"一","7":"上"}, order:[0,1,4,6,5,3,7,2], yomi:"楚人に盾と矛とを鬻ぐ者有り", pat:"ミックス", src:"text" },
+  { id:"k02", text:"誉之曰", marks:{"0":"レ"}, order:[1,0,2], yomi:"之を誉めて曰はく", pat:"レ", src:"text" },
+  { id:"k03", text:"吾盾之堅", marks:{}, order:[0,1,2,3], yomi:"吾が盾の堅きこと", pat:"そのまま", src:"text" },
+  { id:"k04", text:"莫能陥也", marks:{"0":"二","2":"一"}, order:[1,2,0,3], yomi:"能く陥すもの莫きなり", pat:"一二", src:"text" },
+  { id:"k05", text:"又誉其矛曰", marks:{"1":"二","3":"一"}, order:[0,2,3,1,4], yomi:"又、其の矛を誉めて曰はく", pat:"一二", src:"text" },
+  { id:"k06", text:"吾矛之利", marks:{}, order:[0,1,2,3], yomi:"吾が矛の利きこと", pat:"そのまま", src:"text" },
+  { id:"k07", text:"於物無不陥也", marks:{"0":"レ","2":"レ","3":"レ"}, order:[1,0,4,3,2,5], yomi:"物に於て陥さざる無し", pat:"レ", src:"text" },
+  { id:"k08", text:"或謂之曰", marks:{"1":"レ"}, order:[0,2,1,3], yomi:"或る人、之に謂いて曰はく", pat:"レ", src:"text" },
+  { id:"k09", text:"以子之矛", marks:{"0":"二","3":"一"}, order:[1,2,3,0], yomi:"子の矛を以て", pat:"一二", src:"text" },
+  { id:"k10", text:"陥子之盾何如", marks:{"0":"二","3":"一"}, order:[1,2,3,0,4,5], yomi:"子の盾を陥さば何如", pat:"一二", src:"text" },
+  { id:"k11", text:"其人弗能応也", marks:{"2":"レ","3":"レ"}, order:[0,1,4,3,2,5], yomi:"其の人、応ふること能はざるなり", pat:"レ", src:"text" },
+  { id:"k12", text:"謂其人曰", marks:{"0":"二","2":"一"}, order:[1,2,0,3], yomi:"其の人に謂いて曰はく", pat:"一二", src:"text" },
+  { id:"k13", text:"予助苗長矣", marks:{"1":"レ"}, order:[0,2,1,3,4], yomi:"予、苗を助けて長ぜしめたり", pat:"レ", src:"text" },
+  { id:"k14", text:"其子趨而往視之", marks:{"5":"レ"}, order:[0,1,2,3,4,6,5], yomi:"其の子、趨りて往きて之を視る", pat:"レ", src:"text" },
+  { id:"k15", text:"宋人有耕者", marks:{"2":"二","4":"一"}, order:[0,1,3,4,2], yomi:"宋人に耕す者有り", pat:"一二", src:"text" },
+  { id:"k16", text:"田中有株", marks:{"2":"レ"}, order:[0,1,3,2], yomi:"田の中に株有り", pat:"レ", src:"text" },
   /* レ点の練習 */
-  { id:"k17", text:"園中有樹", marks:{"2":"レ"}, order:[0,1,3,2], yomi:"園の中に樹有り", pat:"レ" },
-  { id:"k18", text:"池中有魚", marks:{"2":"レ"}, order:[0,1,3,2], yomi:"池の中に魚有り", pat:"レ" },
-  { id:"k19", text:"門前有市", marks:{"2":"レ"}, order:[0,1,3,2], yomi:"門前に市有り", pat:"レ" },
-  { id:"k20", text:"倉中有米", marks:{"2":"レ"}, order:[0,1,3,2], yomi:"倉の中に米有り", pat:"レ" },
-  { id:"k21", text:"山有寺", marks:{"1":"レ"}, order:[0,2,1], yomi:"山に寺有り", pat:"レ" },
-  { id:"k22", text:"門有客", marks:{"1":"レ"}, order:[0,2,1], yomi:"門に客有り", pat:"レ" },
+  { id:"k17", text:"園中有樹", marks:{"2":"レ"}, order:[0,1,3,2], yomi:"園の中に樹有り", pat:"レ", src:"practice" },
+  { id:"k18", text:"池中有魚", marks:{"2":"レ"}, order:[0,1,3,2], yomi:"池の中に魚有り", pat:"レ", src:"practice" },
+  { id:"k19", text:"門前有市", marks:{"2":"レ"}, order:[0,1,3,2], yomi:"門前に市有り", pat:"レ", src:"practice" },
+  { id:"k20", text:"倉中有米", marks:{"2":"レ"}, order:[0,1,3,2], yomi:"倉の中に米有り", pat:"レ", src:"practice" },
+  { id:"k21", text:"山有寺", marks:{"1":"レ"}, order:[0,2,1], yomi:"山に寺有り", pat:"レ", src:"practice" },
+  { id:"k22", text:"門有客", marks:{"1":"レ"}, order:[0,2,1], yomi:"門に客有り", pat:"レ", src:"practice" },
   /* 一二点の練習 */
-  { id:"k23", text:"人有善行", marks:{"1":"二","3":"一"}, order:[0,2,3,1], yomi:"人に善行有り", pat:"一二" },
-  { id:"k24", text:"国有賢臣", marks:{"1":"二","3":"一"}, order:[0,2,3,1], yomi:"国に賢臣有り", pat:"一二" },
-  { id:"k25", text:"王有大志", marks:{"1":"二","3":"一"}, order:[0,2,3,1], yomi:"王に大志有り", pat:"一二" },
-  { id:"k26", text:"師有高名", marks:{"1":"二","3":"一"}, order:[0,2,3,1], yomi:"師に高名有り", pat:"一二" },
-  { id:"k27", text:"村有老翁", marks:{"1":"二","3":"一"}, order:[0,2,3,1], yomi:"村に老翁有り", pat:"一二" },
-  { id:"k28", text:"昔者有賢人", marks:{"2":"二","4":"一"}, order:[0,1,3,4,2], yomi:"昔、賢人有り", pat:"一二" },
+  { id:"k23", text:"人有善行", marks:{"1":"二","3":"一"}, order:[0,2,3,1], yomi:"人に善行有り", pat:"一二", src:"practice" },
+  { id:"k24", text:"国有賢臣", marks:{"1":"二","3":"一"}, order:[0,2,3,1], yomi:"国に賢臣有り", pat:"一二", src:"practice" },
+  { id:"k25", text:"王有大志", marks:{"1":"二","3":"一"}, order:[0,2,3,1], yomi:"王に大志有り", pat:"一二", src:"practice" },
+  { id:"k26", text:"師有高名", marks:{"1":"二","3":"一"}, order:[0,2,3,1], yomi:"師に高名有り", pat:"一二", src:"practice" },
+  { id:"k27", text:"村有老翁", marks:{"1":"二","3":"一"}, order:[0,2,3,1], yomi:"村に老翁有り", pat:"一二", src:"practice" },
+  { id:"k28", text:"昔者有賢人", marks:{"2":"二","4":"一"}, order:[0,1,3,4,2], yomi:"昔、賢人有り", pat:"一二", src:"practice" },
   /* 一二三点の練習 */
-  { id:"k29", text:"客見花笑", marks:{"0":"二","2":"一","3":"三"}, order:[1,2,0,3], yomi:"花を見て、客は笑う", pat:"一二三" },
-  { id:"k30", text:"子聞声喜", marks:{"0":"二","2":"一","3":"三"}, order:[1,2,0,3], yomi:"声を聞いて、子は喜ぶ", pat:"一二三" },
-  { id:"k31", text:"王見民喜", marks:{"0":"二","2":"一","3":"三"}, order:[1,2,0,3], yomi:"民を見て、王は喜ぶ", pat:"一二三" },
-  { id:"k32", text:"鳥聞声飛", marks:{"0":"二","2":"一","3":"三"}, order:[1,2,0,3], yomi:"声を聞いて、鳥は飛ぶ", pat:"一二三" },
+  { id:"k29", text:"客見花笑", marks:{"0":"二","2":"一","3":"三"}, order:[1,2,0,3], yomi:"花を見て、客は笑う", pat:"一二三", src:"practice" },
+  { id:"k30", text:"子聞声喜", marks:{"0":"二","2":"一","3":"三"}, order:[1,2,0,3], yomi:"声を聞いて、子は喜ぶ", pat:"一二三", src:"practice" },
+  { id:"k31", text:"王見民喜", marks:{"0":"二","2":"一","3":"三"}, order:[1,2,0,3], yomi:"民を見て、王は喜ぶ", pat:"一二三", src:"practice" },
+  { id:"k32", text:"鳥聞声飛", marks:{"0":"二","2":"一","3":"三"}, order:[1,2,0,3], yomi:"声を聞いて、鳥は飛ぶ", pat:"一二三", src:"practice" },
   /* 上下点の練習 */
-  { id:"k33", text:"国有賢臣家有孝子", marks:{"1":"二","3":"一","5":"下","7":"上"}, order:[0,2,3,1,4,6,7,5], yomi:"国に賢臣有り、家に孝子有り", pat:"上下" },
-  { id:"k34", text:"人有善行天有晴日", marks:{"1":"二","3":"一","5":"下","7":"上"}, order:[0,2,3,1,4,6,7,5], yomi:"人に善行有り、天に晴日有り", pat:"上下" },
-  { id:"k35", text:"客見花入園", marks:{"0":"下","1":"二","2":"一","3":"上"}, order:[2,1,3,0,4], yomi:"花を見て、客は園に入る", pat:"上下" },
-  { id:"k36", text:"子迎友入家", marks:{"0":"下","1":"二","2":"一","3":"上"}, order:[2,1,3,0,4], yomi:"友を迎えて、子は家に入る", pat:"上下" },
+  { id:"k33", text:"国有賢臣家有孝子", marks:{"1":"二","3":"一","5":"下","7":"上"}, order:[0,2,3,1,4,6,7,5], yomi:"国に賢臣有り、家に孝子有り", pat:"上下", src:"practice" },
+  { id:"k34", text:"人有善行天有晴日", marks:{"1":"二","3":"一","5":"下","7":"上"}, order:[0,2,3,1,4,6,7,5], yomi:"人に善行有り、天に晴日有り", pat:"上下", src:"practice" },
+  { id:"k35", text:"客見花入園", marks:{"0":"下","1":"二","2":"一","3":"上"}, order:[2,1,3,0,4], yomi:"花を見て、客は園に入る", pat:"上下", src:"practice" },
+  { id:"k36", text:"子迎友入家", marks:{"0":"下","1":"二","2":"一","3":"上"}, order:[2,1,3,0,4], yomi:"友を迎えて、子は家に入る", pat:"上下", src:"practice" },
   /* ミックス */
-  { id:"k37", text:"人見花鳥有声", marks:{"0":"二","2":"一","4":"レ"}, order:[1,2,0,3,5,4], yomi:"花を見る人。鳥に声有り", pat:"ミックス" },
-  { id:"k38", text:"園中有花鳥有声", marks:{"2":"レ","5":"レ"}, order:[0,1,3,2,4,6,5], yomi:"園の中に花有り、鳥に声有り", pat:"ミックス" }
+  { id:"k37", text:"人見花鳥有声", marks:{"0":"二","2":"一","4":"レ"}, order:[1,2,0,3,5,4], yomi:"花を見る人。鳥に声有り", pat:"ミックス", src:"practice" },
+  { id:"k38", text:"園中有花鳥有声", marks:{"2":"レ","5":"レ"}, order:[0,1,3,2,4,6,5], yomi:"園の中に花有り、鳥に声有り", pat:"ミックス", src:"practice" },
+  { id:"k39", text:"温故知新", marks:{"0":"レ","2":"レ"}, order:[1,0,3,2], yomi:"故きを温めて新しきを知る", pat:"レ", src:"classic" },
+  { id:"k40", text:"以五十歩笑百歩", marks:{"0":"二","3":"一","4":"レ"}, order:[1,2,3,0,5,6,4], yomi:"五十歩を以て百歩を笑う", pat:"ミックス", src:"classic" },
+  { id:"k41", text:"知足者富", marks:{"0":"レ"}, order:[1,0,2,3], yomi:"足るを知る者は富む", pat:"レ", src:"classic" },
+  { id:"k42", text:"漁者得利", marks:{"2":"レ"}, order:[0,1,3,2], yomi:"漁者は利を得る", pat:"レ", src:"classic" },
+  { id:"k43", text:"画蛇添足", marks:{"0":"レ","2":"レ"}, order:[1,0,3,2], yomi:"蛇を画きて足を添う", pat:"レ", src:"classic" },
+  { id:"k44", text:"塞翁失馬", marks:{"2":"レ"}, order:[0,1,3,2], yomi:"塞翁、馬を失う", pat:"レ", src:"classic" },
+  { id:"k45", text:"天時不如地利", marks:{"2":"二","5":"一"}, order:[0,1,4,5,2,3], yomi:"天の時は地の利に如かず", pat:"一二", src:"classic" },
+  { id:"k46", text:"地利不如人和", marks:{"2":"二","5":"一"}, order:[0,1,4,5,2,3], yomi:"地の利は人の和に如かず", pat:"一二", src:"classic" },
+  { id:"k47", text:"上善如水", marks:{"2":"レ"}, order:[0,1,3,2], yomi:"上善は水の如し", pat:"レ", src:"classic" },
+  { id:"k48", text:"徳不孤必有隣", marks:{"4":"レ"}, order:[0,1,2,3,5,4], yomi:"徳は孤ならず、必ず隣有り", pat:"レ", src:"classic" },
+  { id:"k49", text:"有朋自遠方来", marks:{"0":"レ","2":"二","4":"一"}, order:[1,0,3,4,2,5], yomi:"朋有り、遠方より来たる", pat:"ミックス", src:"classic" },
+  { id:"k50", text:"道可道非常道", marks:{"3":"下","5":"上"}, order:[0,1,2,4,5,3], yomi:"道の道うべきは、常の道に非ず", pat:"上下", src:"classic" },
+  { id:"k51", text:"知之者不如好之者", marks:{"0":"レ","3":"下","7":"上"}, order:[1,0,2,5,6,7,3,4], yomi:"之を知る者は、之を好む者に如かず", pat:"ミックス", src:"classic" },
+  { id:"k52", text:"好之者不如楽之者", marks:{"3":"二","7":"一"}, order:[0,1,2,5,6,7,3,4], yomi:"之を好む者は、之を楽しむ者に如かず", pat:"一二", src:"classic" },
+  { id:"k53", text:"百聞不如一見", marks:{"2":"二","5":"一"}, order:[0,1,4,5,2,3], yomi:"百聞は一見に如かず", pat:"一二", src:"classic" },
+  { id:"k54", text:"狐假虎之威", marks:{"1":"二","4":"一"}, order:[0,2,3,4,1], yomi:"狐、虎の威を假る", pat:"一二", src:"classic" },
+  { id:"k55", text:"青出於藍", marks:{"1":"二","3":"一"}, order:[0,3,2,1], yomi:"青は藍より出づ", pat:"一二", src:"classic" },
+  { id:"k56", text:"後生可畏", marks:{"2":"レ"}, order:[0,1,3,2], yomi:"後生、畏るべし", pat:"レ", src:"classic" },
+  { id:"k57", text:"三人行必有我師", marks:{"4":"レ"}, order:[0,1,2,3,5,6,4], yomi:"三人行けば、必ず我が師有り", pat:"レ", src:"classic" },
+  { id:"k58", text:"聞一知十", marks:{"0":"レ","2":"レ"}, order:[1,0,3,2], yomi:"一を聞きて十を知る", pat:"レ", src:"classic" },
+  { id:"k59", text:"朝聞道夕死可", marks:{"1":"レ"}, order:[0,2,1,3,4,5], yomi:"朝に道を聞かば、夕べに死すとも可なり", pat:"レ", src:"classic" },
+  { id:"k60", text:"歳寒知松柏", marks:{"2":"二","4":"一"}, order:[0,1,3,4,2], yomi:"歳寒くして、松柏を知る", pat:"一二", src:"classic" },
 ];
 
 var REC_KEY = "ryunosuke.kokugo-kanbun.records.v1";
@@ -244,6 +273,7 @@ saveJSON(FAIL_KEY, failCounts);
 
 var currentDirMode = "a";   /* a / b / mix */
 var currentPat = "all";
+var currentSrc = "all";
 var quizList = [];          /* {s, dir, confirm} */
 var quizIdx = 0;
 var quizCorrect = 0;
@@ -270,6 +300,7 @@ function poolItems(mode){
   var items = [];
   SENTENCES.forEach(function(s){
     if (currentPat !== "all" && s.pat !== currentPat) return;
+    if (currentSrc !== "all" && s.src !== currentSrc) return;
     dirsForMode().forEach(function(d){
       var k = keyOf(s, d);
       if (mode === "all") items.push({s:s, dir:d});
@@ -518,6 +549,12 @@ el("dir-chips").addEventListener("click", function(e){
 el("pat-chips").addEventListener("click", function(e){
   var b = e.target.closest(".chip"); if (!b) return;
   currentPat = b.dataset.pat;
+  this.querySelectorAll(".chip").forEach(function(c){ c.classList.toggle("on", c === b); });
+  renderHome();
+});
+el("src-chips").addEventListener("click", function(e){
+  var b = e.target.closest(".chip"); if (!b) return;
+  currentSrc = b.dataset.src;
   this.querySelectorAll(".chip").forEach(function(c){ c.classList.toggle("on", c === b); });
   renderHome();
 });
