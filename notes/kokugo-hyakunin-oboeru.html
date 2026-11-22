@@ -87,6 +87,20 @@ var POEMS = [
     kuH:["<ruby>大江山<rt>おおえやま</rt></ruby>","いく<ruby>野<rt>の</rt></ruby>の<ruby>道<rt>みち</rt></ruby>の","<ruby>遠<rt>とお</rt></ruby>ければ","まだふみも<ruby>見<rt>み</rt></ruby>ず","<ruby>天<rt>あま</rt></ruby>の<ruby>橋立<rt>はしだて</rt></ruby>"] }
 ];
 
+/* 読み上げ用：ふりがな通りの読み（漢字で読ませると読み間違えるため、かなで渡す） */
+var YOMI = {
+  51:"かくとだに、えやはいぶきの、さしもぐさ、さしもしらじな、もゆるおもいを",
+  52:"あけぬれば、くるるものとは、しりながら、なほうらめしき、あさぼらけかな",
+  53:"なげきつつ、ひとりねるよの、あくるまは、いかにひさしき、ものとかはしる",
+  54:"わすれじの、ゆくすえまでは、かたければ、けふをかぎりの、いのちともがな",
+  55:"たきのおとは、たえてひさしく、なりぬれど、なこそながれて、なほきこえけれ",
+  56:"あらざらむ、このよのほかの、おもいでに、いまひとたびの、あふこともがな",
+  57:"めぐりあひて、みしやそれとも、わかぬまに、くもがくれにし、よはのつきかな",
+  58:"ありまやま、いなのささはら、かぜふけば、いでそよひとを、わすれやはする",
+  59:"やすらはで、ねなましものを、さよふけて、かたぶくまでの、つきをみしかな",
+  60:"おおえやま、いくののみちの、とおければ、まだふみもみず、あまのはしだて"
+};
+
 var wrap = document.getElementById("poems");
 POEMS.forEach(function(p){
   var card = document.createElement("div");
@@ -118,7 +132,7 @@ function speakText(text, onend){
   if (onend) u.onend = onend;
   window.speechSynthesis.speak(u);
 }
-function poemText(p){ return p.ku.join("、"); }
+function poemText(p){ return YOMI[p.no] || p.ku.join("、"); }
 
 document.querySelectorAll(".poem-play").forEach(function(btn){
   btn.addEventListener("click", function(){
