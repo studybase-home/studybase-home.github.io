@@ -119,6 +119,24 @@
   .empty-note { color: var(--ink-soft); font-size: 0.92rem; margin: 4px 2px; }
 
   .foot { color: var(--ink-soft); font-size: 0.78rem; margin-top: 24px; }
+
+  /* 並べ替え */
+  .reorder-row { display: flex; justify-content: flex-end; margin: 0 2px 8px; }
+  #reorder-toggle {
+    font-family: inherit; cursor: pointer; min-height: 40px; padding: 6px 14px;
+    border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface);
+    color: var(--ink-soft); font-size: 0.85rem; font-weight: 700;
+  }
+  body.reorder #reorder-toggle { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .move-btns { display: none; gap: 6px; flex: 0 0 auto; }
+  body.reorder .move-btns { display: flex; }
+  body.reorder .card-link .arrow { display: none; }
+  .move-btn {
+    width: 44px; height: 44px; border-radius: 10px; cursor: pointer;
+    border: 1.5px solid var(--line); background: var(--surface);
+    color: var(--ink); font-size: 1.05rem; font-family: inherit;
+  }
+  .move-btn:disabled { opacity: 0.3; }
 </style>
 </head>
 <body>
@@ -136,6 +154,8 @@
     <a class="send-chip" href="https://www.dropbox.com/request/pyv94loexft184q9eguj"><span class="icon">❓</span>解説希望</a>
     <a class="send-chip" href="https://www.dropbox.com/request/j4u46ahkm0bo2dwwyrmn"><span class="icon">📄</span>その他</a>
   </div>
+
+  <div class="reorder-row"><button id="reorder-toggle" type="button">↕ 並べ替え</button></div>
 
   <!-- 教科タブ（インデックス風） -->
   <div class="tabs">
@@ -254,6 +274,74 @@
   var savedTab = null;
   try { savedTab = localStorage.getItem(TAB_KEY); } catch (e) {}
   if (savedTab && panels[savedTab]) { showTab(savedTab); }
+
+  /* ===== カードの並べ替え（タップで上下に移動、このスマホの中に保存） ===== */
+  var ORDER_KEY = "ryu-portal-order-v1";
+  function loadOrder() {
+    try { return JSON.parse(localStorage.getItem(ORDER_KEY) || "{}") || {}; } catch (e) { return {}; }
+  }
+  function saveOrder() {
+    var data = {};
+    Object.keys(panels).forEach(function (k) {
+      data[k] = Array.prototype.map.call(panels[k].querySelectorAll(".card-link"), function (a) { return a.getAttribute("href"); });
+    });
+    try { localStorage.setItem(ORDER_KEY, JSON.stringify(data)); } catch (e) {}
+  }
+  function applyOrder() {
+    var data = loadOrder();
+    Object.keys(panels).forEach(function (k) {
+      var saved = data[k];
+      if (!saved || !saved.length) { return; }
+      var cards = Array.prototype.slice.call(panels[k].querySelectorAll(".card-link"));
+      var fresh = cards.filter(function (a) { return saved.indexOf(a.getAttribute("href")) < 0; });
+      var known = saved.map(function (h) {
+        return cards.filter(function (a) { return a.getAttribute("href") === h; })[0];
+      }).filter(Boolean);
+      fresh.concat(known).forEach(function (a) { panels[k].appendChild(a); });
+    });
+  }
+  function refreshMoveBtns() {
+    Object.keys(panels).forEach(function (k) {
+      var cards = panels[k].querySelectorAll(".card-link");
+      cards.forEach(function (a, i) {
+        var btns = a.querySelectorAll(".move-btn");
+        if (btns.length < 2) { return; }
+        btns[0].disabled = (i === 0);
+        btns[1].disabled = (i === cards.length - 1);
+      });
+    });
+  }
+  Object.keys(panels).forEach(function (k) {
+    panels[k].querySelectorAll(".card-link").forEach(function (a) {
+      var span = document.createElement("span");
+      span.className = "move-btns";
+      var up = document.createElement("button");
+      up.type = "button"; up.className = "move-btn"; up.textContent = "↑"; up.setAttribute("aria-label", "上へ");
+      var down = document.createElement("button");
+      down.type = "button"; down.className = "move-btn"; down.textContent = "↓"; down.setAttribute("aria-label", "下へ");
+      up.addEventListener("click", function (e) {
+        e.preventDefault(); e.stopPropagation();
+        var prev = a.previousElementSibling;
+        while (prev && !prev.classList.contains("card-link")) { prev = prev.previousElementSibling; }
+        if (prev) { a.parentNode.insertBefore(a, prev); saveOrder(); refreshMoveBtns(); }
+      });
+      down.addEventListener("click", function (e) {
+        e.preventDefault(); e.stopPropagation();
+        var next = a.nextElementSibling;
+        while (next && !next.classList.contains("card-link")) { next = next.nextElementSibling; }
+        if (next) { a.parentNode.insertBefore(next, a); saveOrder(); refreshMoveBtns(); }
+      });
+      span.appendChild(up); span.appendChild(down);
+      a.appendChild(span);
+      a.addEventListener("click", function (e) { if (document.body.classList.contains("reorder")) { e.preventDefault(); } });
+    });
+  });
+  applyOrder();
+  refreshMoveBtns();
+  document.getElementById("reorder-toggle").addEventListener("click", function () {
+    var on = document.body.classList.toggle("reorder");
+    this.textContent = on ? "✓ 並べ替えを終わる" : "↕ 並べ替え";
+  });
 </script>
 </body>
 </html>
