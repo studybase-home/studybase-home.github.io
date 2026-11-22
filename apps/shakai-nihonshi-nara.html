@@ -159,12 +159,16 @@
 
   <a class="back" href="../index.html">‹ RYU学習ポータルに戻る</a>
   <h1>日本史：奈良時代</h1>
-  <p class="sub">社会・日本史 一問一答（ノート① 律令のしくみ 16問・ノート② 平城京と領土の拡大 20問）</p>
+  <p class="sub">社会・日本史 一問一答（ノート① 律令のしくみ 16問・ノート1.5 民衆の生活と遣唐使 23問・ノート② 平城京と領土の拡大 20問）</p>
   <p class="sub" style="margin-top:-6px;">時代：奈良時代（律令国家と平城京）／作成：2026年11月22日</p>
 
   <div class="err-box">
     <h2>📝 ノートの誤りチェック</h2>
-    <p class="err-lead">ノートの内容を教科書の内容と照らし合わせて確認しました。次の3点は直しておきましょう。それ以外の内容は合っていました。</p>
+    <p class="err-lead">ノートの内容を教科書の内容と照らし合わせて確認しました。次の4点は直しておきましょう。それ以外の内容は合っていました。</p>
+    <div class="err-item">
+      <p class="err-ng">ノート1.5枚目・7行目あたり：租（口分田の収穫の3%）の納め先が「国府」</p>
+      <p class="err-ok">正しくは <strong>郡家（ぐんが＝郡の役所の倉）</strong> です。租は郡家に納めるもので、国府ではありません。</p>
+    </div>
     <div class="err-item">
       <p class="err-ng">ノート2枚目・20行目あたり：淳足柵</p>
       <p class="err-ok">正しくは <strong>渟足柵（ぬたりのさく）</strong>。「渟」の字が正しく、読みは「さく」です（磐舟柵も「いわふねのさく」）。</p>
@@ -182,13 +186,14 @@
   <!-- ===== トップ画面 ===== -->
   <div id="screen-home">
     <div class="progress-box">
-      <div class="progress-row"><span>進み具合</span><span class="num" id="progress-text">全36問中 できた 0問</span></div>
+      <div class="progress-row"><span>進み具合</span><span class="num" id="progress-text">全59問中 できた 0問</span></div>
       <div class="bar"><div class="bar-fill" id="progress-bar" style="width:0%"></div></div>
       <p class="progress-note" id="progress-note"></p>
     </div>
 
     <div class="tabs" role="tablist" aria-label="問題の種類">
       <button class="tab" id="tab-sent" role="tab" aria-selected="true">ノート① 律令のしくみ<span class="tab-count">全16問</span></button>
+      <button class="tab" id="tab-mid" role="tab" aria-selected="false">ノート1.5 民衆の生活と遣唐使<span class="tab-count">全23問</span></button>
       <button class="tab" id="tab-word" role="tab" aria-selected="false">ノート② 平城京と領土の拡大<span class="tab-count">全20問</span></button>
     </div>
 
@@ -258,6 +263,32 @@
     { q: ["庸・調を徴収するために、毎年作られた台帳は？"], a: ["計帳"] }
   ];
 
+  var MID = [
+    { q: ["班田収授法で、6歳以上の男子に与えられた田を何という？"], a: ["口分田"] },
+    { q: ["口分田の売買は、認められていた？"], a: ["禁止されていた"] },
+    { q: ["田を区画する仕組みを何という？"], a: ["条里制"] },
+    { q: ["租として納めたのは、口分田の収穫のどのくらい？"], a: ["約3%"] },
+    { q: ["租を納める先はどこ？"], a: ["郡家（郡の役所の倉）"], note: "ノートの「国府」は誤り（誤りチェック参照）" },
+    { q: ["絹・糸・布などの特産品を、成人男子が納めた税は？"], a: ["調"] },
+    { q: ["都での労役の代わりに、布を納めた税は？"], a: ["庸"] },
+    { q: ["国司のもとで労役に服する負担を何という？"], a: ["雑徭"] },
+    { q: ["稲を貸し付ける制度は？国家のものと豪族のものの呼び分けは？"], a: ["出挙（公出挙・私出挙）"] },
+    { q: ["兵士は、正丁何人に1人の割合で選ばれた？"], a: ["3〜4人に1人"] },
+    { q: ["兵士の武器と食料は、どうやって用意した？"], a: ["自分で用意した（自弁）"] },
+    { q: ["宮城の警備にあたった兵士を何という？"], a: ["衛士"] },
+    { q: ["九州の警備にあたり、東国の農民が多かった兵士は？"], a: ["防人"] },
+    { q: ["賤民（せんみん）の総称を何という？"], a: ["五色の賤"] },
+    { q: ["五色の賤のうち、官有のものを3つ言うと？"], a: ["陵戸・官戸・公奴婢"] },
+    { q: ["五色の賤のうち、私有のものを2つ言うと？"], a: ["家人・私奴婢"] },
+    { q: ["唐の存続期間と、都の名前は？"], a: ["618〜907年・長安"] },
+    { q: ["第1回の遣唐使が派遣された年と、大使の名前は？"], a: ["630年・犬上御田鍬"] },
+    { q: ["遣唐使の廃止を建議した人物と、その年は？"], a: ["菅原道真・894年"] },
+    { q: ["遣唐使の航路は、初めと後でどう変わった？"], a: ["初めは北路、新羅との関係が悪くなった後は南路（南島路）"] },
+    { q: ["唐に渡って帰国し、聖武天皇に仕えた2人は？"], a: ["吉備真備・玄昉"] },
+    { q: ["唐に渡ったまま、帰国できなかった人物は？"], a: ["阿倍仲麻呂"] },
+    { q: ["日本に戒律（かいりつ）を伝えた、唐の僧は？"], a: ["鑑真"] }
+  ];
+
   var WORD_CATS = ["① 動詞（表現含む）", "② 名詞（表現含む）", "③ 形容詞（表現含む）", "④ 副詞（表現含む）"];
   var WORDS = [
     { q: ["平城京へ都が移されたのは何年？そのときの天皇は？"], a: ["710年・元明天皇"], note: "藤原京から移転した" },
@@ -285,12 +316,14 @@
   /* 各問題に安定したIDを付ける（記録の保存キー） */
   SENTENCES.forEach(function (it, i) { it.id = "s" + (i + 1); });
   WORDS.forEach(function (it, i) { it.id = "w" + (i + 1); });
+  MID.forEach(function (it, i) { it.id = "m" + (i + 1); });
 
   var SETS = {
     sent: { label: "ノート① 律令のしくみ", items: SENTENCES },
+    mid: { label: "ノート1.5 民衆の生活と遣唐使", items: MID },
     word: { label: "ノート② 平城京と領土の拡大", items: WORDS }
   };
-  var ALL_ITEMS = SENTENCES.concat(WORDS);
+  var ALL_ITEMS = SENTENCES.concat(MID, WORDS);
 
   /* ===== 記録（localStorage：このブラウザの中だけ） ===== */
   var STORE_KEY = "ryunosuke.shakai-nara.records.v1";
@@ -351,6 +384,7 @@
     $("progress-note").textContent = "できなかった " + ngAll + "問 ／ まだやっていない " + yetAll + "問";
 
     $("tab-sent").setAttribute("aria-selected", currentSet === "sent" ? "true" : "false");
+    $("tab-mid").setAttribute("aria-selected", currentSet === "mid" ? "true" : "false");
     $("tab-word").setAttribute("aria-selected", currentSet === "word" ? "true" : "false");
     $("mode-all").setAttribute("aria-pressed", currentMode === "all" ? "true" : "false");
     $("mode-retry").setAttribute("aria-pressed", currentMode === "retry" ? "true" : "false");
@@ -480,6 +514,7 @@
 
   /* ===== イベント ===== */
   $("tab-sent").addEventListener("click", function () { currentSet = "sent"; renderHome(); });
+  $("tab-mid").addEventListener("click", function () { currentSet = "mid"; renderHome(); });
   $("tab-word").addEventListener("click", function () { currentSet = "word"; renderHome(); });
   $("mode-all").addEventListener("click", function () { currentMode = "all"; renderHome(); });
   $("mode-retry").addEventListener("click", function () { currentMode = "retry"; renderHome(); });
