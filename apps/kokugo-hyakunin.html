@@ -46,6 +46,7 @@
   .poem-box .ku{font-size:20px; font-weight:700; line-height:1.5; padding:3px 0;}
   .poem-box .ku.blank{display:inline-block; background:#fdf3e3; border:2px dashed var(--accent2); border-radius:8px; color:var(--accent2); padding:2px 14px; margin:3px 0;}
   .poem-box .ku.revealed{background:#e7f7ee; border:2px solid var(--ok); border-radius:8px; color:var(--ink); padding:2px 14px;}
+  .imi-box{display:none; margin-top:22px; font-size:.76rem; color:#9aa3ab; line-height:1.7;}
   .choices{display:flex; flex-direction:column; gap:10px;}
   .choice{border:2px solid var(--line); background:#fff; border-radius:12px; padding:14px; font-size:18px; font-weight:700; text-align:left; cursor:pointer; min-height:52px; width:100%;}
   .choice.sel{border-color:var(--accent); background:#e8effe;}
@@ -128,6 +129,7 @@
     <div class="btn-row">
       <button class="btn primary hidden" id="next-btn">次の問題へ</button>
     </div>
+    <div class="imi-box" id="imi-box"></div>
   </section>
 
   <!-- 終了 -->
@@ -147,16 +149,16 @@
 <script>
 "use strict";
 var POEMS = [
-  { no:51, author:"藤原実方朝臣", ku:["かくとだに","えやは伊吹の","さしも草","さしも知らじな","燃ゆる思ひを"] },
-  { no:52, author:"藤原道信朝臣", ku:["明けぬれば","暮るるものとは","知りながら","なほうらめしき","朝ぼらけかな"] },
-  { no:53, author:"右大将道綱母", ku:["嘆きつつ","ひとり寝る夜の","明くる間は","いかに久しき","ものとかは知る"] },
-  { no:54, author:"儀同三司母", ku:["忘れじの","行く末までは","かたければ","今日を限りの","命ともがな"] },
-  { no:55, author:"大納言公任", ku:["滝の音は","絶えて久しく","なりぬれど","名こそ流れて","なほ聞こえけれ"] },
-  { no:56, author:"和泉式部", ku:["あらざらむ","この世のほかの","思ひ出に","今ひとたびの","逢ふこともがな"] },
-  { no:57, author:"紫式部", ku:["めぐり逢ひて","見しやそれとも","分かぬ間に","雲隠れにし","夜半の月かな"] },
-  { no:58, author:"大弐三位", ku:["有馬山","猪名の笹原","風吹けば","いでそよ人を","忘れやはする"] },
-  { no:59, author:"赤染衛門", ku:["やすらはで","寝なましものを","小夜更けて","かたぶくまでの","月を見しかな"] },
-  { no:60, author:"小式部内侍", ku:["大江山","いく野の道の","遠ければ","まだふみも見ず","天の橋立"] }
+  { no:51, author:"藤原実方朝臣", ku:["かくとだに","えやは伊吹の","さしも草","さしも知らじな","燃ゆる思ひを"], imi:"これほどあなたを思っていることさえ、言えません。燃えるような私の思いを、あなたは知らないでしょう。" },
+  { no:52, author:"藤原道信朝臣", ku:["明けぬれば","暮るるものとは","知りながら","なほうらめしき","朝ぼらけかな"], imi:"夜が明ければ、また日が暮れる（＝あなたに会えない夜が来る）と分かっているのに、それでも夜明けの光がうらめしい。" },
+  { no:53, author:"右大将道綱母", ku:["嘆きつつ","ひとり寝る夜の","明くる間は","いかに久しき","ものとかは知る"], imi:"嘆きながら一人で寝る夜が明けるまでの時間が、どれほど長いか、あなたは知っているでしょうか。" },
+  { no:54, author:"儀同三司母", ku:["忘れじの","行く末までは","かたければ","今日を限りの","命ともがな"], imi:"「忘れない」という約束が、将来まで続くとは思えません。今日を最後の日として、命が終わってしまえばよいのに。" },
+  { no:55, author:"大納言公任", ku:["滝の音は","絶えて久しく","なりぬれど","名こそ流れて","なほ聞こえけれ"], imi:"滝の音は、絶えてから久しくなりました。でも、その評判は流れ伝わって、今も聞こえてきます。" },
+  { no:56, author:"和泉式部", ku:["あらざらむ","この世のほかの","思ひ出に","今ひとたびの","逢ふこともがな"], imi:"私はもう長くは生きられないでしょう。あの世への思い出に、もう一度だけあなたに逢いたい。" },
+  { no:57, author:"紫式部", ku:["めぐり逢ひて","見しやそれとも","分かぬ間に","雲隠れにし","夜半の月かな"], imi:"久しぶりにめぐり逢ったのに、それがあなたかどうかも分からないうちに、夜中の月のように（あなたは）姿を消してしまった。" },
+  { no:58, author:"大弐三位", ku:["有馬山","猪名の笹原","風吹けば","いでそよ人を","忘れやはする"], imi:"有馬山のふもとの猪名の笹原に風が吹くと、笹が「そよ」と音を立てます。でも、私があなたを忘れることなど、決してありません。" },
+  { no:59, author:"赤染衛門", ku:["やすらはで","寝なましものを","小夜更けて","かたぶくまでの","月を見しかな"], imi:"（来ないと分かっていたら）ためらわずに寝てしまえばよかったのに。夜が更けて、西に傾くまでの月を、待ちながら見てしまった。" },
+  { no:60, author:"小式部内侍", ku:["大江山","いく野の道の","遠ければ","まだふみも見ず","天の橋立"], imi:"大江山を越えて生野へ行く道は遠いので、天の橋立にはまだ行ったこともなく、（母からの）手紙もまだ見ていません。" }
 ];
 var KU_LEN = [5, 7, 5, 7, 7];
 
@@ -313,6 +315,7 @@ function renderQuestion(){
   el("check-btn").disabled = true;
   el("check-btn").style.display = "";
   el("result").style.display = "none";
+  el("imi-box").style.display = "none";
   el("next-btn").classList.add("hidden");
 }
 
@@ -367,6 +370,9 @@ function doCheck(){
   var nb = el("next-btn");
   nb.classList.remove("hidden");
   nb.textContent = quizIdx + 1 < quizList.length ? "次の問題へ" : "結果を見る";
+  var ib = el("imi-box");
+  ib.textContent = "意味：" + (cur.poem.imi || "");
+  ib.style.display = cur.poem.imi ? "block" : "none";
 }
 
 function nextQuestion(){
