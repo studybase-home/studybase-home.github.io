@@ -78,6 +78,13 @@
   .done-box { text-align: center; }
   .done-box h2 { margin: 4px 0 8px; }
   .listen-status { text-align: center; font-weight: 700; margin: 8px 0 0; min-height: 1.4em; }
+  .mode-toggle { display: flex; gap: 8px; margin: 0 0 12px; }
+  .mode-toggle button { flex: 1; padding: 12px 6px; border-radius: 12px; border: 2px solid var(--line); background: #fff; font-size: 1rem; font-weight: 800; font-family: inherit; color: var(--ink-soft); cursor: pointer; min-height: 48px; }
+  .mode-toggle button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .judge-row2 { display: flex; gap: 10px; margin-top: 12px; }
+  .judge-row2 button { flex: 1; min-height: 56px; border: none; border-radius: 14px; font-size: 1.15rem; font-weight: 800; font-family: inherit; cursor: pointer; }
+  .ok-btn { background: #15803d; color: #fff; }
+  .ng-btn { background: #dc2626; color: #fff; }
 </style>
 </head>
 <body>
@@ -88,10 +95,14 @@
 
   <!-- ===== ホーム画面 ===== -->
   <div id="screen-home">
+    <div class="mode-toggle">
+      <button id="mode-type">✍️ タイピング</button>
+      <button id="mode-oral">🗣 口頭で答える</button>
+    </div>
     <div class="card master-box">
       <div class="master-num">マスター <span class="gold" id="master-count">0</span> / 28 語</div>
       <div class="bar"><div id="master-bar" style="width:0%"></div></div>
-      <p class="note">3回連続で正しく書けたらマスター（★）。1回できただけでは完了になりません。</p>
+      <p class="note" id="master-note">3回連続で正しく書けたらマスター（★）。1回できただけでは完了になりません。</p>
     </div>
     <button class="start-btn" id="start-all">全28語ミックス スタート</button>
     <button class="wide-btn" id="start-weak">苦手だけ（まだマスターしていない語）</button>
@@ -133,6 +144,42 @@
       </div>
       <button class="ghost-btn dontknow" id="dontknow-btn">わからない</button>
       <button class="ghost-btn" id="skip-btn">記録しないで次へ →</button>
+    </div>
+  </div>
+
+  <!-- ===== 口頭クイズ画面 ===== -->
+  <div id="screen-oral" hidden>
+    <div class="quiz-head"><span id="o-pos"></span><span id="o-mode"></span></div>
+    <div class="card">
+      <p class="q-label" id="o-label"></p>
+      <p class="q-text" id="o-text"></p>
+      <p class="q-jp" id="o-jp"></p>
+      <div class="star" id="o-star"></div>
+      <button class="start-btn" id="reveal-btn">答えを見る</button>
+      <div class="result" id="o-result" style="display:none">
+        <p class="forms" id="o-forms"></p>
+        <p class="forms-jp" id="o-forms-jp"></p>
+        <p class="forms-note" id="o-note" hidden></p>
+        <button class="speak-btn" id="o-speak-btn">🔊 もう一度聞く</button>
+        <div class="judge-row2" id="judge-row">
+          <button class="ok-btn" id="judge-ok">できた</button>
+          <button class="ng-btn" id="judge-ng">できなかった</button>
+        </div>
+        <button class="start-btn" id="o-next-btn" hidden>次へ →</button>
+      </div>
+      <button class="ghost-btn" id="o-skip-btn">記録しないで次へ →</button>
+    </div>
+  </div>
+
+  <!-- ===== 口頭の結果画面 ===== -->
+  <div id="screen-odone" hidden>
+    <div class="card done-box">
+      <h2>おつかれさま！</h2>
+      <p id="odone-summary"></p>
+      <p id="odone-master"></p>
+      <button class="start-btn" id="o-again-all">全部もう一度（口頭）</button>
+      <button class="wide-btn" id="o-again-failed">できなかった語だけもう一度</button>
+      <button class="ghost-btn" id="o-done-home">トップに戻る</button>
     </div>
   </div>
 
@@ -242,7 +289,7 @@
 
   function $(id) { return document.getElementById(id); }
   function showScreen(name) {
-    ["home", "quiz", "done"].forEach(function (s) {
+    ["home", "quiz", "done", "oral", "odone"].forEach(function (s) {
       $("screen-" + s).hidden = (s !== name);
     });
   }
@@ -314,20 +361,27 @@
 
   /* ===== ホーム ===== */
   function renderHome() {
-    $("master-count").textContent = masteredCount();
-    var remainF = VERBS.filter(function (v) { return !roundDone[v.id]; }).length;
+    $("mode-type").className = mode === "type" ? "on" : "";
+    $("mode-oral").className = mode === "oral" ? "on" : "";
+    $("master-note").textContent = mode === "oral"
+      ? "口頭で3回連続「できた」になったらマスター（★）。タイピングの記録とは別に数えます。"
+      : "3回連続で正しく書けたらマスター（★）。1回できただけでは完了になりません。";
+    $("master-count").textContent = mode === "oral" ? oralMasteredCount() : masteredCount();
+    var rmap = mode === "oral" ? oralRound : roundDone;
+    var remainF = VERBS.filter(function (v) { return !rmap[v.id]; }).length;
     $("start-all").textContent = remainF > 0 && remainF < VERBS.length
       ? "全28語ミックス スタート（一周の途中：残り" + remainF + "語）"
       : "全28語ミックス スタート";
-    $("master-bar").style.width = Math.round(masteredCount() / VERBS.length * 100) + "%";
-    $("start-weak").disabled = masteredCount() >= VERBS.length;
-    $("start-weak").textContent = masteredCount() >= VERBS.length
+    $("master-bar").style.width = Math.round((mode === "oral" ? oralMasteredCount() : masteredCount()) / VERBS.length * 100) + "%";
+    var actM = mode === "oral" ? oralMasteredCount() : masteredCount();
+    $("start-weak").disabled = actM >= VERBS.length;
+    $("start-weak").textContent = actM >= VERBS.length
       ? "苦手だけ（全部マスター済みです）"
       : "苦手だけ（まだマスターしていない語）";
     var html = "";
     Object.keys(GROUPS).forEach(function (g) {
       var items = VERBS.filter(function (v) { return v.g === Number(g); });
-      var m = items.filter(isMastered).length;
+      var m = items.filter(mode === "oral" ? oralMastered : isMastered).length;
       html += '<button class="group-btn" data-group="' + g + '">' + GROUPS[g] +
         '<span class="cnt">★ ' + m + " / " + items.length + "語</span></button>";
     });
@@ -336,7 +390,8 @@
     for (var i = 0; i < btns.length; i++) {
       btns[i].addEventListener("click", function () {
         var g = Number(this.getAttribute("data-group"));
-        startQuiz(VERBS.filter(function (v) { return v.g === g; }), GROUPS[g]);
+        var gitems = VERBS.filter(function (v) { return v.g === g; });
+        if (mode === "oral") { startOralQuiz(gitems, GROUPS[g]); } else { startQuiz(gitems, GROUPS[g]); }
       });
     }
     showScreen("home");
@@ -512,10 +567,129 @@
     showScreen("done");
   }
 
+  /* ===== 口頭モード（記録はタイピングと別） ===== */
+  var MODE_KEY = "ryu-l9tango-mode-v1";
+  var mode = "type";
+  try { if (localStorage.getItem(MODE_KEY) === "oral") { mode = "oral"; } } catch (e) {}
+  var OKEY = "ryu-l9tango-oral-v1";
+  var oralStreaks = {};
+  function loadOralStreaks() {
+    try { var raw = localStorage.getItem(OKEY); if (raw) { oralStreaks = JSON.parse(raw) || {}; } } catch (e) { oralStreaks = {}; }
+  }
+  function saveOralStreaks() { try { localStorage.setItem(OKEY, JSON.stringify(oralStreaks)); } catch (e) {} }
+  var OROUND_KEY = "ryu-l9tango-oral-round-v1";
+  var oralRound = {};
+  function loadOralRound() {
+    try { var raw = localStorage.getItem(OROUND_KEY); if (raw) { oralRound = JSON.parse(raw) || {}; } } catch (e) { oralRound = {}; }
+  }
+  function saveOralRound() { try { localStorage.setItem(OROUND_KEY, JSON.stringify(oralRound)); } catch (e) {} }
+  loadOralStreaks();
+  loadOralRound();
+  function oralStreakOf(v) { return oralStreaks[v.id] || 0; }
+  function oralMastered(v) { return oralStreakOf(v) >= 3; }
+  function oralMasteredCount() { return VERBS.filter(oralMastered).length; }
+  function setMode(m) {
+    mode = m;
+    try { localStorage.setItem(MODE_KEY, m); } catch (e) {}
+    renderHome();
+  }
+  function oralStarText(v) {
+    var s = oralStreakOf(v);
+    if (s >= 3) { return "★ 口頭マスター済み（連続3回できた）"; }
+    if (s === 2) { return "☆ あと1回で口頭マスター"; }
+    if (s === 1) { return "☆ 連続1回できた（あと2回）"; }
+    return "";
+  }
+  var oQueue = [], oPos = 0, oLabel = "", oCurrent = null, oRevealed = false;
+  var oTotal = 0, oOk = 0, oSeen = {}, oFailed = [];
+  function startOralRound(label) {
+    var remaining = VERBS.filter(function (v) { return !oralRound[v.id]; });
+    if (remaining.length === 0) { oralRound = {}; saveOralRound(); remaining = VERBS.slice(); }
+    startOralQuiz(remaining, label);
+  }
+  function startOralQuiz(items, label) {
+    stopListen();
+    if ("speechSynthesis" in window) { window.speechSynthesis.cancel(); }
+    oQueue = shuffle(items).map(function (v) { return { v: v, confirm: false }; });
+    oPos = 0; oLabel = label; oTotal = 0; oOk = 0; oSeen = {}; oFailed = [];
+    showScreen("oral");
+    renderOralQuestion();
+  }
+  function renderOralQuestion() {
+    oCurrent = oQueue[oPos];
+    oRevealed = false;
+    var v = oCurrent.v;
+    $("o-pos").textContent = (oPos + 1) + " / " + oQueue.length + " 問";
+    $("o-mode").textContent = oLabel;
+    $("o-label").textContent = "日本語 → 英語を声で答えよう";
+    $("o-text").textContent = v.jp;
+    $("o-jp").textContent = "";
+    if (oCurrent.confirm) {
+      $("o-label").textContent = "確認：" + $("o-label").textContent;
+      $("o-pos").textContent = "確認：もう一度、声に出して言ってみよう";
+    }
+    $("o-star").textContent = oCurrent.confirm ? "" : oralStarText(v);
+    $("o-result").style.display = "none";
+    $("reveal-btn").hidden = false;
+    $("o-skip-btn").hidden = !!oCurrent.confirm;
+  }
+  function revealAnswer() {
+    if (oRevealed || !oCurrent) { return; }
+    oRevealed = true;
+    var v = oCurrent.v;
+    $("reveal-btn").hidden = true;
+    $("o-skip-btn").hidden = true;
+    var box = $("o-result");
+    box.style.display = "block";
+    box.className = "result";
+    $("o-forms").textContent = (v.disp || v.en);
+    $("o-forms-jp").textContent = v.jp;
+    if (v.note) { $("o-note").hidden = false; $("o-note").textContent = "※ " + v.note; }
+    else { $("o-note").hidden = true; }
+    $("judge-row").style.display = oCurrent.confirm ? "none" : "flex";
+    $("o-next-btn").hidden = !oCurrent.confirm;
+    speakForms(v);
+  }
+  function judgeOral(ok) {
+    if (!oRevealed || !oCurrent || oCurrent.confirm) { return; }
+    var v = oCurrent.v;
+    if (!oSeen[v.id]) {
+      oSeen[v.id] = true; oTotal++;
+      if (ok) { oOk++; } else { oFailed.push(v); }
+    }
+    oralStreaks[v.id] = ok ? oralStreakOf(v) + 1 : 0;
+    saveOralStreaks();
+    oralRound[v.id] = true;
+    saveOralRound();
+    if (!ok) { oQueue.splice(Math.min(oPos + 1, oQueue.length), 0, { v: v, confirm: true }); }
+    oNext();
+  }
+  function oNext() {
+    if ("speechSynthesis" in window) { window.speechSynthesis.cancel(); }
+    oPos++;
+    if (oPos >= oQueue.length) { finishOral(); } else { renderOralQuestion(); }
+  }
+  function finishOral() {
+    $("odone-summary").textContent = "今回は " + oTotal + "語に挑戦して、「できた」は " + oOk + "語でした。";
+    $("odone-master").textContent = "口頭マスター合計：" + oralMasteredCount() + " / " + VERBS.length + " 語" +
+      (oralMasteredCount() >= VERBS.length ? "　全語マスター、完璧です！" : "（あと " + (VERBS.length - oralMasteredCount()) + "語）");
+    $("o-again-failed").disabled = oFailed.length === 0;
+    $("o-again-failed").textContent = oFailed.length === 0
+      ? "できなかった語だけもう一度（今回はなし）"
+      : "できなかった語だけもう一度（" + oFailed.length + "語）";
+    showScreen("odone");
+  }
+
   /* ===== イベント ===== */
-  $("start-all").addEventListener("click", function () { startRoundQuiz("全28語ミックス"); });
-  $("start-review").addEventListener("click", function () { startRoundQuiz("全部復習"); });
+  $("start-all").addEventListener("click", function () { if (mode === "oral") { startOralRound("全28語ミックス"); } else { startRoundQuiz("全28語ミックス"); } });
+  $("start-review").addEventListener("click", function () { if (mode === "oral") { startOralRound("全部復習"); } else { startRoundQuiz("全部復習"); } });
   $("start-weak").addEventListener("click", function () {
+    if (mode === "oral") {
+      var weakO = VERBS.filter(function (v) { return !oralMastered(v); });
+      weakO.sort(function (a, b) { return oralStreakOf(a) - oralStreakOf(b); });
+      startOralQuiz(weakO, "苦手だけ（口頭）");
+      return;
+    }
     var weak = VERBS.filter(function (v) { return !isMastered(v); });
     weak.sort(function (a, b) {
       var ra = accuracyOf(a), rb = accuracyOf(b);
@@ -541,6 +715,18 @@
     startQuiz(VERBS.filter(function (v) { return !isMastered(v); }), "苦手だけ");
   });
   $("done-home-btn").addEventListener("click", renderHome);
+
+  $("mode-type").addEventListener("click", function () { setMode("type"); });
+  $("mode-oral").addEventListener("click", function () { setMode("oral"); });
+  $("reveal-btn").addEventListener("click", revealAnswer);
+  $("judge-ok").addEventListener("click", function () { judgeOral(true); });
+  $("judge-ng").addEventListener("click", function () { judgeOral(false); });
+  $("o-next-btn").addEventListener("click", oNext);
+  $("o-skip-btn").addEventListener("click", oNext);
+  $("o-speak-btn").addEventListener("click", function () { if (oCurrent) { speakForms(oCurrent.v); } });
+  $("o-again-all").addEventListener("click", function () { startOralQuiz(VERBS, "全部もう一度（口頭）"); });
+  $("o-again-failed").addEventListener("click", function () { startOralQuiz(oFailed.slice(), "できなかった語だけ"); });
+  $("o-done-home").addEventListener("click", renderHome);
 
   loadRecords();
   renderHome();
