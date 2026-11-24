@@ -91,6 +91,7 @@
   .tab[data-tab="japanese"] { --subj: #dc2626; }
   .tab[data-tab="science"] { --subj: #059669; }
   .tab[data-tab="social"] { --subj: #d97706; }
+  .tab[data-tab="other"] { --subj: #7c3aed; }
   .tab { border-color: var(--subj); color: var(--subj); }
   .tab.active { background: var(--subj); border-color: var(--subj); color: #fff; }
   .tab[data-tab="english"].active { color: #1a1a1a; }
@@ -100,6 +101,7 @@
   #panel-japanese { --subj: #dc2626; --tint: rgba(220, 38, 38, 0.08); }
   #panel-science { --subj: #059669; --tint: rgba(5, 150, 105, 0.10); }
   #panel-social { --subj: #d97706; --tint: rgba(217, 119, 6, 0.10); }
+  #panel-other { --subj: #7c3aed; --tint: rgba(124, 58, 237, 0.08); }
   .panel { border-color: var(--subj); background: var(--tint); }
 
   /* カード：大きく見せるのは単元・番号（label）、種類名は小さく（sub）。並びは上が新しい順 */
@@ -164,6 +166,7 @@
     <button class="tab" data-tab="japanese">国語</button>
     <button class="tab" data-tab="science">理科</button>
     <button class="tab" data-tab="social">社会</button>
+    <button class="tab" data-tab="other">その他</button>
   </div>
 
   <!-- ===== 英語（上が新しい順） ===== -->
@@ -243,6 +246,17 @@
     </a>
   </section>
 
+  <!-- ===== その他（上が新しい順） ===== -->
+  <section class="panel" id="panel-other" hidden>
+    <!-- 新しいカードはこのパネルの一番上に追加する -->
+    <a class="card-link" href="apps/joho-moral.html">
+      <span class="icon">🔐</span>
+      <span><span class="label">情報モラル 第4章・第5章</span>
+      <span class="sub">情報モラルテスト対策 4択ドリル（CASE12〜20・全51問）</span></span>
+      <span class="card-date" data-created="2026-11-24"></span><span class="arrow">›</span>
+    </a>
+  </section>
+
   <p class="foot">記録（できた・できない）は、このスマホのブラウザの中だけに保存されます。</p>
 
 </div>
@@ -253,7 +267,8 @@
     math: document.getElementById("panel-math"),
     japanese: document.getElementById("panel-japanese"),
     science: document.getElementById("panel-science"),
-    social: document.getElementById("panel-social")
+    social: document.getElementById("panel-social"),
+    other: document.getElementById("panel-other")
   };
   document.querySelectorAll(".card-date").forEach(function (el) {
     var d = new Date(el.getAttribute("data-created") + "T00:00:00");

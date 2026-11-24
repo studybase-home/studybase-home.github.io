@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="情報モラルドリル">
+<title>情報モラル 第4章・第5章 4択ドリル</title>
+<style>
+  :root{
+    --bg:#f4f6fb; --card:#ffffff; --ink:#1c2333; --sub:#5b6478;
+    --accent:#0e7490; --accent2:#e8710a; --ok:#1d9e57; --ng:#d23c3c;
+    --line:#d9deea;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{margin:0; font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; background:var(--bg); color:var(--ink);}
+  header{background:linear-gradient(135deg,#164e63,#0e7490); color:#fff; padding:18px 16px 14px;}
+  header .back{color:#cffafe; text-decoration:none; font-size:13px;}
+  header h1{margin:6px 0 2px; font-size:22px;}
+  header .era{font-size:13px; opacity:.9;}
+  header .date{font-size:12px; opacity:.75; margin-top:2px;}
+  main{max-width:640px; margin:0 auto; padding:14px 14px 40px;}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px; margin-bottom:14px;}
+  .card h2{margin:0 0 8px; font-size:16px;}
+  .small{font-size:13px; color:var(--sub); line-height:1.6;}
+  .mode-box{display:block; width:100%; text-align:left; border:2px solid var(--line); background:#fff; border-radius:12px; padding:13px 14px; margin-bottom:10px; cursor:pointer; min-height:52px;}
+  .mode-box .t{font-size:16px; font-weight:700;}
+  .mode-box .d{font-size:12px; color:var(--sub); margin-top:2px;}
+  .mode-box:active{background:#ecfeff;}
+  .mode-box.disabled{opacity:.45; pointer-events:none;}
+  .progress{font-size:13px; color:var(--sub); margin-top:6px;}
+  .chips{display:flex; gap:8px; margin:4px 0 12px;}
+  .chip{flex:1; padding:11px 6px; border-radius:12px; border:2px solid var(--line); background:#fff; font-size:15px; font-weight:800; font-family:inherit; color:var(--sub); cursor:pointer; min-height:48px;}
+  .chip.on{background:var(--accent); border-color:var(--accent); color:#fff;}
+  details.list summary{font-size:15px; font-weight:700; cursor:pointer; padding:4px 0;}
+  .term-item{border-top:1px solid var(--line); padding:8px 0;}
+  .term-item:first-of-type{border-top:none;}
+  .term-item .tm{font-size:15px; font-weight:700;}
+  .term-item .df{font-size:13px; color:var(--sub); line-height:1.6; margin-top:2px;}
+  /* quiz */
+  #quiz-screen{display:none;}
+  .q-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;}
+  .q-count{font-size:13px; color:var(--sub); font-weight:700;}
+  .home-btn{border:1px solid var(--line); background:#fff; border-radius:8px; padding:8px 12px; font-size:13px; cursor:pointer; min-height:40px;}
+  .q-no{font-size:14px; font-weight:700; color:var(--accent); margin:2px 0 6px;}
+  .fail-badge{display:none; background:#fdecec; color:var(--ng); border-radius:8px; padding:6px 10px; font-size:13px; font-weight:700; margin-bottom:10px;}
+  .q-box{background:#fff; border:2px solid var(--line); border-radius:12px; padding:16px; margin-bottom:14px; font-size:18px; font-weight:700; line-height:1.7;}
+  .imi-box{display:none; margin-top:22px; font-size:.76rem; color:#9aa3ab; line-height:1.7;}
+  .choices{display:flex; flex-direction:column; gap:10px;}
+  .choice{border:2px solid var(--line); background:#fff; border-radius:12px; padding:14px; font-size:16px; font-weight:700; text-align:left; cursor:pointer; min-height:52px; width:100%; line-height:1.5;}
+  .choice.sel{border-color:var(--accent); background:#ecfeff;}
+  .choice.good{border-color:var(--ok); background:#e7f7ee;}
+  .choice.bad{border-color:var(--ng); background:#fdecec;}
+  .choice:disabled{cursor:default;}
+  .btn-row{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;}
+  .btn{flex:1; min-width:100px; border:none; border-radius:10px; padding:13px 10px; font-size:15px; font-weight:700; cursor:pointer; min-height:48px;}
+  .btn.primary{background:var(--accent); color:#fff;}
+  .btn.ghost{background:#fff; border:2px solid var(--line); color:var(--ink);}
+  .btn:disabled{opacity:.4;}
+  .result{display:none; border-radius:12px; padding:12px 14px; margin-top:14px; font-size:15px; line-height:1.7;}
+  .result.ok{background:#e7f7ee; border:1px solid var(--ok);}
+  .result.ng{background:#fdecec; border:1px solid var(--ng);}
+  /* done */
+  #done-screen{display:none; text-align:center;}
+  #done-screen .score{font-size:34px; font-weight:800; margin:10px 0;}
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="../index.html">← RYU学習ポータルに戻る</a>
+  <h1>情報モラル 4択ドリル</h1>
+  <div class="era">『ポイント整理 情報モラル』第4章・第5章（CASE12〜20）― 学校の情報モラルテスト対策</div>
+  <div class="date">作成：2026年11月24日</div>
+</header>
+<main>
+  <!-- ホーム -->
+  <section id="home-screen">
+    <div class="card">
+      <h2>問題の形式</h2>
+      <div class="small">
+        本番のテストと同じ4択です。第4章「情報機器を安全に利用する」と第5章「情報を適切に利用する」から、全51問を用意しました。間違えた問題は、その場でもう一度出ます。
+      </div>
+      <div class="progress" id="progress-text"></div>
+    </div>
+
+    <div class="card">
+      <h2>章を選ぶ</h2>
+      <div class="chips">
+        <button class="chip" id="chip-all">全部</button>
+        <button class="chip" id="chip-4">第4章</button>
+        <button class="chip" id="chip-5">第5章</button>
+      </div>
+      <button class="mode-box" id="start-all">
+        <div class="t">全部の問題</div>
+        <div class="d" id="all-count"></div>
+      </button>
+      <button class="mode-box" id="start-retry">
+        <div class="t">バツのままの問題だけ</div>
+        <div class="d" id="retry-count"></div>
+      </button>
+      <button class="mode-box" id="start-ever">
+        <div class="t">1回でもバツになった問題（最後の確認）</div>
+        <div class="d" id="ever-count"></div>
+      </button>
+    </div>
+
+    <div class="card">
+      <details class="list">
+        <summary>用語の一覧 ― 覚える用</summary>
+        <div id="term-list"></div>
+      </details>
+    </div>
+  </section>
+
+  <!-- クイズ -->
+  <section id="quiz-screen">
+    <div class="q-head">
+      <div class="q-count" id="q-count"></div>
+      <button class="home-btn" id="quiz-home-btn">トップに戻る</button>
+    </div>
+    <div class="q-no" id="q-no"></div>
+    <div class="fail-badge" id="fail-badge"></div>
+    <div class="q-box" id="q-box"></div>
+    <div class="choices" id="choices"></div>
+    <div class="btn-row">
+      <button class="btn primary" id="check-btn" disabled>答え合わせ</button>
+    </div>
+    <div class="result" id="result"></div>
+    <div class="btn-row">
+      <button class="btn primary hidden" id="next-btn">次の問題へ</button>
+    </div>
+    <div class="imi-box" id="imi-box"></div>
+  </section>
+
+  <!-- 終了 -->
+  <section id="done-screen">
+    <div class="card">
+      <h2>おつかれさま！</h2>
+      <div class="score" id="done-score"></div>
+      <div class="small" id="done-msg"></div>
+      <div class="btn-row" style="margin-top:16px;">
+        <button class="btn ghost" id="done-retry-btn">バツの問題だけ</button>
+        <button class="btn primary" id="done-home-btn">トップに戻る</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+"use strict";
+/* id, ch=章, cs=CASE番号, q=問題, a=正解, d=誤答3つ, exp=解説（答え合わせの後に表示） */
+var ITEMS = [
+  /* ===== 第4章 CASE12 パスワードと不正アクセス ===== */
+  { id:"j01", ch:4, cs:12, q:"許可なく他人のIDやパスワードを使って、コンピュータやネットワークにアクセスする行為を何という？", a:"不正アクセス", d:["フィッシング","ウイルス感染","個人情報の共有"], exp:"不正アクセスは、法律で禁止されている犯罪行為です。" },
+  { id:"j02", ch:4, cs:12, q:"不正アクセスを禁止している法律は？", a:"不正アクセス禁止法", d:["個人情報保護法","著作権法","青少年インターネット環境整備法"], exp:"正式には「不正アクセス行為の禁止等に関する法律」。フィッシング行為も禁止されています。" },
+  { id:"j03", ch:4, cs:12, q:"パスワードを作るときのポイントとして、正しいものは？", a:"他人には意味がわからない文字列にする", d:["生年月日を使う","英単語をそのまま使う","名前のローマ字を使う"], exp:"英字の大文字と小文字を混ぜるなど、他人に推測されにくい文字列にします。" },
+  { id:"j04", ch:4, cs:12, q:"パスワードの管理のしかたとして、正しいものは？", a:"自分自身で記憶しておく", d:["パソコンのわきにメモを貼っておく","アプリケーションに記憶させる","家族にも教えておく"], exp:"メモに残す場合は、人目につかないところに保管します。" },
+  { id:"j05", ch:4, cs:12, q:"流出したIDとパスワードのリストを使って、たくさんのサービスにログインを試みる攻撃を何という？", a:"パスワードリスト攻撃", d:["キーロガー","ソーシャルエンジニアリング","ボットウイルス"], exp:"パスワードを使い回していると、この攻撃で被害が広がってしまいます。" },
+  { id:"j06", ch:4, cs:12, q:"IDとパスワードの入力に加えて、メールで送られる確認コードなど、もう1つの要素でも本人確認を行う仕組みは？", a:"2段階認証（2要素認証）", d:["ファイアウォール","フィルタリング","暗号化"], exp:"2つの要素を合わせた認証を行うことで、不正な本人確認を防ぎます。" },
+  /* ===== 第4章 CASE13 コンピュータウイルスと対策 ===== */
+  { id:"j07", ch:4, cs:13, q:"コンピュータ内に侵入し、データやプログラムの改ざん・破壊、個人情報の流出などを行う不正なプログラムを何という？", a:"コンピュータウイルス", d:["ファームウェア","バックアップ","アプリケーション"], exp:"電子メールについたり、データやプログラムについたりするなど、感染経路はさまざまです。" },
+  { id:"j08", ch:4, cs:13, q:"ウイルス対策ソフトのウイルス定義ファイルを、常に最新にしておく必要があるのはなぜ？", a:"新しいウイルスが次々と作られているから", d:["ソフトの料金が安くなるから","パソコンの動作が速くなるから","古いウイルスが自然に消えるから"], exp:"対策ソフトは定義ファイルをもとにウイルスを探すので、定義が古いと新しいウイルスを見つけられません。" },
+  { id:"j09", ch:4, cs:13, q:"感染したコンピュータが、悪意ある攻撃者の指令を受けて自動的に接続・動作し、被害を広げていくウイルスは？", a:"ボットウイルス", d:["ランサムウェア","スパイウェア","キーロガー"], exp:"指令コンピュータからの命令で、迷惑メールの大量配信や個人情報の漏えいなどを行います。" },
+  { id:"j10", ch:4, cs:13, q:"感染したコンピュータを使用できない状態にし、元に戻すことと引き換えに金銭を要求するウイルスは？", a:"ランサムウェア", d:["ボットウイルス","スパイウェア","ファームウェア"], exp:"金銭を支払っても元に戻る保証はありません。万一のためにバックアップを取っておくことが重要です。" },
+  { id:"j11", ch:4, cs:13, q:"ウイルスメールへの対策として、正しいものは？", a:"心当たりのないメールは開かず、添付されている実行ファイルは決して実行しない", d:["件名に知人の名前があれば開いてよい","プレビューで表示するだけなら安全である","添付ファイルは保存するだけなら安全である"], exp:"知人の名前で送られてくるウイルスメールも多いので、件名や内容に注意が必要です。" },
+  { id:"j12", ch:4, cs:13, q:"OSやアプリケーションソフトを、常に最新の状態にしておくことが大切なのはなぜ？", a:"修正プログラムによって、セキュリティの弱点が直されるため", d:["新しい機能が必ず増えるため","ウイルス対策ソフトが不要になるため","パソコンの動作が必ず速くなるため"], exp:"修正プログラムは自動的にダウンロードされるよう設定しておくなど、ソフトを最新の状態に保ちます。" },
+  /* ===== 第4章 CASE14 危険なアプリ ===== */
+  { id:"j13", ch:4, cs:14, q:"コンピュータウイルスやスパイウェアなど、悪意あるソフトウェアの総称は？", a:"マルウェア", d:["ファームウェア","フリーウェア","シェアウェア"], exp:"「悪意のある」という意味の英語とソフトウェアを組み合わせた言葉です。" },
+  { id:"j14", ch:4, cs:14, q:"知らないうちにパソコンなどにインストールされ、個人情報やアクセス履歴などの情報を収集して、勝手に作成者へ送信するソフトウェアは？", a:"スパイウェア", d:["ファームウェア","キーロガー","ボットウイルス"], exp:"スパイウェア対策には、セキュリティ対策ソフトを導入します。" },
+  { id:"j15", ch:4, cs:14, q:"ハードウェアの基本的な制御を行うソフトウェアは？", a:"ファームウェア", d:["マルウェア","スパイウェア","アプリケーション"], exp:"アプリとは異なり通常は変更されませんが、不具合の修正などのために、メーカーからアップデートが提供されることがあります。" },
+  { id:"j16", ch:4, cs:14, q:"アプリをインストールするときに、まず確認すべきことは？", a:"そのアプリが求めている情報へのアクセス許可", d:["アプリの色やデザイン","ダウンロードされた回数だけ","有名な会社が出しているかどうかだけ"], exp:"インストール・起動のときに、そのアプリが求めている情報を確認する画面が表示されます。" },
+  { id:"j17", ch:4, cs:14, q:"危険なアプリの特徴として、正しいものは？", a:"本来の機能とは関係のない個人情報の使用を求める", d:["ダウンロード数が多い","人気ランキングに入っている","無料で提供されている"], exp:"たとえば壁紙を表示するアプリなのに、位置情報など関係ない個人情報を求めるものは危険です。人気のアプリの偽アプリにも注意が必要です。" },
+  /* ===== 第4章 CASE15 有害サイトとフィルタリング ===== */
+  { id:"j18", ch:4, cs:15, q:"犯罪の奨励、わいせつな描写、違法薬物、残虐な内容、人種差別、自殺などの情報がのっているウェブサイトを何という？", a:"有害サイト", d:["ポータルサイト","公式サイト","まとめサイト"], exp:"有害サイトを見ると、精神的に危害を受けたり、トラウマになったりすることもあります。" },
+  { id:"j19", ch:4, cs:15, q:"違法・不適切な情報を排除し、問題のないウェブサイトだけを閲覧できるようにする仕組みは？", a:"フィルタリング", d:["ファイアウォール","暗号化","バックアップ"], exp:"フィルタリングソフトをインストールするなどして、興味本位のアクセスを防止し、トラブルを回避します。" },
+  { id:"j20", ch:4, cs:15, q:"「出会い」「暴力」などのカテゴリ別にブラックリストをつくり、それに分類されたウェブサイトの閲覧を禁止するフィルタリングの方式は？", a:"ブラックリスト方式", d:["ホワイトリスト方式","キーワード・フレーズ方式","SSL方式"], exp:"幅広く閲覧が可能ですが、ブラックリストに登録されていない有害サイトは閲覧できてしまう欠点があります。" },
+  { id:"j21", ch:4, cs:15, q:"安全だと認められたウェブサイトのリストをつくり、それ以外のウェブサイトの閲覧を禁止するフィルタリングの方式は？", a:"ホワイトリスト方式", d:["ブラックリスト方式","キーワード・フレーズ方式","パスワード方式"], exp:"有害サイトを確実に禁止できますが、ウェブサイトの閲覧の幅が狭くなる欠点があります。" },
+  { id:"j22", ch:4, cs:15, q:"青少年の携帯電話について、保護者の申し出がない限りフィルタリングが原則としてつけられている根拠となる法律は？", a:"青少年インターネット環境整備法", d:["不正アクセス禁止法","個人情報保護法","著作権法"], exp:"正式には「青少年が安全に安心してインターネットを利用できる環境の整備等に関する法律」で、2009年4月に施行されました。" },
+  { id:"j23", ch:4, cs:15, q:"スマートフォンをWi-Fiで接続した場合の注意として、正しいものは？", a:"携帯電話会社の機種や設定によっては、フィルタリングが無効になることがある", d:["Wi-Fiでは有害サイトは表示されない","Wi-Fi接続中はウイルスに感染しない","Wi-Fiならフィルタリングは必ず有効になる"], exp:"Wi-Fi接続でスマートフォンを使うときは、フィルタリングの状態を確認しておくことが大切です。" },
+  /* ===== 第4章 CASE16 紛失・故障とバックアップ ===== */
+  { id:"j24", ch:4, cs:16, q:"コンピュータやスマホなどのデータやシステムをコピーして、別の機器やメディアに保存しておくことを何という？", a:"バックアップ", d:["アップデート","暗号化","ダウンロード"], exp:"データの誤消去や破壊、ウイルス感染などが起こった場合でも、バックアップがあれば復旧できます。" },
+  { id:"j25", ch:4, cs:16, q:"USBメモリのような小さな記録メディアに重要なデータを入れて持ち運ぶ場合に、すべきことは？", a:"データを暗号化する", d:["ラベルに内容を詳しく書く","パスワードを設定しない","誰かに預けておく"], exp:"小さな記録メディアは特に紛失しやすいので注意が必要です。廃棄する場合にも注意します。" },
+  { id:"j26", ch:4, cs:16, q:"スマホの紛失・盗難への事前の対策として、正しいものは？", a:"ロック機能を設定し、位置情報を利用して端末を探すサービスを設定しておく", d:["パスワードは設定しない","バックアップは取らない","おサイフケータイ機能はロックしない"], exp:"紛失したときは、自分の番号に電話して着信音を鳴らしてみたり、遠隔操作でロックをかけたりします。" },
+  { id:"j27", ch:4, cs:16, q:"スマホやパソコンが、意外と簡単に壊れてしまうことがあるのはなぜ？", a:"精密機械なので、少しの衝撃を受けたり、水にぬれたりしただけで壊れることがあるから", d:["価格が高いから","充電が必要だから","画面が大きいから"], exp:"身近な存在で乱雑に扱われることも珍しくありませんが、精密機械だという意識が必要です。" },
+  { id:"j28", ch:4, cs:16, q:"バックアップを怠る人が多い理由として、テキストが挙げている考え方は？", a:"「パソコンやスマホはめったに壊れない」「自分はなくすことはない」という考え", d:["バックアップにはお金がかかるという考え","バックアップの方法が1つしかないという考え","データの量が少ないという考え"], exp:"失う情報量が大きくなっているのに、パスワード設定など紛失に対する備えは甘い、とされています。" },
+  /* ===== 第5章 CASE17 著作権 ===== */
+  { id:"j29", ch:5, cs:17, q:"著作者の名誉や声望など、精神的な面を守る権利は？", a:"著作者人格権", d:["著作権（財産権）","肖像権","パブリシティ権"], exp:"著作者の金銭的な面を守るのは著作権（財産権）で、この2つを合わせて著作権と呼びます。" },
+  { id:"j30", ch:5, cs:17, q:"自分自身や家庭内など限られた範囲で楽しむ場合に、著作者の許諾を得ずに音楽CDなどをコピーできる利用を何という？", a:"私的使用", d:["引用","公衆送信","貸与"], exp:"著作権法第30条で、私的使用のための複製として認められています。" },
+  { id:"j31", ch:5, cs:17, q:"ファイル共有ソフト（ファイル交換ソフト）の利用について、正しいものは？", a:"著作権侵害や重要な情報の流出につながることがあるため、安易に使わない", d:["無料なので自由に使ってよい","自分が買ったファイルなら共有してよい","ダウンロードするだけなら問題ない"], exp:"不特定多数とファイルを共有するソフトは、著作権侵害や個人情報の流出などの問題が起こっています。" },
+  { id:"j32", ch:5, cs:17, q:"違法にアップロードされた著作物をダウンロードした場合の罰則として、正しいものは？", a:"2年以下の拘禁刑もしくは200万円以下の罰金、またはその両方", d:["罰則はない","注意されるだけである","お金を払えばよい"], exp:"著作権法の改正により、2021年より著作物全般が対象になりました。" },
+  { id:"j33", ch:5, cs:17, q:"上映中の映画をビデオカメラなどで撮影する行為について、正しいものは？", a:"映画盗撮防止法で禁止されている", d:["個人で楽しむなら問題ない","音声だけなら問題ない","一部だけなら問題ない"], exp:"違反者には、10年以下の拘禁刑もしくは1000万円以下の罰金、またはその両方が科せられます。" },
+  { id:"j34", ch:5, cs:17, q:"著作権の保護期間として、正しいものは？", a:"原則として著作者の死後70年", d:["原則として著作者の死後50年","発表後50年","著作者の死後30年"], exp:"もともと50年でしたが、著作権法の改正で70年に延長され、2018年12月30日に施行されました。" },
+  /* ===== 第5章 CASE18 引用のしかた ===== */
+  { id:"j35", ch:5, cs:18, q:"他の人がつくった文章などの著作物の一部を、自分の作品にとり入れることを何という？", a:"引用", d:["複製","転載","要約"], exp:"引用の必然性がある場合、著作権法では著作者の許諾は必要ないとしています。" },
+  { id:"j36", ch:5, cs:18, q:"著作権法で認められる引用の要件として、正しいものは？", a:"引用部分を明確に区切り、自分の創作部分と分け、出所を明記する", d:["引用部分が自分の文章より多くてよい","出所は書かなくてよい","相手の許可が必ず必要である"], exp:"引用の必然性、主従関係、引用部分の明確化、引用の量、出典の明示などの要件を満たす必要があります。" },
+  { id:"j37", ch:5, cs:18, q:"引用するときの「主従関係」とは、どういうこと？", a:"自分の創作部分が主で、引用部分が従になるようにすること", d:["引用部分を自分の文章より多くすること","有名な作品を優先すること","出典を文章の先頭に書くこと"], exp:"引用部分が主になってしまうと、著作権を侵害している場合があります。" },
+  { id:"j38", ch:5, cs:18, q:"図書館における複製（著作権法第31条）について、正しいものは？", a:"図書館の資料を使って、利用者に提供するための複製や、保存のための複製などを、一定の条件の下に行うことができる", d:["どんな資料でも全ページをコピーできる","複製したものを販売できる","貸出用のコピーを無制限に作れる"], exp:"営利を目的としない図書館などに認められた、限られた範囲の利用です。" },
+  { id:"j39", ch:5, cs:18, q:"電子メールで他の人の文章を引用することについて、正しいものは？", a:"本来は、書いた人の許可が必要である", d:["許可は一切不要である","全文を引用してよい","相手に負担がかかってもよい"], exp:"親しい人同士では慣習として引用されることもありますが、受信者の負担にならないよう、必要最低限の引用にします。" },
+  /* ===== 第5章 CASE19 肖像権・プライバシー ===== */
+  { id:"j40", ch:5, cs:19, q:"公表したくない情報を、公表されない権利を何という？", a:"プライバシー権", d:["肖像権","パブリシティ権","著作権"], exp:"プライバシーの権利は、だれにでもあると考えられています。" },
+  { id:"j41", ch:5, cs:19, q:"有名人の肖像や名前が無断で使われて金銭的損害を受けないよう、手厚く保護する権利は？", a:"パブリシティ権", d:["プライバシー権","著作者人格権","肖像権"], exp:"有名人の肖像や名前には、経済的な価値があるためです。" },
+  { id:"j42", ch:5, cs:19, q:"自分が撮影した写真でも、他の人が写っている場合に注意すべきことは？", a:"許可なく公表してはいけない", d:["自分の写真なので自由に公表できる","顔が小さく写っていれば問題ない","ブログに載せるだけなら問題ない"], exp:"卒業式などの集合写真も同様です。自分以外の人が写っている写真を公表するときは、必ず許可を得ることが必要です。" },
+  { id:"j43", ch:5, cs:19, q:"他人の作品や写真を公表したり、利用したりしたいときは、必ず何をすることが大事？", a:"許諾（許可）を得る", d:["出典を明記するだけ","対価を支払うだけ","自分の名前で発表する"], exp:"公表したくないといわれた情報などは、絶対に公表しません。" },
+  { id:"j44", ch:5, cs:19, q:"交際相手などの裸の写真や動画を、嫌がらせとしてインターネット上に公開する行為を何という？", a:"リベンジポルノ", d:["フィッシング","デジタルタトゥー","ジオタグ"], exp:"2014年11月にリベンジポルノ防止法が制定されました。親しい仲の相手であっても、安易に写真を渡さないことが重要です。" },
+  /* ===== 第5章 CASE20 個人情報の扱い方 ===== */
+  { id:"j45", ch:5, cs:20, q:"氏名、生年月日、住所、性別、携帯番号、メールアドレス、学籍番号や顔写真など、個人を識別できる情報を何という？", a:"個人情報", d:["公開情報","機密情報","統計情報"], exp:"他の情報と組み合わせることで特定の個人を識別できるものも、個人情報に含まれます。" },
+  { id:"j46", ch:5, cs:20, q:"個人の権利利益の保護を目的として、個人情報をとり扱う事業者が守るべき義務などを定めた法律は？", a:"個人情報保護法", d:["不正アクセス禁止法","著作権法","特定商取引法"], exp:"個人情報保護法は、個人の権利を定める法律ではありません。" },
+  { id:"j47", ch:5, cs:20, q:"SSLを利用しているウェブページの見分け方は？", a:"URLが「https://」となり、鍵マークが表示される", d:["URLが短くなる","ページ全体が緑色になる","広告が表示されなくなる"], exp:"SSLは情報を暗号化し、第三者による通信の盗聴や改ざんなどを防止します。利用には電子証明書が必要です。" },
+  { id:"j48", ch:5, cs:20, q:"スマートフォンで撮影した写真に、撮影場所の情報が自動的に追加される機能を何という？", a:"ジオタグ", d:["フィルタリング","バックアップ","アップロード"], exp:"ジオタグつきの写真をネットに公開してしまうと、住所の特定につながる危険性があります。" },
+  { id:"j49", ch:5, cs:20, q:"投稿した内容など、一度インターネット上に記録された情報が、消えることなく半永久的に残ってしまうことを表した言葉は？", a:"デジタルタトゥー", d:["リベンジポルノ","ジオタグ","フィッシング"], exp:"入れ墨（タトゥー）のように消すことができないことを表しています。検索エンジンのデータから削除する「忘れられる権利」が議論され始めています。" },
+  { id:"j50", ch:5, cs:20, q:"国民一人ひとりに与えられる、12桁の個人番号を何という？", a:"マイナンバー", d:["学籍番号","保険証番号","パスワード"], exp:"社会保障、税、災害対策の行政手続きで利用が始まりました。一人に1つ指定され、一生使う番号なので、扱いには十分気をつける必要があります。" },
+  { id:"j51", ch:5, cs:20, q:"無線LANによる情報漏えいの防止として、正しいものは？", a:"通信が傍受されるおそれがあるので、暗号化して通信する", d:["無線LANは有線より安全である","公共の無線LANは自由に使ってよい","パスワードがなくても問題ない"], exp:"無線LANでは通信が傍受され、第三者によるデータの不正取得・改ざんのおそれがあります。" }
+];
+
+/* 用語の一覧（ホームの覚える用。クイズ中には表示しない） */
+var TERMS = [
+  ["不正アクセス", "許可なく他人のIDやパスワードを使って、コンピュータやネットワークにアクセスすること。"],
+  ["不正アクセス禁止法", "不正アクセスを禁止する法律。フィッシング行為も禁止されている。"],
+  ["パスワードリスト攻撃", "流出したIDとパスワードのリストを使って、たくさんのサービスにログインを試みる攻撃。"],
+  ["2段階認証（2要素認証）", "IDとパスワードに加えて、もう1つの要素でも本人確認を行う仕組み。"],
+  ["コンピュータウイルス", "データやプログラムの改ざん・破壊、個人情報の流出などを行う不正なプログラム。"],
+  ["ボットウイルス", "感染したコンピュータが、攻撃者の指令で自動的に動作して被害を広げるウイルス。"],
+  ["ランサムウェア", "コンピュータを使用できない状態にし、回復と引き換えに金銭を要求するウイルス。"],
+  ["マルウェア", "ウイルスやスパイウェアなど、悪意あるソフトウェアの総称。"],
+  ["スパイウェア", "個人情報やアクセス履歴などを収集して、勝手に作成者へ送信するソフトウェア。"],
+  ["ファームウェア", "ハードウェアの基本的な制御を行うソフトウェア。"],
+  ["有害サイト", "犯罪の奨励、わいせつな描写、違法薬物、残虐な内容などの情報がのっているウェブサイト。"],
+  ["フィルタリング", "違法・不適切な情報を排除し、問題のないウェブサイトだけを閲覧できるようにする仕組み。"],
+  ["ブラックリスト方式", "カテゴリ別にブラックリストをつくり、それに分類されたサイトの閲覧を禁止する方式。"],
+  ["ホワイトリスト方式", "安全だと認められたサイトのリストをつくり、それ以外は閲覧を禁止する方式。"],
+  ["バックアップ", "データやシステムをコピーして、別の機器やメディアに保存しておくこと。"],
+  ["暗号化", "データを、鍵を持つ人だけが読める形に変換すること。"],
+  ["著作者人格権", "著作者の名誉や声望など、精神的な面を守る権利。"],
+  ["私的使用", "自分自身や家庭内など限られた範囲で楽しむための著作物の利用。許諾なくコピーが認められる。"],
+  ["引用", "他の人の著作物の一部を、自分の作品にとり入れること。要件を満たせば許諾は不要。"],
+  ["肖像権", "自分の写真などが、許可なく使用されない権利。"],
+  ["プライバシー権", "公表したくない情報を、公表されない権利。"],
+  ["パブリシティ権", "有名人の肖像や名前の経済的価値を守る権利。"],
+  ["リベンジポルノ", "交際相手などの裸の写真や動画を、嫌がらせとしてネット上に公開する行為。"],
+  ["個人情報", "氏名、生年月日、住所など、個人を識別できる情報。"],
+  ["個人情報保護法", "個人情報をとり扱う事業者が守るべき義務などを定めた法律。"],
+  ["SSL", "情報を暗号化して送受信する仕組み。利用ページはURLが「https://」になり鍵マークが表示される。"],
+  ["ジオタグ", "撮影した写真に自動的に追加される、撮影場所の情報。"],
+  ["デジタルタトゥー", "一度ネット上に記録された情報が、半永久的に残ってしまうこと。"],
+  ["忘れられる権利", "検索エンジンのデータなどから、自分の情報を削除してもらう権利として議論されているもの。"],
+  ["マイナンバー", "国民一人ひとりに与えられる12桁の個人番号。一生使う番号。"]
+];
+
+var REC_KEY = "ryunosuke.joho-moral.records.v1";
+var FAIL_KEY = "ryunosuke.joho-moral.failcounts.v1";
+var ROUND_KEY = "ryunosuke.joho-moral.round.v1";
+var CHF_KEY = "ryunosuke.joho-moral.chapter.v1";
+
+function loadJSON(key){
+  try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : {}; } catch(e){ return {}; }
+}
+function saveJSON(key, obj){
+  try { localStorage.setItem(key, JSON.stringify(obj)); } catch(e){}
+}
+var records = loadJSON(REC_KEY);
+var failCounts = loadJSON(FAIL_KEY);
+var roundDone = loadJSON(ROUND_KEY);
+var chFilter = 0;
+try { var cf = parseInt(localStorage.getItem(CHF_KEY) || "0", 10); if (cf === 4 || cf === 5) chFilter = cf; } catch(e){}
+ITEMS.forEach(function(it){
+  if (records[it.id] === "x" && !failCounts[it.id]) failCounts[it.id] = 1;
+});
+saveJSON(FAIL_KEY, failCounts);
+
+var quizList = [];
+var quizIdx = 0;
+var quizCorrect = 0;
+var quizReal = 0;
+var cur = null;
+var curChoices = [];
+var selected = -1;
+var checked = false;
+
+function el(id){ return document.getElementById(id); }
+function shuffle(arr){
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+function inChapter(it){ return chFilter === 0 || it.ch === chFilter; }
+function poolItems(mode){
+  var items = ITEMS.filter(function(it){
+    if (!inChapter(it)) return false;
+    if (mode === "all") return true;
+    if (mode === "retry") return records[it.id] === "x";
+    if (mode === "ever") return (failCounts[it.id] || 0) >= 1;
+    return false;
+  });
+  if (mode !== "all"){
+    items.sort(function(x, y){
+      return (failCounts[y.id] || 0) - (failCounts[x.id] || 0);
+    });
+  }
+  return items;
+}
+
+function renderHome(){
+  var done = 0;
+  ITEMS.forEach(function(it){ if (records[it.id] === "o") done++; });
+  el("progress-text").textContent = "全" + ITEMS.length + "問中、" + done + "問 できました。";
+  el("chip-all").classList.toggle("on", chFilter === 0);
+  el("chip-4").classList.toggle("on", chFilter === 4);
+  el("chip-5").classList.toggle("on", chFilter === 5);
+  var allItems = poolItems("all");
+  var remain = allItems.filter(function(it){ return !roundDone[it.id]; }).length;
+  el("all-count").textContent = allItems.length + "問" + (remain > 0 && remain < allItems.length ? "（一周の途中：残り" + remain + "問から再開）" : "");
+  var r = poolItems("retry"), e = poolItems("ever");
+  el("retry-count").textContent = r.length + "問";
+  el("ever-count").textContent = e.length + "問";
+  el("start-retry").classList.toggle("disabled", r.length === 0);
+  el("start-ever").classList.toggle("disabled", e.length === 0);
+  var list = el("term-list");
+  list.innerHTML = "";
+  TERMS.forEach(function(t){
+    var d = document.createElement("div");
+    d.className = "term-item";
+    var tm = document.createElement("div");
+    tm.className = "tm";
+    tm.textContent = t[0];
+    var df = document.createElement("div");
+    df.className = "df";
+    df.textContent = t[1];
+    d.appendChild(tm);
+    d.appendChild(df);
+    list.appendChild(d);
+  });
+}
+
+function showScreen(name){
+  el("home-screen").style.display = name === "home" ? "block" : "none";
+  el("quiz-screen").style.display = name === "quiz" ? "block" : "none";
+  el("done-screen").style.display = name === "done" ? "block" : "none";
+  window.scrollTo(0, 0);
+}
+
+function startQuiz(mode){
+  var items = poolItems(mode);
+  if (items.length === 0) return;
+  if (mode === "all"){
+    var remaining = items.filter(function(it){ return !roundDone[it.id]; });
+    if (remaining.length === 0){
+      items.forEach(function(it){ delete roundDone[it.id]; });
+      saveJSON(ROUND_KEY, roundDone);
+      remaining = items;
+    }
+    items = remaining;
+  }
+  quizList = (mode === "all" ? shuffle(items) : items).map(function(it){
+    return { it: it, confirm: false };
+  });
+  quizReal = quizList.length;
+  quizIdx = 0;
+  quizCorrect = 0;
+  showScreen("quiz");
+  renderQuestion();
+}
+
+function renderQuestion(){
+  cur = quizList[quizIdx];
+  selected = -1;
+  checked = false;
+  curChoices = shuffle([cur.it.a].concat(cur.it.d));
+  el("q-count").textContent = (quizIdx + 1) + " / " + quizList.length + " 問";
+  el("q-no").textContent = (cur.confirm ? "確認：" : "") + "CASE" + cur.it.cs + "（第" + cur.it.ch + "章）";
+  var fc = failCounts[cur.it.id] || 0;
+  var badge = el("fail-badge");
+  if (!cur.confirm && fc >= 1){
+    badge.style.display = "block";
+    badge.textContent = "この問題は今まで " + fc + "回 できなかった";
+  } else {
+    badge.style.display = "none";
+  }
+  el("q-box").textContent = cur.it.q;
+  var wrap = el("choices");
+  wrap.innerHTML = "";
+  curChoices.forEach(function(c, i){
+    var b = document.createElement("button");
+    b.className = "choice";
+    b.textContent = c;
+    b.addEventListener("click", function(){
+      if (checked) return;
+      selected = i;
+      wrap.querySelectorAll(".choice").forEach(function(x, j){
+        x.classList.toggle("sel", j === i);
+      });
+      el("check-btn").disabled = false;
+    });
+    wrap.appendChild(b);
+  });
+  el("check-btn").disabled = true;
+  el("check-btn").style.display = "";
+  el("result").style.display = "none";
+  el("imi-box").style.display = "none";
+  el("next-btn").classList.add("hidden");
+}
+
+function doCheck(){
+  if (checked || selected < 0) return;
+  checked = true;
+  var it = cur.it;
+  var ok = curChoices[selected] === it.a;
+  if (!cur.confirm){
+    roundDone[it.id] = true;
+    saveJSON(ROUND_KEY, roundDone);
+    if (ok){
+      records[it.id] = "o";
+      quizCorrect++;
+    } else {
+      records[it.id] = "x";
+      failCounts[it.id] = (failCounts[it.id] || 0) + 1;
+      saveJSON(FAIL_KEY, failCounts);
+      /* 間違えた問題は、直後にもう一度出して確認する（記録には入らない） */
+      quizList.splice(Math.min(quizIdx + 1, quizList.length), 0, { it: it, confirm: true });
+    }
+    saveJSON(REC_KEY, records);
+  }
+  el("choices").querySelectorAll(".choice").forEach(function(b){
+    b.disabled = true;
+    if (b.textContent === it.a) b.classList.add("good");
+    else if (b.classList.contains("sel")) b.classList.add("bad");
+    b.classList.remove("sel");
+  });
+  var r = el("result");
+  r.style.display = "block";
+  r.className = "result " + (ok ? "ok" : "ng");
+  r.textContent = cur.confirm
+    ? (ok ? "⭕ 確認できました。（記録には入りません）" : "❌ 正解は「" + it.a + "」です。もう一度見直しましょう。（記録には入りません）")
+    : (ok ? "⭕ 正解です！" : "❌ 正解は「" + it.a + "」です。この問題は、次にもう一度出ます。");
+  el("check-btn").style.display = "none";
+  var nb = el("next-btn");
+  nb.classList.remove("hidden");
+  nb.textContent = quizIdx + 1 < quizList.length ? "次の問題へ" : "結果を見る";
+  var ib = el("imi-box");
+  ib.textContent = "解説：" + (it.exp || "");
+  ib.style.display = it.exp ? "block" : "none";
+}
+
+function nextQuestion(){
+  quizIdx++;
+  if (quizIdx < quizList.length){
+    renderQuestion();
+  } else {
+    el("done-score").textContent = quizCorrect + " / " + quizReal + " 問 正解";
+    el("done-msg").textContent = quizCorrect === quizReal
+      ? "全問正解です。本番でも満点を目指しましょう。"
+      : "バツになった問題は、トップの「バツのままの問題だけ」からもう一度できます。用語の一覧で見直すのもおすすめです。";
+    showScreen("done");
+    renderHome();
+  }
+}
+
+function setChapter(n){
+  chFilter = n;
+  try { localStorage.setItem(CHF_KEY, String(n)); } catch(e){}
+  renderHome();
+}
+
+el("chip-all").addEventListener("click", function(){ setChapter(0); });
+el("chip-4").addEventListener("click", function(){ setChapter(4); });
+el("chip-5").addEventListener("click", function(){ setChapter(5); });
+el("start-all").addEventListener("click", function(){ startQuiz("all"); });
+el("start-retry").addEventListener("click", function(){ startQuiz("retry"); });
+el("start-ever").addEventListener("click", function(){ startQuiz("ever"); });
+el("quiz-home-btn").addEventListener("click", function(){ showScreen("home"); renderHome(); });
+el("check-btn").addEventListener("click", doCheck);
+el("next-btn").addEventListener("click", nextQuestion);
+el("done-home-btn").addEventListener("click", function(){ showScreen("home"); renderHome(); });
+el("done-retry-btn").addEventListener("click", function(){ startQuiz("retry"); });
+
+renderHome();
+</script>
+</body>
+</html>
